@@ -1,4 +1,4 @@
-html {
+﻿html {
   font-size: 14px;
 }
 
@@ -28,4 +28,48 @@ body {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+
+/* 🔹 Search Bar Styling */
+.navbar .search-box .form-control {
+    border: 2px solid #0d6efd; /* Bootstrap primary color */
+    border-right: none;
+    padding: 10px 15px;
+    transition: all 0.3s ease;
+    box-shadow: none;
+}
+
+    .navbar .search-box .form-control:focus {
+        border-color: #0b5ed7;
+        box-shadow: 0 0 8px rgba(13, 110, 253, 0.3);
+        outline: none;
+    }
+
+.navbar .search-box .btn {
+    border: 2px solid #0d6efd;
+    background: #0d6efd;
+    color: #fff;
+    transition: all 0.3s ease;
+    padding: 0 18px;
+}
+
+    .navbar .search-box .btn:hover {
+        background: #0b5ed7;
+        border-color: #0b5ed7;
+        transform: scale(1.05);
+    }
+
+/* 🔹 Rounded pill look */
+.navbar .search-box .form-control,
+.navbar .search-box .btn {
+    border-radius: 50px;
+}
+
+/* 🔹 Mobile responsiveness */
+@media (max-width: 576px) {
+    .navbar .search-box {
+        width: 100%;
+        margin-top: 10px;
+    }
 }
