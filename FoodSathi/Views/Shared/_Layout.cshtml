@@ -13,7 +13,7 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                <a class="navbar-brand me-5" asp-area="" asp-controller="Home" asp-action="Index">
                     <img src="~/images/logo.png" alt="Logo" height="40px"/>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -24,6 +24,9 @@
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item me-5">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Menu">Menu</a>
+                        </li>
+                        <li class="nav-item me-5">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Offer">Offers</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
