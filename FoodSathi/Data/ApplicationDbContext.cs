@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using FoodSathi.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodSathi.Data
@@ -9,5 +10,7 @@ namespace FoodSathi.Data
             : base(options)
         {
         }
+
+        public DbSet<MenuItem> MenuItems { get; set; }
     }
 }

@@ -17,10 +17,6 @@ namespace FoodSathi.Controllers
         {
             return View();
         }
-        public IActionResult Menu()
-        {
-            return View();
-        }
         public IActionResult Offer()
         {
             return View();
