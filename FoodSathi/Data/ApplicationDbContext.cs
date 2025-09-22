@@ -10,7 +10,5 @@ namespace FoodSathi.Data
             : base(options)
         {
         }
-
-        public DbSet<MenuItem> MenuItems { get; set; }
     }
 }
