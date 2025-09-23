@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FoodSathi.Models;
 
@@ -19,25 +18,32 @@ namespace FoodSathi.Controllers
         }
 
         // GET: MenuItems
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string category)
         {
-            return View(await _context.MenuItems.ToListAsync());
+            var items = from m in _context.MenuItems
+                        select m;
+
+            if (!string.IsNullOrEmpty(category))
+            {
+                items = items.Where(m => m.Category == category);
+            }
+
+            ViewBag.Categories = await _context.MenuItems
+                                               .Select(m => m.Category)
+                                               .Distinct()
+                                               .ToListAsync();
+
+            return View(await items.ToListAsync());
         }
 
         // GET: MenuItems/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var menuItem = await _context.MenuItems
-                .FirstOrDefaultAsync(m => m.ItemID == id);
-            if (menuItem == null)
-            {
-                return NotFound();
-            }
+                                         .FirstOrDefaultAsync(m => m.ItemID == id);
+            if (menuItem == null) return NotFound();
 
             return View(menuItem);
         }
@@ -49,11 +55,9 @@ namespace FoodSathi.Controllers
         }
 
         // POST: MenuItems/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ItemID,ItemName,Description,Price,ImageURL,IsAvailable")] MenuItem menuItem)
+        public async Task<IActionResult> Create([Bind("ItemID,ItemName,Description,Price,ImageURL,IsAvailable,Category")] MenuItem menuItem)
         {
             if (ModelState.IsValid)
             {
@@ -67,30 +71,20 @@ namespace FoodSathi.Controllers
         // GET: MenuItems/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var menuItem = await _context.MenuItems.FindAsync(id);
-            if (menuItem == null)
-            {
-                return NotFound();
-            }
+            if (menuItem == null) return NotFound();
+
             return View(menuItem);
         }
 
         // POST: MenuItems/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ItemID,ItemName,Description,Price,ImageURL,IsAvailable")] MenuItem menuItem)
+        public async Task<IActionResult> Edit(int id, [Bind("ItemID,ItemName,Description,Price,ImageURL,IsAvailable,Category")] MenuItem menuItem)
         {
-            if (id != menuItem.ItemID)
-            {
-                return NotFound();
-            }
+            if (id != menuItem.ItemID) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -102,13 +96,9 @@ namespace FoodSathi.Controllers
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!MenuItemExists(menuItem.ItemID))
-                    {
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -118,17 +108,11 @@ namespace FoodSathi.Controllers
         // GET: MenuItems/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var menuItem = await _context.MenuItems
-                .FirstOrDefaultAsync(m => m.ItemID == id);
-            if (menuItem == null)
-            {
-                return NotFound();
-            }
+                                         .FirstOrDefaultAsync(m => m.ItemID == id);
+            if (menuItem == null) return NotFound();
 
             return View(menuItem);
         }
@@ -142,9 +126,8 @@ namespace FoodSathi.Controllers
             if (menuItem != null)
             {
                 _context.MenuItems.Remove(menuItem);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

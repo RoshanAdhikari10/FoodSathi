@@ -12,5 +12,7 @@ namespace FoodSathi.Models
         public decimal Price { get; set; }
         public string ImageURL { get; set; }
         public bool IsAvailable { get; set; } = true;
+
+        public string Category { get; set; }  // ✅ New property for filtering
     }
 }
