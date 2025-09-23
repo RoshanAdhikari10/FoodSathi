@@ -1,8 +1,35 @@
-﻿@{
-    ViewData["Title"] = "Menu Page";
+﻿@model IEnumerable<FoodSathi.Models.MenuItem>
+
+@{
+    ViewData["Title"] = "Our Menu";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Food Items</p>
+<h2>🍴 Our Menu</h2>
 
+<a asp-controller="MenuItems" asp-action="Create" class="btn btn-primary mb-3">
+    ➕ Add New Menu Item
+</a>
 
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm">
+                <img class="card-img-top" src="@item.ImageURL" alt="@item.ItemName" style="height:200px;object-fit:cover;" />
+                <div class="card-body">
+                    <h5 class="card-title">@item.ItemName</h5>
+                    <p class="card-text">@item.Description</p>
+                    <p class="fw-bold text-success">Rs. @item.Price</p>
+                    <p>@(item.IsAvailable ? "Available ✅" : "Not Available ❌")</p>
+
+                    <!-- Action buttons -->
+                    <a asp-controller="MenuItems" asp-action="Edit" asp-route-id="@item.ItemID" class="btn btn-sm btn-warning me-1">✏️ Edit</a>
+                    <a asp-controller="MenuItems" asp-action="Details" asp-route-id="@item.ItemID" class="btn btn-sm btn-info me-1">ℹ️ Details</a>
+                    <form asp-controller="MenuItems" asp-action="Delete" asp-route-id="@item.ItemID" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">🗑️ Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>
