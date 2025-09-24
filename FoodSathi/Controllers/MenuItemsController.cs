@@ -19,9 +19,25 @@ namespace FoodSathi.Controllers
         }
 
         // GET: MenuItems
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string category, string search)
         {
-            return View(await _context.MenuItems.ToListAsync());
+            // Start with all items
+            var items = from m in _context.MenuItems
+                        select m;
+
+            // Filter by category if provided
+            if (!string.IsNullOrEmpty(category))
+            {
+                items = items.Where(m => m.Category == category);
+            }
+
+            // Search by name or description if provided
+            if (!string.IsNullOrEmpty(search))
+            {
+                items = items.Where(m => m.ItemName.Contains(search) || m.Description.Contains(search));
+            }
+
+            return View(await items.ToListAsync());
         }
 
         // GET: MenuItems/Details/5
@@ -49,8 +65,6 @@ namespace FoodSathi.Controllers
         }
 
         // POST: MenuItems/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ItemID,ItemName,Description,Price,ImageURL,IsAvailable,Category")] MenuItem menuItem)
@@ -59,6 +73,7 @@ namespace FoodSathi.Controllers
             {
                 _context.Add(menuItem);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "✅ Menu item added successfully!";
                 return RedirectToAction(nameof(Index));
             }
             return View(menuItem);
@@ -81,8 +96,6 @@ namespace FoodSathi.Controllers
         }
 
         // POST: MenuItems/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ItemID,ItemName,Description,Price,ImageURL,IsAvailable,Category")] MenuItem menuItem)
@@ -98,6 +111,7 @@ namespace FoodSathi.Controllers
                 {
                     _context.Update(menuItem);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "✅ Menu item updated successfully!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -134,7 +148,7 @@ namespace FoodSathi.Controllers
         }
 
         // POST: MenuItems/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("DeleteConfirmed")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -142,6 +156,7 @@ namespace FoodSathi.Controllers
             if (menuItem != null)
             {
                 _context.MenuItems.Remove(menuItem);
+                TempData["SuccessMessage"] = "🗑️ Menu item deleted successfully!";
             }
 
             await _context.SaveChangesAsync();
