@@ -19,5 +19,7 @@ namespace FoodSathi.Models
                 .Property(m => m.Price)
                 .HasColumnType("decimal(18,2)");
         }
+
     }
+
 }
