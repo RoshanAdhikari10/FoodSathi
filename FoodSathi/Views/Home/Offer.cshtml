@@ -1,5 +1,47 @@
-﻿
+﻿@model IEnumerable<FoodSathi.Models.Offer>
+
 @{
-    ViewData["Title"] = "Offer page";
+    ViewData["Title"] = "Offer";
 }
-<h1>@ViewData["Title"]</h1>
+
+<h2 class="mb-4 text-center">🎉 Special Offers</h2>
+<hr />
+
+<a asp-controller="Offers" asp-action="Create" class="btn btn-primary mb-3">
+    ➕ Add New Offer
+</a>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="alert alert-info text-center">
+        No active offers at the moment. Please check back later! 😊
+    </div>
+}
+
+else
+{
+    <div class="row">
+        @foreach (var offer in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-lg h-100 border-0">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">@offer.Title</h5>
+                        <p class="card-text">@offer.Description</p>
+                        <p><strong>Discount:</strong> <span class="text-success">@offer.DiscountPercentage % OFF</span></p>
+                        <p>
+                            <small class="text-muted">
+                                Valid until: @offer.EndDate.ToString("MMMM dd, yyyy")
+                            </small>
+                        </p>
+                    </div>
+                    <div class="card-footer bg-light text-center">
+                        <a href="/MenuItems" class="btn btn-outline-success btn-sm">
+                            🍔 Order Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

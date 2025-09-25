@@ -8,35 +8,40 @@ namespace FoodSathi.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly MenuDbContext _context;
+        private readonly MenuDbContext _menuContext;
+        private readonly OfferDbContext _offerContext;
 
-        // ✅ Inject both logger and MenuDbContext
-        public HomeController(ILogger<HomeController> logger, MenuDbContext context)
+        public HomeController(ILogger<HomeController> logger, MenuDbContext menuContext, OfferDbContext offerContext)
         {
             _logger = logger;
-            _context = context;
+            _menuContext = menuContext;
+            _offerContext = offerContext;  // ✅ assign properly
         }
 
-        // ✅ Home Page
+        // Home Page
         public IActionResult Index()
         {
             return View();
         }
 
-        // ✅ Offer Page
-        public IActionResult Offer()
+        // Offer Page
+        public async Task<IActionResult> Offer()
         {
-            return View();
-        }
+            var items = await _offerContext.Offers
+                .Where(o => o.IsActive && o.EndDate >= DateTime.Now)
+                .ToListAsync();
 
-        // ✅ Menu Page (Fetch items from DB)
-        public async Task<IActionResult> Menu()
-        {
-            var items = await _context.MenuItems.ToListAsync();
             return View(items);
         }
 
-        // ✅ Error Page
+        // Menu Page
+        public async Task<IActionResult> Menu()
+        {
+            var items = await _menuContext.MenuItems.ToListAsync();
+            return View(items);
+        }
+
+        // Error Page
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
