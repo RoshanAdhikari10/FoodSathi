@@ -9,6 +9,7 @@ namespace FoodSathi.Models
             : base(options) { }
 
         public DbSet<MenuItem> MenuItems { get; set; }
+        public DbSet<Cart> Carts { get; set; }   // 👈 Added for Cart
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
