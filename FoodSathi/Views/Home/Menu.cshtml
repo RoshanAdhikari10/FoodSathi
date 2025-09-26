@@ -22,6 +22,22 @@
                     <p class="fw-bold text-success">Rs. @item.Price</p>
                     <p>@(item.IsAvailable ? "Available ✅" : "Not Available ❌")</p>
 
+                    <!-- Quantity selector -->
+                    <div class="input-group mb-2" style="max-width:150px;">
+                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="decreaseQty(@item.ItemID)">-</button>
+                        <input type="text" id="qty-@item.ItemID" value="1" class="form-control text-center" readonly />
+                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="increaseQty(@item.ItemID)">+</button>
+                    </div>
+
+                    <!-- Add to cart button -->
+                    <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                        <input type="hidden" name="itemId" value="@item.ItemID" />
+                        <input type="hidden" id="form-qty-@item.ItemID" name="quantity" value="1" />
+                        <button type="submit" class="btn btn-sm btn-success">🛒 Add to Cart</button>
+                    </form>
+
+                    <hr />
+
                     <!-- Action buttons -->
                     <a asp-controller="MenuItems" asp-action="Edit" asp-route-id="@item.ItemID" class="btn btn-sm btn-warning me-1">✏️ Edit</a>
                     <a asp-controller="MenuItems" asp-action="Details" asp-route-id="@item.ItemID" class="btn btn-sm btn-info me-1">ℹ️ Details</a>
@@ -32,4 +48,26 @@
             </div>
         </div>
     }
-</div> 
+</div>
+
+@section Scripts {
+    <script>
+        function increaseQty(id) {
+            let qtyInput = document.getElementById("qty-" + id);
+            let formQtyInput = document.getElementById("form-qty-" + id);
+            let value = parseInt(qtyInput.value) || 1;
+            qtyInput.value = value + 1;
+            formQtyInput.value = qtyInput.value;
+        }
+
+        function decreaseQty(id) {
+            let qtyInput = document.getElementById("qty-" + id);
+            let formQtyInput = document.getElementById("form-qty-" + id);
+            let value = parseInt(qtyInput.value) || 1;
+            if (value > 1) {
+                qtyInput.value = value - 1;
+                formQtyInput.value = qtyInput.value;
+            }
+        }
+    </script>
+}
