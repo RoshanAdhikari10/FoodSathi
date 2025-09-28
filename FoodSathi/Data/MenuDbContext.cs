@@ -11,6 +11,8 @@ namespace FoodSathi.Models
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<Cart> Carts { get; set; }   // 👈 Added for Cart
 
+        public DbSet<Order> Orders { get; set; }   // 👈 Added for Cart
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

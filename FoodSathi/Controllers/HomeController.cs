@@ -9,9 +9,9 @@ namespace FoodSathi.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly MenuDbContext _menuContext;
-        private readonly OfferDbContext _offerContext;
+        private readonly MenuDbContext _offerContext;
 
-        public HomeController(ILogger<HomeController> logger, MenuDbContext menuContext, OfferDbContext offerContext)
+        public HomeController(ILogger<HomeController> logger, MenuDbContext menuContext, MenuDbContext offerContext)
         {
             _logger = logger;
             _menuContext = menuContext;
@@ -22,16 +22,6 @@ namespace FoodSathi.Controllers
         public IActionResult Index()
         {
             return View();
-        }
-
-        // Offer Page
-        public async Task<IActionResult> Offer()
-        {
-            var items = await _offerContext.Offers
-                .Where(o => o.IsActive && o.EndDate >= DateTime.Now)
-                .ToListAsync();
-
-            return View(items);
         }
 
         // Menu Page

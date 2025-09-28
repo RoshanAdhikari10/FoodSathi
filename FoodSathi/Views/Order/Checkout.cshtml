@@ -1,0 +1,16 @@
+﻿@model FoodSathi.Models.Order
+
+<h2 class="text-success fw-bold">✅ Checkout</h2>
+<hr />
+
+<p><strong>Item:</strong> @Model.ItemName</p>
+<p><strong>Quantity:</strong> @Model.Quantity</p>
+<p><strong>Total Price:</strong> Rs. @Model.TotalPrice</p>
+<p><strong>Order Date:</strong> @Model.OrderDate.ToString("MMMM dd, yyyy hh:mm tt")</p>
+
+<div class="mt-4">
+    <a asp-controller="Payment" asp-action="Pay" asp-route-id="@Model.OrderID" class="btn btn-success">
+        💳 Proceed to Payment
+    </a>
+    <a asp-controller="MenuItems" asp-action="Index" class="btn btn-secondary">🔙 Back to Menu</a>
+</div>

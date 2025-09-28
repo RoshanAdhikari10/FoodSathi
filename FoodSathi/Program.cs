@@ -13,8 +13,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDbContext<MenuDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Menupage")));
 
-builder.Services.AddDbContext<OfferDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Offerpage")));
 
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();

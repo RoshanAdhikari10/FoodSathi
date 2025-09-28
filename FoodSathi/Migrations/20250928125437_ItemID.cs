@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace FoodSathi.Migrations.OfferDb
+namespace FoodSathi.Migrations
 {
     /// <inheritdoc />
-    public partial class AddOffer : Migration
+    public partial class ItemID : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
