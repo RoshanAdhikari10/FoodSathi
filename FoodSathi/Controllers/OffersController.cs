@@ -18,7 +18,7 @@ namespace FoodSathi.Controllers
         }
 
         // GET: Offers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Offer()
         {
             return View(await _context.Offers.ToListAsync());
         }
@@ -58,7 +58,7 @@ namespace FoodSathi.Controllers
             {
                 _context.Add(offer);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Offer));
             }
             return View(offer);
         }
@@ -109,7 +109,7 @@ namespace FoodSathi.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Offer));
             }
             return View(offer);
         }
@@ -144,7 +144,7 @@ namespace FoodSathi.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Offer));
         }
 
         private bool OfferExists(int id)
