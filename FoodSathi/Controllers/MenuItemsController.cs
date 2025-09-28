@@ -19,7 +19,7 @@ namespace FoodSathi.Controllers
         }
 
         // GET: MenuItems
-        public async Task<IActionResult> Index(string category, string search)
+        public async Task<IActionResult> Menu(string category, string search)
         {
             // Start with all items
             var items = from m in _context.MenuItems
@@ -74,7 +74,7 @@ namespace FoodSathi.Controllers
                 _context.Add(menuItem);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "✅ Menu item added successfully!";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Menu));
             }
             return View(menuItem);
         }
@@ -124,7 +124,7 @@ namespace FoodSathi.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Menu));
             }
             return View(menuItem);
         }
@@ -160,7 +160,7 @@ namespace FoodSathi.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Menu));
         }
 
         private bool MenuItemExists(int id)

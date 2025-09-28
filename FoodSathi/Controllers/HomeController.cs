@@ -24,12 +24,6 @@ namespace FoodSathi.Controllers
             return View();
         }
 
-        // Menu Page
-        public async Task<IActionResult> Menu()
-        {
-            var items = await _menuContext.MenuItems.ToListAsync();
-            return View(items);
-        }
 
         // Error Page
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
