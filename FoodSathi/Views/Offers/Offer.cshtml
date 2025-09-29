@@ -16,17 +16,23 @@
 <div class="row">
     @foreach (var offer in Model)
     {
+        var isActive = offer.StartDate <= DateTime.Now && offer.EndDate >= DateTime.Now;
         <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
+            <div class="card shadow-sm h-100 offer-card">
                 <!-- Offer Image -->
                 <img class="card-img-top" src="@offer.ImageUrl" alt="@offer.Title" style="height:200px; object-fit:cover;" />
 
                 <div class="card-body d-flex flex-column">
+                    <!-- Badge -->
+                    <span class="badge @(isActive ? "bg-success" : "bg-secondary") mb-2">
+                        @(isActive ? "Active ✅" : "Expired ❌")
+                    </span>
+
                     <!-- Offer Details -->
                     <h5 class="card-title">@offer.Title</h5>
                     <p class="card-text">@offer.Description</p>
 
-                    @if(offer.Discount > 0)
+                    @if (offer.Discount > 0)
                     {
                         <p class="fw-bold text-success">Discount: @offer.Discount %</p>
                     }
@@ -34,6 +40,14 @@
                     <p class="text-muted mb-3">
                         Valid: @offer.StartDate.ToString("MMM dd, yyyy") - @offer.EndDate.ToString("MMM dd, yyyy")
                     </p>
+
+                    <!-- Buy Now (only if active) -->
+                    @if (isActive)
+                    {
+                        <a asp-controller="Order" asp-action="BuyNow" asp-route-offerId="@offer.Id" class="btn btn-sm btn-primary mb-2">
+                            ⚡ Buy Now
+                        </a>
+                    }
 
                     <!-- Action Buttons -->
                     <div class="mt-auto d-flex justify-content-between">
@@ -49,3 +63,23 @@
     }
 </div>
 
+@section Styles {
+    <style>
+        /* Hover effect */
+        .offer-card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+            .offer-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Optional: future countdown timers or animations
+        console.log("Professional Offer page with Active/Expired badge loaded.");
+    </script>
+}
