@@ -41,13 +41,20 @@
                         Valid: @offer.StartDate.ToString("MMM dd, yyyy") - @offer.EndDate.ToString("MMM dd, yyyy")
                     </p>
 
-                    <!-- Buy Now (only if active) -->
+                    <!-- Buy Now (Active/Expired) -->
                     @if (isActive)
                     {
-                        <a asp-controller="Order" asp-action="BuyNow" asp-route-offerId="@offer.Id" class="btn btn-sm btn-primary mb-2">
-                            ⚡ Buy Now
+                        <a asp-controller="Order" asp-action="BuyNow" asp-route-offerId="@offer.Id" class="btn btn-sm btn-success mb-2">
+                            🛒 Buy Now
                         </a>
                     }
+                    else
+                    {
+                        <button class="btn btn-sm btn-secondary mb-2" disabled>
+                            ❌ Expired
+                        </button>
+                    }
+
 
                     <!-- Action Buttons -->
                     <div class="mt-auto d-flex justify-content-between">
