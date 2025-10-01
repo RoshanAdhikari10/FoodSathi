@@ -41,10 +41,11 @@
                         Valid: @offer.StartDate.ToString("MMM dd, yyyy") - @offer.EndDate.ToString("MMM dd, yyyy")
                     </p>
 
-                    <!-- Buy Now (Active/Expired) -->
+                    <!-- Buy Now Button -->
                     @if (isActive)
                     {
-                        <a asp-controller="Order" asp-action="BuyNow" asp-route-offerId="@offer.Id" class="btn btn-sm btn-success mb-2">
+                        <a asp-controller="Order" asp-action="BuyNowOffer" asp-route-offerTitle="@offer.Title.Replace(" ", "-")"
+                           class="btn btn-sm btn-success mb-2">
                             🛒 Buy Now
                         </a>
                     }
@@ -55,13 +56,15 @@
                         </button>
                     }
 
-
                     <!-- Action Buttons -->
                     <div class="mt-auto d-flex justify-content-between">
                         <a asp-action="Edit" asp-route-id="@offer.Id" class="btn btn-sm btn-warning me-1">✏️ Edit</a>
                         <a asp-action="Details" asp-route-id="@offer.Id" class="btn btn-sm btn-info me-1">ℹ️ Details</a>
                         <form asp-action="Delete" asp-route-id="@offer.Id" method="post" class="d-inline">
-                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this offer?');">🗑️ Delete</button>
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Are you sure you want to delete this offer?');">
+                                🗑️ Delete
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -86,7 +89,6 @@
 
 @section Scripts {
     <script>
-        // Optional: future countdown timers or animations
         console.log("Professional Offer page with Active/Expired badge loaded.");
     </script>
 }
