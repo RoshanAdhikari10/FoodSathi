@@ -31,13 +31,15 @@ namespace FoodSathi.Controllers
             _context.Orders.Add(order);
             _context.SaveChanges();
 
-            // Redirect to Checkout page
-            return RedirectToAction("Checkout", new { orderId = order.OrderID });
+            // Redirect with clean URL: /Order/Checkout/Pizza
+            return RedirectToAction("Checkout", new { orderName = order.ItemName });
         }
 
-        public IActionResult Checkout(int orderId)
+        // ✅ Route parameter style
+        [HttpGet("Order/Checkout/{orderName}")]
+        public IActionResult Checkout(string orderName)
         {
-            var order = _context.Orders.Find(orderId);
+            var order = _context.Orders.FirstOrDefault(o => o.ItemName == orderName);
             if (order == null) return NotFound();
 
             return View(order);

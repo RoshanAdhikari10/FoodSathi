@@ -59,6 +59,12 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+app.MapControllerRoute(
+    name: "checkoutByName",
+    pattern: "Order/Checkout/{orderName}",
+    defaults: new { controller = "Order", action = "Checkout" });
+
+
 app.MapRazorPages()
    .WithStaticAssets();
 
