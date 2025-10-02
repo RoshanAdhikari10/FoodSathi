@@ -31,8 +31,9 @@ namespace FoodSathi.Controllers
             _context.Orders.Add(order);
             _context.SaveChanges();
 
-            // Redirect with clean URL: /Order/Checkout/Pizza
+            // Redirect with both OrderId and OrderName
             return RedirectToAction("Checkout", new { orderName = order.ItemName });
+
         }
 
         // ✅ Route parameter style
