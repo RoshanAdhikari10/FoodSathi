@@ -1,0 +1,24 @@
+﻿@model FoodSathi.Models.Order
+
+<h2 class="text-primary fw-bold">💳 Payment Page</h2>
+<hr />
+
+<p><strong>Item:</strong> @Model.ItemName</p>
+<p><strong>Total Amount:</strong> Rs. @Model.TotalPrice</p>
+
+<form asp-action="ConfirmPayment" method="post">
+    <input type="hidden" name="orderId" value="@Model.OrderID" />
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Choose Payment Method:</label>
+        <select class="form-select" name="method" required>
+            <option value="Esewa">eSewa</option>
+            <option value="Khalti">Khalti</option>
+            <option value="Bank">Bank Transfer</option>
+            <option value="CashOnDelivery">Cash on Delivery</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">✅ Confirm Payment</button>
+    <a asp-controller="Order" asp-action="Checkout" asp-route-orderName="@Model.ItemName" class="btn btn-secondary">🔙 Back</a>
+</form>
