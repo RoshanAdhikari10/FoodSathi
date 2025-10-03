@@ -44,7 +44,7 @@
                     <!-- Buy Now Button -->
                     @if (isActive)
                     {
-                        <a asp-controller="Order" asp-action="BuyNowOffer" asp-route-offerTitle="@offer.Title.Replace(" ", "-")"
+                        <a asp-controller="Order" asp-action="Checkout" asp-route-offerTitle="@offer.Title.Replace(" ", "-")"
                            class="btn btn-sm btn-success mb-2">
                             🛒 Buy Now
                         </a>
