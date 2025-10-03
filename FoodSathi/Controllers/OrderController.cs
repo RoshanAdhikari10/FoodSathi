@@ -18,7 +18,6 @@ namespace FoodSathi.Controllers
             var item = _context.MenuItems.Find(itemId);
             if (item == null) return NotFound();
 
-            // Create new order
             var order = new Order
             {
                 ItemID = item.ItemID,
@@ -31,16 +30,21 @@ namespace FoodSathi.Controllers
             _context.Orders.Add(order);
             _context.SaveChanges();
 
-            // Redirect with both OrderId and OrderName
+            // ✅ Redirect with ItemName in URL
             return RedirectToAction("Checkout", new { orderName = order.ItemName });
-
         }
 
-        // ✅ Route parameter style
+
+
+
         [HttpGet("Order/Checkout/{orderName}")]
         public IActionResult Checkout(string orderName)
         {
-            var order = _context.Orders.FirstOrDefault(o => o.ItemName == orderName);
+            var order = _context.Orders
+                .Where(o => o.ItemName == orderName)
+                .OrderByDescending(o => o.OrderDate)  // ✅ Always latest
+                .FirstOrDefault();
+
             if (order == null) return NotFound();
 
             return View(order);
