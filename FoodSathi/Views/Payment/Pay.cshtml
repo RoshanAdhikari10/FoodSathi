@@ -4,9 +4,9 @@
     ViewData["Title"] = "Payment";
 }
 
-<div class="container mt-5">
+<div class="container py-5">
     <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
+        <div class="col-lg-6 col-md-8 col-sm-10">
 
             <div class="card shadow-lg border-0 rounded-4">
                 <div class="card-body p-4">
@@ -17,7 +17,7 @@
                     <hr />
 
                     <!-- Order Summary -->
-                    <div class="mb-3">
+                    <div class="mb-3 text-center">
                         <p class="fs-5 mb-1"><strong>Item:</strong> @Model.ItemName</p>
                         <p class="fs-5 mb-1">
                             <strong>Total Amount:</strong>
@@ -30,8 +30,7 @@
 
                         <!-- Payment Options -->
                         <div class="payment-options">
-
-                            <!-- Esewa -->
+                            <!-- eSewa -->
                             <label class="payment-card">
                                 <input type="radio" name="method" value="Esewa" required />
                                 <div class="card-body d-flex align-items-center">
@@ -57,7 +56,7 @@
                                 </div>
                             </label>
 
-                            <!-- Bank -->
+                            <!-- Bank Transfer -->
                             <label class="payment-card">
                                 <input type="radio" name="method" value="Bank" required />
                                 <div class="card-body d-flex align-items-center">
@@ -65,12 +64,12 @@
                                          alt="Bank" width="40" class="me-3" />
                                     <div>
                                         <h6 class="mb-1 fw-bold">Bank Transfer</h6>
-                                        <small class="text-muted">Pay directly via your bank account</small>
+                                        <small class="text-muted">Pay via your bank account</small>
                                     </div>
                                 </div>
                             </label>
 
-                            <!-- COD -->
+                            <!-- Cash on Delivery -->
                             <label class="payment-card">
                                 <input type="radio" name="method" value="CashOnDelivery" required />
                                 <div class="card-body d-flex align-items-center">
@@ -84,42 +83,58 @@
                             </label>
                         </div>
 
-                        <!-- Bank Transfer Options -->
-                        <div id="bankOptions" class="mt-3 p-3 border rounded bg-light d-none">
-                            <label class="fw-bold mb-2">Select Your Bank:</label>
-                            <select class="form-select mb-3" id="bankSelect" name="bankName">
+                        <!-- Bank Transfer Section -->
+                        <div id="bankOptions" class="mt-3 p-3 border rounded bg-light d-none fade-section">
+                            <label class="fw-bold mb-2">🏦 Select Your Bank:</label>
+                            <select class="form-select mb-3" id="bankSelect" name="bankName" required>
                                 <option value="">-- Choose Bank --</option>
-                                <option value="Kumari Bank">🏦 Kumari Bank</option>
-                                <option value="Machhapuchchhre Bank">🏦 Machhapuchchhre Bank</option>
-                                <option value="Nabil Bank">🏦 Nabil Bank</option>
-                                <option value="NIC Asia Bank">🏦 NIC Asia Bank</option>
-                                <option value="Prabhu Bank">🏦 Prabhu Bank</option>
+                                <option value="Kumari Bank">Kumari Bank</option>
+                                <option value="Machhapuchchhre Bank">Machhapuchchhre Bank</option>
+                                <option value="Nabil Bank">Nabil Bank</option>
+                                <option value="NIC Asia Bank">NIC Asia Bank</option>
+                                <option value="Prabhu Bank">Prabhu Bank</option>
                             </select>
 
-                            <!-- Bank Account Details -->
-                            <div id="bankDetails" class="p-2 rounded bg-white shadow-sm d-none">
-                                <p class="mb-1"><strong>Account Name:</strong> FoodSathi Pvt. Ltd.</p>
+                            <div id="branchSection" class="d-none fade-section">
+                                <label class="fw-bold mb-2">🏢 Select Branch:</label>
+                                <select class="form-select mb-3" id="branchSelect" name="branchName" required>
+                                    <option value="">-- Choose Branch --</option>
+                                </select>
+                            </div>
+
+                            <!-- User Account -->
+                            <div id="userAccountSection" class="d-none fade-section">
+                                <label class="fw-bold mb-2">🧍‍♂️ Your Account Details:</label>
+                                <input type="text" class="form-control mb-2" name="accountName" placeholder="Account holder name" required />
+                                <input type="text" class="form-control mb-3" name="accountNumber" id="accountNumber"
+                                       placeholder="Enter your account number" required />
+                                <small id="accError" class="text-danger d-none">❌ Invalid account number (10–16 digits required)</small>
+                            </div>
+
+                            <!-- FoodSathi Account -->
+                            <div id="bankDetails" class="p-3 rounded bg-white shadow-sm d-none fade-section">
+                                <p class="mb-1"><strong>Pay To:</strong> FoodSathi Pvt. Ltd.</p>
                                 <p class="mb-1"><strong>Account Number:</strong> <span id="accNumber"></span></p>
                                 <p class="mb-1"><strong>Branch:</strong> <span id="branchName"></span></p>
                             </div>
 
                             <!-- Upload Screenshot -->
-                            <div id="uploadSlip" class="mt-3 d-none">
-                                <label class="fw-bold">Upload Payment Slip / Screenshot:</label>
-                                <input type="file" name="PaymentSlip" class="form-control mt-2" accept="image/*" />
-                                <small class="text-muted">Upload the transaction screenshot for verification</small>
+                            <div id="uploadSlip" class="mt-3 d-none fade-section">
+                                <label class="fw-bold">📸 Upload Payment Slip / Screenshot:</label>
+                                <input type="file" name="PaymentSlip" class="form-control mt-2" accept="image/*" required />
+                                <small class="text-muted">Upload your transaction screenshot for verification</small>
                             </div>
                         </div>
 
                         <!-- Buttons -->
-                        <div class="d-flex justify-content-between mt-4">
+                        <div class="d-flex justify-content-between mt-4 flex-wrap gap-2">
                             <a asp-controller="Order"
                                asp-action="Checkout"
                                asp-route-orderName="@Model.ItemName"
-                               class="btn btn-outline-secondary px-4">
+                               class="btn btn-outline-secondary flex-grow-1">
                                 🔙 Back
                             </a>
-                            <button type="submit" class="btn btn-success px-4">
+                            <button type="submit" class="btn btn-success flex-grow-1">
                                 ✅ Confirm Payment
                             </button>
                         </div>
@@ -154,7 +169,7 @@
     </div>
 </div>
 
-<!-- Custom CSS -->
+<!-- CSS -->
 <style>
     .payment-card {
         display: block;
@@ -180,57 +195,108 @@
             border-radius: 12px;
             box-shadow: 0 0 10px rgba(13,110,253,0.2);
         }
+
+    .fade-section {
+        transition: all 0.4s ease-in-out;
+    }
+
+        .fade-section.d-none {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .fade-section:not(.d-none) {
+            opacity: 1;
+            max-height: 800px;
+        }
+
+    .is-invalid {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
+    }
+    @@media (max-width: 768px) {
+        .card-body
+
+    {
+        padding: 1.2rem;
+    }
+
+    .payment-card .card-body img {
+        width: 32px;
+    }
+
+    }
 </style>
 
 <!-- Script -->
 <script>
     const bankInfo = {
-        "Kumari Bank": { acc: "1234567890", branch: "New Road, Pokhara" },
-        "Machhapuchchhre Bank": { acc: "9876543210", branch: "Lakeside, Pokhara" },
-        "Nabil Bank": { acc: "1122334455", branch: "Chipledhunga, Pokhara" },
-        "NIC Asia Bank": { acc: "5566778899", branch: "Bagar, Pokhara" },
-        "Prabhu Bank": { acc: "2233445566", branch: "Mahendrapool, Pokhara" }
+        "Kumari Bank": { acc: "1234567890", branches: ["New Road", "Bagar", "Chipledhunga"] },
+        "Machhapuchchhre Bank": { acc: "9876543210", branches: ["Lakeside", "Mahendrapool", "Amarsingh"] },
+        "Nabil Bank": { acc: "1122334455", branches: ["Chipledhunga", "Lakeside", "Bagar"] },
+        "NIC Asia Bank": { acc: "5566778899", branches: ["Bagar", "Mahendrapool", "New Road"] },
+        "Prabhu Bank": { acc: "2233445566", branches: ["Mahendrapool", "Lakeside", "Chipledhunga"] }
     };
 
+    // Show/Hide Bank Section
     document.querySelectorAll("input[name='method']").forEach(radio => {
         radio.addEventListener("change", function () {
-            if (this.value === "Bank") {
-                document.getElementById("bankOptions").classList.remove("d-none");
-            } else {
-                document.getElementById("bankOptions").classList.add("d-none");
-            }
+            const bankOptions = document.getElementById("bankOptions");
+            if (this.value === "Bank") bankOptions.classList.remove("d-none");
+            else bankOptions.classList.add("d-none");
         });
     });
 
+    // Bank selection logic
     document.getElementById("bankSelect").addEventListener("change", function () {
-        const detailsDiv = document.getElementById("bankDetails");
-        const uploadDiv = document.getElementById("uploadSlip");
+        const branchSelect = document.getElementById("branchSelect");
+        const branchSection = document.getElementById("branchSection");
+        branchSelect.innerHTML = '<option value="">-- Choose Branch --</option>';
 
-        if (this.value && bankInfo[this.value]) {
-            document.getElementById("accNumber").innerText = bankInfo[this.value].acc;
-            document.getElementById("branchName").innerText = bankInfo[this.value].branch;
-            detailsDiv.classList.remove("d-none");
-            uploadDiv.classList.remove("d-none");
+        const selectedBank = this.value;
+        if (selectedBank && bankInfo[selectedBank]) {
+            bankInfo[selectedBank].branches.forEach(branch => {
+                const opt = document.createElement("option");
+                opt.value = branch;
+                opt.textContent = "🏢 " + branch;
+                branchSelect.appendChild(opt);
+            });
+            branchSection.classList.remove("d-none");
         } else {
-            detailsDiv.classList.add("d-none");
-            uploadDiv.classList.add("d-none");
+            branchSection.classList.add("d-none");
         }
     });
 
+    // Branch selected logic
+    document.getElementById("branchSelect").addEventListener("change", function () {
+        const selectedBank = document.getElementById("bankSelect").value;
+        const selectedBranch = this.value;
+        if (selectedBranch && bankInfo[selectedBank]) {
+            document.getElementById("accNumber").innerText = bankInfo[selectedBank].acc;
+            document.getElementById("branchName").innerText = selectedBranch;
+            ["bankDetails", "uploadSlip", "userAccountSection"].forEach(id => document.getElementById(id).classList.remove("d-none"));
+        }
+    });
+
+    // Account validation
+    const accInput = document.getElementById("accountNumber");
+    const accError = document.getElementById("accError");
+    accInput.addEventListener("input", () => {
+        const valid = /^[0-9]{10,16}$/.test(accInput.value.trim());
+        accInput.classList.toggle("is-invalid", !valid);
+        accError.classList.toggle("d-none", valid);
+    });
+
+    // QR Modal for eSewa / Khalti
     document.getElementById("paymentForm").addEventListener("submit", function (e) {
         let method = document.querySelector("input[name='method']:checked")?.value;
         if (method === "Esewa" || method === "Khalti") {
             e.preventDefault();
-            let qrImg = document.getElementById("qrImage");
-
-            if (method === "Esewa") {
-                qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=eSewaPayment:Order-@Model.OrderID-Rs.@Model.TotalPrice";
-            } else {
-                qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=KhaltiPayment:Order-@Model.OrderID-Rs.@Model.TotalPrice";
-            }
-
-            var qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
-            qrModal.show();
+            const qrImg = document.getElementById("qrImage");
+            const base = method === "Esewa" ? "eSewaPayment" : "KhaltiPayment";
+            qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${base}:Order-${@Model.OrderID}-Rs.${@Model.TotalPrice}`;
+            new bootstrap.Modal(document.getElementById('qrModal')).show();
         }
     });
 </script>
