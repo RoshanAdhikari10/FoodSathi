@@ -2,63 +2,86 @@
 
 @{
     ViewData["Title"] = "Our Menu";
+    var categories = ViewBag.Categories as List<string>;
 }
 
-<h2>🍴 Our Menu</h2>
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-primary fw-bold">🍴 Our Menu</h2>
 
-<a asp-controller="MenuItems" asp-action="Create" class="btn btn-primary mb-3">
-    ➕ Add New Menu Item
-</a>
+    <!-- 🔍 Search + Category Filter -->
+    <div class="d-flex flex-wrap justify-content-center mb-4 gap-3">
+        <input id="searchInput" type="text" class="form-control w-50 shadow-sm rounded-pill px-4" placeholder="Search dishes..." />
 
-<div class="row">
-    @foreach (var item in Model)
-    {
-        <div class="col-md-4 mb-4">
-            <div class="card shadow-sm">
-                <img class="card-img-top" src="@item.ImageURL" alt="@item.ItemName" style="height:200px;object-fit:cover;" />
-                <div class="card-body">
-                    <h5 class="card-title">@item.ItemName</h5>
-                    <p class="card-text">@item.Description</p>
-                    <p class="fw-bold text-success">Rs. @item.Price</p>
-                    <p>@(item.IsAvailable ? "Available ✅" : "Not Available ❌")</p>
+        <div class="btn-group flex-wrap" role="group">
+            <button class="btn btn-outline-primary active rounded-pill px-4 fw-semibold" onclick="filterMenu('all')">All</button>
+            @foreach (var category in categories)
+            {
+                <button class="btn btn-outline-primary rounded-pill px-4 fw-semibold" onclick="filterMenu('@category')">@category</button>
+            }
+        </div>
+    </div>
 
-                    <!-- Quantity selector -->
-                    <div class="input-group mb-2" style="max-width:150px;">
-                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="decreaseQty(@item.ItemID)">-</button>
-                        <input type="text" id="qty-@item.ItemID" value="1" class="form-control text-center" readonly />
-                        <button class="btn btn-outline-secondary btn-sm" type="button" onclick="increaseQty(@item.ItemID)">+</button>
+    <!-- ➕ Add New Menu Item Button -->
+    <div class="text-center mb-4">
+        <a asp-controller="MenuItems" asp-action="Create" class="btn btn-success rounded-pill shadow-sm fw-semibold">
+            ➕ Add New Menu Item
+        </a>
+    </div>
+
+    <!-- 🍔 Menu Grid -->
+    <div class="row" id="menuContainer">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 col-lg-3 mb-4 menu-item" data-category="@item.Category" data-name="@item.ItemName.ToLower()">
+                <div class="card border-0 shadow-sm rounded-4 h-100 hover-card">
+                    <img src="@item.ImageURL" class="card-img-top rounded-top-4" alt="@item.ItemName" style="height: 180px; object-fit: cover;">
+                    <div class="card-body d-flex flex-column text-center">
+                        <h5 class="fw-bold">@item.ItemName</h5>
+                        <p class="text-muted small flex-grow-1">@item.Description</p>
+                        <p class="text-success fw-semibold fs-5">Rs. @item.Price</p>
+                        <p class="small">@((item.IsAvailable) ? "Available ✅" : "Not Available ❌")</p>
+
+                        <!-- Quantity Selector -->
+                        <div class="input-group mb-2 justify-content-center" style="max-width:150px; margin:0 auto;">
+                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="decreaseQty(@item.ItemID)">-</button>
+                            <input type="text" id="qty-@item.ItemID" value="1" class="form-control text-center" readonly />
+                            <button class="btn btn-outline-secondary btn-sm" type="button" onclick="increaseQty(@item.ItemID)">+</button>
+                        </div>
+
+                        <!-- 🛒 Add to Cart -->
+                        <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline">
+                            <input type="hidden" name="itemId" value="@item.ItemID" />
+                            <input type="hidden" id="form-qty-@item.ItemID" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-sm btn-success me-1 rounded-pill shadow-sm">🛒 Add to Cart</button>
+                        </form>
+
+                        <!-- ⚡ Buy Now -->
+                        <form asp-controller="Order" asp-action="BuyNow" method="post" class="d-inline">
+                            <input type="hidden" name="itemId" value="@item.ItemID" />
+                            <input type="hidden" id="buy-qty-@item.ItemID" name="quantity" value="1" />
+                            <button type="submit" class="btn btn-sm btn-primary rounded-pill shadow-sm">⚡ Buy Now</button>
+                        </form>
+
+                        <hr />
+
+                        <!-- ✏️ Edit / ℹ️ Details / 🗑️ Delete -->
+                        <div class="d-flex justify-content-center flex-wrap gap-2">
+                            <a asp-controller="MenuItems" asp-action="Edit" asp-route-id="@item.ItemID" class="btn btn-sm btn-warning">✏️ Edit</a>
+                            <a asp-controller="MenuItems" asp-action="Details" asp-route-id="@item.ItemID" class="btn btn-sm btn-info">ℹ️ Details</a>
+                            <form asp-controller="MenuItems" asp-action="Delete" asp-route-id="@item.ItemID" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">🗑️ Delete</button>
+                            </form>
+                        </div>
                     </div>
-
-                    <!-- Add to cart -->
-                    <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline">
-                        <input type="hidden" name="itemId" value="@item.ItemID" />
-                        <input type="hidden" id="form-qty-@item.ItemID" name="quantity" value="1" />
-                        <button type="submit" class="btn btn-sm btn-success me-1">🛒 Add to Cart</button>
-                    </form>
-
-                    <!-- Buy now -->
-                    <form asp-controller="Order" asp-action="BuyNow" method="post" class="d-inline">
-                        <input type="hidden" name="itemId" value="@item.ItemID" />
-                        <input type="hidden" id="buy-qty-@item.ItemID" name="quantity" value="1" />
-                        <button type="submit" class="btn btn-sm btn-primary">⚡ Buy Now</button>
-                    </form>
-
-                    <hr />
-
-                    <!-- Action buttons -->
-                    <a asp-controller="MenuItems" asp-action="Edit" asp-route-id="@item.ItemID" class="btn btn-sm btn-warning me-1">✏️ Edit</a>
-                    <a asp-controller="MenuItems" asp-action="Details" asp-route-id="@item.ItemID" class="btn btn-sm btn-info me-1">ℹ️ Details</a>
-                    <form asp-controller="MenuItems" asp-action="Delete" asp-route-id="@item.ItemID" method="post" class="d-inline">
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">🗑️ Delete</button>
-                    </form>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
 
 @section Scripts {
     <script>
+        // 🔢 Quantity Handling
         function increaseQty(id) {
             let qtyInput = document.getElementById("qty-" + id);
             let formQtyInput = document.getElementById("form-qty-" + id);
@@ -80,5 +103,49 @@
                 if (buyQtyInput) buyQtyInput.value = qtyInput.value;
             }
         }
+
+        // 🍽️ Filter by Category + Search
+        const searchInput = document.getElementById('searchInput');
+        const categoryButtons = document.querySelectorAll('.btn-group .btn');
+
+        function filterMenu(category) {
+            categoryButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const query = searchInput.value.toLowerCase();
+            document.querySelectorAll('.menu-item').forEach(item => {
+                const itemCategory = item.dataset.category;
+                const itemName = item.dataset.name;
+                const matchesCategory = (category === 'all' || itemCategory === category);
+                const matchesSearch = itemName.includes(query);
+                item.style.display = (matchesCategory && matchesSearch) ? 'block' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', () => {
+            const activeCategory = document.querySelector('.btn-group .btn.active').textContent.trim();
+            filterMenu(activeCategory === 'All' ? 'all' : activeCategory);
+        });
     </script>
+
+    <style>
+        .hover-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .hover-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            }
+
+        .btn-group .btn.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        #searchInput:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
+        }
+    </style>
 }
