@@ -1,67 +1,149 @@
 ﻿@page
 @model RegisterModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Register - FoodSathi";
 }
 
-<h1>@ViewData["Title"]</h1>
+<div class="register-page d-flex align-items-center justify-content-center min-vh-100">
+    <div class="register-card shadow-lg rounded-4 p-4 p-md-5 bg-glass">
+        <div class="text-center mb-4">
+            <h1 class="fw-bold text-warning mb-2">🍴 FoodSathi</h1>
+            <p class="text-light mb-3">Create your account and start ordering your favorite meals!</p>
+        </div>
 
-<div class="row">
-    <div class="col-md-4">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account for foodsathi </h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-3"></div>
+
             <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <input asp-for="Input.Email" class="form-control" autocomplete="username" placeholder="name@example.com" />
                 <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <span asp-validation-for="Input.Email" class="text-danger small"></span>
             </div>
+
             <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <input asp-for="Input.Password" class="form-control" type="password" autocomplete="new-password" placeholder="password" />
                 <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                <span asp-validation-for="Input.Password" class="text-danger small"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+
+            <div class="form-floating mb-4">
+                <input asp-for="Input.ConfirmPassword" class="form-control" type="password" autocomplete="new-password" placeholder="password" />
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger small"></span>
             </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+
+            <button id="registerSubmit" type="submit" class="btn btn-warning w-100 py-2 fw-semibold rounded-pill shadow-sm">
+                Register
+            </button>
         </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
+
+        <div class="text-center text-light mt-4">
+            <small>Already have an account? <a asp-page="./Login" class="text-warning text-decoration-none fw-semibold">Login here</a></small>
+        </div>
+
+        <hr class="text-secondary my-4" />
+
+        <div class="text-center">
+            <h5 class="text-light mb-3">Or register using</h5>
+
             @{
                 if ((Model.ExternalLogins?.Count ?? 0) == 0)
                 {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
-                        </p>
-                    </div>
+                    <p class="text-secondary small">
+                        No external authentication services configured.
+                        <a href="https://go.microsoft.com/fwlink/?LinkID=532715" class="text-warning">Learn how to add them</a>.
+                    </p>
                 }
                 else
                 {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
+                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="d-flex flex-wrap justify-content-center gap-2">
+                        @foreach (var provider in Model.ExternalLogins!)
+                        {
+                            <button type="submit" class="btn btn-outline-light px-4 rounded-pill"
+                                    name="provider" value="@provider.Name"
+                                    title="Register using @provider.DisplayName">
+                                <i class="bi bi-@provider.Name.ToLower() me-2"></i>@provider.DisplayName
+                            </button>
+                        }
                     </form>
                 }
             }
-        </section>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<style>
+    /* Background */
+    .register-page {
+        background: url('/images/food-bg.jpg') center center/cover no-repeat;
+        position: relative;
+    }
+
+        .register-page::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 0;
+        }
+
+    /* Glassmorphism effect */
+    .bg-glass {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        position: relative;
+        z-index: 1;
+        color: #fff;
+    }
+
+    .form-control {
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 10px;
+    }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.4);
+        }
+
+    label {
+        color: #333;
+        font-weight: 500;
+    }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .register-card
+
+    {
+        width: 90%;
+        padding: 2rem 1.5rem;
+    }
+
+    }
+
+    @@media (min-width: 769px) {
+        .register-card
+
+    {
+        width: 450px;
+    }
+
+    }
+
+    /* Button hover effect */
+    .btn-warning:hover {
+        background-color: #ffca2c !important;
+        transform: translateY(-2px);
+        transition: all 0.3s ease;
+    }
+
+    hr {
+        opacity: 0.4;
+    }
+</style>
