@@ -3,57 +3,109 @@
 }
 
 <div class="home-hero d-flex align-items-center justify-content-center text-center text-white px-3">
-    <div class="content">
+    <div class="content animate-fade">
         <h1 class="display-4 fw-bold mb-3 text-shadow">
-            Welcome to <span class="text-warning">FoodSathi</span>
+            Welcome to <span class="brand text-warning">FoodSathi</span>
         </h1>
         <p class="lead mb-4 text-shadow">
-            Order your favorite meals quickly and easily — anytime, anywhere.
+            Craving something delicious? Get it delivered fast and fresh — anytime, anywhere 🍕
         </p>
         <a asp-controller="MenuItems" asp-action="Menu"
-           class="btn btn-warning btn-lg rounded-pill shadow-sm px-4">
+           class="btn btn-warning btn-lg rounded-pill shadow-sm px-4 explore-btn">
             🍴 Explore Menu
         </a>
     </div>
 </div>
 
 <style>
-    /* Fullscreen background with overlay */
+    /* Fullscreen responsive hero section */
     .home-hero {
         min-height: 100vh;
-        background: url('/images/food-bg.jpg') center center/cover no-repeat;
+        background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.65)), url('/images/food-bg.jpg') center center/cover no-repeat;
         position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 0 1rem;
     }
 
-        .home-hero::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.55); /* Dark overlay for readability */
-            z-index: 1;
-        }
+    /* Smooth fade-in animation */
+    .animate-fade {
+        animation: fadeInUp 1.3s ease-out;
+    }
 
-        /* Text content above overlay */
-        .home-hero .content {
-            position: relative;
-            z-index: 2;
-            max-width: 700px;
-        }
+    @@keyframes fadeInUp {
+        from
 
+    {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    /* Text shadow for better contrast */
     .text-shadow {
-        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
     }
 
-    /* Responsive adjustments */
+    .brand {
+        font-family: 'Poppins', sans-serif;
+        letter-spacing: 1px;
+    }
+
+    /* Button style */
+    .explore-btn {
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+        .explore-btn:hover {
+            transform: translateY(-3px);
+            background-color: #ffb703 !important;
+            box-shadow: 0 4px 15px rgba(255, 183, 3, 0.4);
+        }
+
+    /* Responsive typography */
     @@media (max-width: 992px) {
         .home-hero h1
 
     {
-        font-size: 2.5rem;
+        font-size: 2.8rem;
     }
 
     .home-hero p {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
+    }
+
+    }
+
+    @@media (max-width: 768px) {
+        .home-hero
+
+    {
+        padding: 2rem 1rem;
+    }
+
+    .home-hero h1 {
+        font-size: 2.2rem;
+    }
+
+    .home-hero p {
+        font-size: 1rem;
+    }
+
+    .explore-btn {
+        font-size: 1rem;
+        padding: 0.7rem 1.5rem;
     }
 
     }
@@ -63,21 +115,52 @@
 
     {
         background-position: center top;
-        padding: 0 15px;
+        padding: 3rem 1rem;
     }
 
     .home-hero h1 {
-        font-size: 2rem;
+        font-size: 1.9rem;
+        line-height: 1.3;
     }
 
     .home-hero p {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
-    .btn {
+    .explore-btn {
         font-size: 0.9rem;
         padding: 0.6rem 1.2rem;
     }
 
+    }
+
+    /* Optional subtle animated overlay for aesthetic depth */
+    .home-hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top left, rgba(255, 193, 7, 0.15), transparent 60%);
+        animation: pulse 6s infinite alternate;
+        z-index: 0;
+    }
+
+    @@keyframes pulse {
+        0%
+
+    {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 0.9;
+    }
+
+    }
+
+    /* Ensure text always on top */
+    .home-hero .content {
+        position: relative;
+        z-index: 2;
+        max-width: 700px;
     }
 </style>
