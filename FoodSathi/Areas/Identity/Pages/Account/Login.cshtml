@@ -1,108 +1,24 @@
 ﻿@page
 @model LoginModel
-
 @{
-    ViewData["Title"] = "Log in";
+    ViewData["Title"] = "Login - FoodSathi";
 }
 
-<style>
-    body, html {
-        height: 100%;
-        margin: 0;
-        font-family: 'Segoe UI', sans-serif;
-    }
-
-    .bg-gradient {
-        background: linear-gradient(135deg, #4e54c8, #8f94fb);
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .login-card {
-        background: rgba(255, 255, 255, 0.95);
-        padding: 2rem;
-        border-radius: 1rem;
-        box-shadow: 0 0 30px rgba(0,0,0,0.2);
-        width: 100%;
-        max-width: 400px;
-        opacity: 0;
-        transform: translateY(50px);
-        animation: slideFadeIn 0.6s forwards;
-    }
-
-    @@keyframes slideFadeIn {
-        to
-
-    {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    }
-
-    .login-card h2 {
-        color: #4e54c8;
-    }
-
-    .btn-primary {
-        background: #4e54c8;
-        border: none;
-    }
-
-        .btn-primary:hover {
-            background: #3b3f9f;
-        }
-
-    .btn-outline-secondary {
-        border-color: #4e54c8;
-        color: #4e54c8;
-    }
-
-        .btn-outline-secondary:hover {
-            background: #4e54c8;
-            color: white;
-        }
-
-    a {
-        color: #4e54c8;
-    }
-
-        a:hover {
-            color: #3b3f9f;
-        }
-
-    /* Password toggle icon */
-    .password-container {
-        position: relative;
-    }
-
-        .password-container i {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-            color: #6c757d;
-        }
-</style>
-
-<div class="bg-gradient">
-    <div class="login-card">
+<div class="login-page d-flex align-items-center justify-content-center min-vh-100">
+    <div class="login-card shadow-lg rounded-4 p-4 p-md-5 bg-glass">
         <div class="text-center mb-4">
-            <h2 class="fw-bold">Welcome Back 👋</h2>
-            <p class="text-muted">Log in to continue</p>
+            <h1 class="fw-bold text-warning mb-2">🍴 FoodSathi</h1>
+            <p class="text-light">Welcome back! Log in to order your favorite meals.</p>
         </div>
 
         <form id="account" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-3" role="alert"></div>
 
             <!-- Email -->
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control rounded-3" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                 <label asp-for="Input.Email">Email address</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                <span asp-validation-for="Input.Email" class="text-danger small"></span>
             </div>
 
             <!-- Password with toggle -->
@@ -110,49 +26,58 @@
                 <input asp-for="Input.Password" class="form-control rounded-3" type="password" autocomplete="current-password" aria-required="true" placeholder="Password" id="passwordInput" />
                 <label asp-for="Input.Password">Password</label>
                 <i class="bi bi-eye-fill" id="togglePassword"></i>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                <span asp-validation-for="Input.Password" class="text-danger small"></span>
             </div>
 
             <!-- Remember Me -->
             <div class="form-check mb-3">
                 <input class="form-check-input" asp-for="Input.RememberMe" />
-                <label class="form-check-label" asp-for="Input.RememberMe">
+                <label class="form-check-label text-light" asp-for="Input.RememberMe">
                     @Html.DisplayNameFor(m => m.Input.RememberMe)
                 </label>
             </div>
 
             <!-- Submit -->
-            <button id="login-submit" type="submit" class="btn btn-primary w-100 py-2 rounded-3 fw-semibold mb-3">
+            <button id="login-submit" type="submit" class="btn btn-warning w-100 py-2 fw-semibold rounded-pill shadow-sm mb-3">
                 Log In
             </button>
 
             <!-- Links -->
-            <div class="d-flex justify-content-between mb-2">
-                <a id="forgot-password" asp-page="./ForgotPassword" class="small text-decoration-none">Forgot password?</a>
-                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="small text-decoration-none">Register</a>
+            <div class="d-flex justify-content-between text-light small mb-3">
+                <a id="forgot-password" asp-page="./ForgotPassword" class="text-warning text-decoration-none">Forgot password?</a>
+                <a asp-page="./Register" asp-route-returnUrl="@Model.ReturnUrl" class="text-warning text-decoration-none">Register</a>
             </div>
             <div class="text-center mb-3">
-                <a id="resend-confirmation" asp-page="./ResendEmailConfirmation" class="small text-decoration-none">Resend confirmation</a>
+                <a id="resend-confirmation" asp-page="./ResendEmailConfirmation" class="text-warning text-decoration-none small">Resend confirmation</a>
             </div>
         </form>
 
-        <!-- Divider -->
-        <div class="text-center my-3">
-            <span class="text-muted">OR</span>
-        </div>
+        <hr class="text-secondary opacity-50 my-4" />
 
-        <!-- External Login Providers -->
-        @if ((Model.ExternalLogins?.Count ?? 0) > 0)
-        {
-            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-                @foreach (var provider in Model.ExternalLogins!)
-                {
-                    <button type="submit" class="btn btn-outline-secondary w-100 mb-2 rounded-3" name="provider" value="@provider.Name">
-                        Continue with @provider.DisplayName
-                    </button>
-                }
-            </form>
-        }
+        <!-- External Login -->
+        <div class="text-center">
+            <h5 class="text-light mb-3">Or log in using</h5>
+
+            @if ((Model.ExternalLogins?.Count ?? 0) == 0)
+            {
+                <p class="text-secondary small">
+                    No external authentication services configured.
+                    <a href="https://go.microsoft.com/fwlink/?LinkID=532715" class="text-warning">Learn more</a>.
+                </p>
+            }
+            else
+            {
+                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="d-flex flex-wrap justify-content-center gap-2">
+                    @foreach (var provider in Model.ExternalLogins!)
+                    {
+                        <button type="submit" class="btn btn-outline-light rounded-pill px-4"
+                                name="provider" value="@provider.Name">
+                            <i class="bi bi-@provider.Name.ToLower() me-2"></i>@provider.DisplayName
+                        </button>
+                    }
+                </form>
+            }
+        </div>
     </div>
 </div>
 
@@ -172,3 +97,104 @@
         });
     </script>
 }
+
+<style>
+    /* Background */
+    .login-page {
+        background: url('/images/food-bg.jpg') center center/cover no-repeat;
+        position: relative;
+    }
+
+        .login-page::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 0;
+        }
+
+    /* Card */
+    .login-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        position: relative;
+        z-index: 1;
+        color: #fff;
+        max-width: 420px;
+        width: 90%;
+        animation: fadeSlideUp 0.8s ease-out;
+    }
+
+    @@keyframes fadeSlideUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .form-control {
+        background: rgba(255, 255, 255, 0.9);
+        border: none;
+        border-radius: 10px;
+    }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.4);
+        }
+
+    label {
+        color: #333;
+        font-weight: 500;
+    }
+
+    .btn-warning {
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+        .btn-warning:hover {
+            background-color: #ffca2c !important;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+        }
+
+    /* Password toggle */
+    .password-container {
+        position: relative;
+    }
+
+        .password-container i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+    hr {
+        opacity: 0.4;
+    }
+
+    @@media (max-width: 768px) {
+        .login-card
+
+    {
+        padding: 2rem 1.5rem;
+    }
+
+    .text-light {
+        font-size: 0.95rem;
+    }
+
+    }
+</style>
