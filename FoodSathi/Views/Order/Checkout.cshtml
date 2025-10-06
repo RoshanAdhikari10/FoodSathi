@@ -1,16 +1,92 @@
 ﻿@model FoodSathi.Models.Order
 
-<h2 class="text-success fw-bold">✅ Checkout</h2>
-<hr />
+@{
+    ViewData["Title"] = "Checkout";
+}
 
-<p><strong>Item:</strong> @Model.ItemName</p>
-<p><strong>Quantity:</strong> @Model.Quantity</p>
-<p><strong>Total Price:</strong> Rs. @Model.TotalPrice</p>
-<p><strong>Order Date:</strong> @Model.OrderDate.ToString("MMMM dd, yyyy hh:mm tt")</p>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0 rounded-4 p-4">
+                <div class="card-body text-center">
 
-<div class="mt-4">
-    <a asp-controller="Payment" asp-action="Pay" asp-route-id="@Model.OrderID" class="btn btn-success">
-        💳 Proceed to Payment
-    </a>
-    <a asp-controller="MenuItems" asp-action="Menu" class="btn btn-secondary">🔙 Back to Menu</a>
+                    <!-- Checkout Header -->
+                    <h2 class="text-success fw-bold mb-3">
+                        <i class="bi bi-bag-check-fill"></i> Checkout
+                    </h2>
+                    <hr class="mb-4">
+
+                    <!-- Order Details -->
+                    <div class="text-start mb-4">
+                        <p class="mb-2">
+                            <strong>🍽️ Item:</strong> <span class="text-dark">@Model.ItemName</span>
+                        </p>
+                        <p class="mb-2">
+                            <strong>📦 Quantity:</strong> <span class="text-dark">@Model.Quantity</span>
+                        </p>
+                        <p class="mb-2">
+                            <strong>💰 Total Price:</strong>
+                            <span class="text-danger fw-semibold">Rs. @Model.TotalPrice</span>
+                        </p>
+                        <p class="mb-2">
+                            <strong>🕒 Order Date:</strong>
+                            <span class="text-secondary">@Model.OrderDate.ToString("MMMM dd, yyyy hh:mm tt")</span>
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-3">
+                        <a asp-controller="Payment" asp-action="Pay" asp-route-id="@Model.OrderID"
+                           class="btn btn-success btn-lg fw-bold rounded-pill shadow-sm animate-btn">
+                            💳 Proceed to Payment
+                        </a>
+
+                        <a asp-controller="MenuItems" asp-action="Menu"
+                           class="btn btn-outline-secondary btn-lg fw-bold rounded-pill shadow-sm">
+                            🔙 Back to Menu
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Optional Animation Styles -->
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+    .animate-btn {
+        transition: all 0.3s ease;
+    }
+
+        .animate-btn:hover {
+            background-color: #198754;
+            transform: scale(1.05);
+        }
+
+    @@media (max-width: 576px) {
+        .card-body
+
+    {
+        padding: 1.5rem !important;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    .btn-lg {
+        font-size: 1rem;
+        padding: 0.6rem 1rem;
+    }
+
+    }
+</style>
