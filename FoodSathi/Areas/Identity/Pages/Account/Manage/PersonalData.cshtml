@@ -5,20 +5,34 @@
     ViewData["ActivePage"] = ManageNavPages.PersonalData;
 }
 
-<h3>@ViewData["Title"]</h3>
+<div class="container my-5">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body">
+            <h3 class="card-title text-primary mb-4">@ViewData["Title"]</h3>
 
-<div class="row">
-    <div class="col-md-6">
-        <p>Your account contains personal data that you have given us. This page allows you to download or delete that data.</p>
-        <p>
-            <strong>Deleting this data will permanently remove your account, and this cannot be recovered.</strong>
-        </p>
-        <form id="download-data" asp-page="DownloadPersonalData" method="post">
-            <button class="btn btn-primary" type="submit">Download</button>
-        </form>
-        <p>
-            <a id="delete" asp-page="DeletePersonalData" class="btn btn-danger">Delete</a>
-        </p>
+            <p class="mb-3">
+                Your account contains personal data that you have provided. You can download a copy or permanently delete this data.
+            </p>
+            <p class="text-danger fw-bold mb-4">
+                Deleting this data will permanently remove your account. This action <u>cannot</u> be undone.
+            </p>
+
+            <div class="d-flex gap-3">
+                <form id="download-data" asp-page="DownloadPersonalData" method="post">
+                    <button class="btn btn-primary btn-lg rounded-pill px-4" type="submit">
+                        <i class="bi bi-download me-2"></i> Download Data
+                    </button>
+                </form>
+
+                <a id="delete" asp-page="DeletePersonalData" class="btn btn-outline-danger btn-lg rounded-pill px-4">
+                    <i class="bi bi-trash me-2"></i> Delete Account
+                </a>
+            </div>
+
+            <small class="text-muted d-block mt-4">
+                ⚠️ Make sure you have backed up your data before deleting your account.
+            </small>
+        </div>
     </div>
 </div>
 
