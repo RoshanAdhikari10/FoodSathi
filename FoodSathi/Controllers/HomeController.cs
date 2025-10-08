@@ -24,11 +24,6 @@ namespace FoodSathi.Controllers
             return View();
         }
 
-        public IActionResult feedback()
-        {
-            return View();
-        }
-
 
 
         // Error Page
