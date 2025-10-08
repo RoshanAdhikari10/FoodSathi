@@ -14,15 +14,18 @@
         <div class="alert alert-info text-center shadow-sm p-4 rounded">
             <h5 class="mb-2">Your cart is empty 😢</h5>
             <p>Start adding some delicious items to your cart!</p>
-            <a asp-controller="MenuItems" asp-action="Index" class="btn btn-primary">🍴 Browse Menu</a>
+            <a asp-controller="MenuItems" asp-action="Index" class="btn btn-primary rounded-pill">
+                🍴 Browse Menu
+            </a>
         </div>
     }
     else
     {
         <div class="row">
-            <div class="col-lg-8">
-                <div class="table-responsive shadow-sm rounded">
-                    <table class="table table-hover align-middle">
+            <!-- Cart Items -->
+            <div class="col-lg-8 mb-4 mb-lg-0">
+                <div class="table-responsive shadow-sm rounded-3">
+                    <table class="table table-hover align-middle mb-0">
                         <thead class="table-primary">
                             <tr>
                                 <th>Image</th>
@@ -38,16 +41,14 @@
                             {
                                 <tr>
                                     <td>
-                                        <img src="@item.MenuItem.ImageURL" class="rounded shadow-sm" style="width:80px; height:60px; object-fit:cover;" />
+                                        <img src="@item.MenuItem.ImageURL"
+                                             class="rounded shadow-sm"
+                                             style="width:80px; height:60px; object-fit:cover;" />
                                     </td>
                                     <td class="fw-semibold">@item.MenuItem.ItemName</td>
                                     <td><span class="badge bg-info text-dark">Rs. @item.MenuItem.Price</span></td>
-                                    <td>
-                                        <span class="badge bg-secondary">@item.Quantity</span>
-                                    </td>
-                                    <td class="fw-bold text-success">
-                                        Rs. @(item.MenuItem.Price* item.Quantity)
-                                    </td>
+                                    <td><span class="badge bg-secondary">@item.Quantity</span></td>
+                                    <td class="fw-bold text-success">Rs. @(item.MenuItem.Price* item.Quantity)</td>
                                     <td>
                                         <a asp-controller="Cart" asp-action="Remove" asp-route-cartId="@item.CartID"
                                            class="btn btn-sm btn-outline-danger rounded-pill">
@@ -74,7 +75,7 @@
             <div class="col-lg-4">
                 <div class="card shadow-lg border-0 rounded-3">
                     <div class="card-body">
-                        <h5 class="card-title text-center fw-bold">💳 Order Summary</h5>
+                        <h5 class="card-title text-center fw-bold text-success mb-3">💳 Order Summary</h5>
                         <hr />
                         <p class="d-flex justify-content-between">
                             <span>Items:</span>
@@ -82,17 +83,17 @@
                         </p>
                         <p class="d-flex justify-content-between">
                             <span>Subtotal:</span>
-                            <span class="fw-semibold">Rs. @grandTotal</span>
+                            <span id="subtotal" class="fw-semibold">Rs. @grandTotal</span>
                         </p>
 
                         <!-- Delivery Selection -->
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">🚚 Delivery Option</label>
-                            <select id="deliveryOption" class="form-select">
-                                <option value="0">Free Delivery (3-5 days)</option>
-                                <option value="100">Express (1-2 days) - Rs. 100</option>
-                                <option value="50">Standard (2-4 days) - Rs. 50</option>
-                                <option value="-50">Pickup (Store) - Save Rs. 50</option>
+                            <label class="form-label fw-semibold text-primary">🚚 Delivery Option</label>
+                            <select id="deliveryOption" class="form-select shadow-sm">
+                                <option value="0" selected>Free Delivery (3–5 days)</option>
+                                <option value="100">Express (1–2 days) — Rs. 100</option>
+                                <option value="50">Standard (2–4 days) — Rs. 50</option>
+                                <option value="-50">Pickup (Store) — Save Rs. 50</option>
                             </select>
                         </div>
 
@@ -103,10 +104,11 @@
                         <hr />
                         <p class="d-flex justify-content-between fs-5 fw-bold text-primary">
                             <span>Grand Total:</span>
-                            <span id="finalTotal">Rs. @grandTotal</span>
+                            <span id="finalTotal" class="text-success">Rs. @grandTotal</span>
                         </p>
 
-                        <a asp-controller="Payment" asp-action="Pay" class="btn btn-success w-100 mt-3 rounded-pill fw-bold shadow">
+                        <a asp-controller="Payment" asp-action="Pay"
+                           class="btn btn-success w-100 mt-3 rounded-pill fw-bold shadow">
                             ✅ Proceed to Payment
                         </a>
                     </div>
@@ -118,13 +120,66 @@
 
 @section Scripts {
     <script>
-        document.getElementById("deliveryOption").addEventListener("change", function () {
-            var deliveryCharge = parseInt(this.value);
-            var subtotal = @grandTotal;
-            var finalTotal = subtotal + deliveryCharge;
+        const deliverySelect = document.getElementById("deliveryOption");
+        const deliveryChargeText = document.getElementById("deliveryCharge");
+        const finalTotalText = document.getElementById("finalTotal");
+        const subtotalValue = @grandTotal;
 
-            document.getElementById("deliveryCharge").innerText = "Rs. " + deliveryCharge;
-            document.getElementById("finalTotal").innerText = "Rs. " + finalTotal;
-        });
+        function formatCurrency(amount) {
+            return "Rs. " + amount.toLocaleString("en-IN");
+        }
+
+        function updateTotals() {
+            const deliveryCharge = parseInt(deliverySelect.value);
+            const finalTotal = subtotalValue + deliveryCharge;
+
+            // Animate the total change
+            finalTotalText.style.transition = "transform 0.2s ease, color 0.2s ease";
+            finalTotalText.style.transform = "scale(1.2)";
+            finalTotalText.style.color = "#198754";
+
+            setTimeout(() => {
+                finalTotalText.style.transform = "scale(1)";
+                finalTotalText.style.color = "";
+            }, 200);
+
+            deliveryChargeText.innerText = formatCurrency(deliveryCharge);
+            finalTotalText.innerText = formatCurrency(finalTotal);
+        }
+
+        // Initial calculation
+        updateTotals();
+
+        // Event listener for delivery change
+        deliverySelect.addEventListener("change", updateTotals);
     </script>
 }
+
+<style>
+    select.form-select:focus {
+        box-shadow: 0 0 10px rgba(13, 110, 253, 0.3);
+        border-color: #0d6efd;
+    }
+
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+    @@media (max-width: 576px) {
+        .card-body
+
+    {
+        padding: 1.2rem !important;
+    }
+
+    .btn {
+        font-size: 0.95rem;
+    }
+
+    }
+</style>
