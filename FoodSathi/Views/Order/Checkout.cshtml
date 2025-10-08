@@ -18,12 +18,8 @@
 
                     <!-- Order Details -->
                     <div class="text-start mb-4">
-                        <p class="mb-2">
-                            <strong>🍽️ Item:</strong> <span class="text-dark">@Model.ItemName</span>
-                        </p>
-                        <p class="mb-2">
-                            <strong>📦 Quantity:</strong> <span class="text-dark">@Model.Quantity</span>
-                        </p>
+                        <p class="mb-2"><strong>🍽️ Item:</strong> <span class="text-dark">@Model.ItemName</span></p>
+                        <p class="mb-2"><strong>📦 Quantity:</strong> <span class="text-dark">@Model.Quantity</span></p>
                         <p class="mb-2">
                             <strong>💰 Total Price:</strong>
                             <span class="text-danger fw-semibold">Rs. @Model.TotalPrice</span>
@@ -32,6 +28,41 @@
                             <strong>🕒 Order Date:</strong>
                             <span class="text-secondary">@Model.OrderDate.ToString("MMMM dd, yyyy hh:mm tt")</span>
                         </p>
+                    </div>
+
+                    <!-- Delivery Options -->
+                    <div class="text-start mb-4">
+                        <h5 class="fw-bold text-primary mb-3">
+                            🚚 Select Delivery Option
+                        </h5>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="deliveryOption" id="standardDelivery" value="Standard" checked>
+                            <label class="form-check-label" for="standardDelivery">
+                                <strong>Standard Delivery</strong> — Free (Delivered within 45–60 minutes)
+                            </label>
+                        </div>
+
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="deliveryOption" id="expressDelivery" value="Express">
+                            <label class="form-check-label" for="expressDelivery">
+                                <strong>Express Delivery</strong> — Rs. 100 (Delivered within 20–30 minutes)
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="deliveryOption" id="pickup" value="Pickup">
+                            <label class="form-check-label" for="pickup">
+                                <strong>Self Pickup</strong> — No delivery charge (Collect from store)
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Delivery Address -->
+                    <div class="text-start mb-4">
+                        <label for="deliveryAddress" class="form-label fw-semibold text-primary">
+                            🏠 Delivery Address
+                        </label>
+                        <textarea id="deliveryAddress" class="form-control rounded-3" rows="2" placeholder="Enter your delivery address..." required></textarea>
                     </div>
 
                     <!-- Action Buttons -->
@@ -70,6 +101,16 @@
         .animate-btn:hover {
             background-color: #198754;
             transform: scale(1.05);
+        }
+
+    textarea {
+        resize: none;
+        transition: box-shadow 0.3s ease;
+    }
+
+        textarea:focus {
+            box-shadow: 0 0 10px rgba(25, 135, 84, 0.3);
+            outline: none;
         }
 
     @@media (max-width: 576px) {
