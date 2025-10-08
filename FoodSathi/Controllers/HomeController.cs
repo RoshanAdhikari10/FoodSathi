@@ -24,6 +24,12 @@ namespace FoodSathi.Controllers
             return View();
         }
 
+        public IActionResult feedback()
+        {
+            return View();
+        }
+
+
 
         // Error Page
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
