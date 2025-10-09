@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\OfferDbContext.cs" />
     <Compile Remove="Models\ApplicationUser.cs" />
   </ItemGroup>
 
