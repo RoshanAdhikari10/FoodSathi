@@ -9,13 +9,11 @@ namespace FoodSathi.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly MenuDbContext _menuContext;
-        private readonly MenuDbContext _offerContext;
 
-        public HomeController(ILogger<HomeController> logger, MenuDbContext menuContext, MenuDbContext offerContext)
+        public HomeController(ILogger<HomeController> logger, MenuDbContext menuContext)
         {
             _logger = logger;
             _menuContext = menuContext;
-            _offerContext = offerContext;  // ✅ assign properly
         }
 
         // Home Page
