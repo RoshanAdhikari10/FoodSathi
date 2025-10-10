@@ -24,7 +24,7 @@ namespace FoodSathi.Controllers
             // Get top 6 recent or featured dishes
             var featuredItems = await _menuContext.MenuItems
                 .OrderByDescending(m => m.ItemID)
-                .Take(6)
+                .Take(3)
                 .ToListAsync();
 
             return View(featuredItems);
