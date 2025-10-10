@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace FoodSathi.Controllers
 {
@@ -16,13 +18,17 @@ namespace FoodSathi.Controllers
             _menuContext = menuContext;
         }
 
-        // Home Page
-        public IActionResult Index()
+        // ✅ Home Page (Dynamic Featured Dishes)
+        public async Task<IActionResult> Index()
         {
-            return View();
+            // Get top 6 recent or featured dishes
+            var featuredItems = await _menuContext.MenuItems
+                .OrderByDescending(m => m.ItemID)
+                .Take(6)
+                .ToListAsync();
+
+            return View(featuredItems);
         }
-
-
 
         // Error Page
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
