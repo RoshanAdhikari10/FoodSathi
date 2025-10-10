@@ -1,4 +1,7 @@
-﻿@{
+﻿@model IEnumerable<FoodSathi.Models.MenuItem>
+
+
+@{
     ViewData["Title"] = "Home - FoodSathi";
 }
 
@@ -17,6 +20,33 @@
         </a>
     </div>
 </div>
+
+<!-- 🍽️ Featured Menu Section -->
+<section class="featured-menu py-5 bg-light">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-4 text-success">🍽️ Featured Dishes</h2>
+        <div class="row g-4 justify-content-center">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4 col-sm-6">
+                    <div class="card shadow-sm border-0 rounded-4 h-100 hover-card">
+                        <img src="@item.ImageURL" class="card-img-top rounded-top-4" alt="@item.ItemName">
+                        <div class="card-body">
+                            <h5 class="card-title fw-semibold">@item.ItemName</h5>
+                            <p class="text-muted mb-2">@item.Description</p>
+                            <p class="fw-bold text-success fs-5">Rs. @item.Price</p>
+                            <a asp-controller="Order" asp-action="BuyNow"
+                               asp-route-id="@item.ItemID"
+                               class="btn btn-warning rounded-pill px-4">
+                                🛒 Order Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
 
 <style>
     /* ===== Hero Section ===== */
@@ -77,6 +107,15 @@
             background-color: #ffc947 !important;
             box-shadow: 0 6px 20px rgba(255, 183, 3, 0.4);
             color: #222 !important;
+        }
+
+    .hover-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .hover-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
 
     /* ===== Responsive Text ===== */
