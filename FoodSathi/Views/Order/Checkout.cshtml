@@ -88,7 +88,7 @@
                         <input type="hidden" id="selectedDeliveryOption" name="deliveryOption" value="Standard">
                     </div>
 
-                    <!-- Address Section -->
+                    <!-- Address -->
                     <div class="mb-5">
                         <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">
                             🏠 Delivery Address
@@ -97,7 +97,7 @@
                                   placeholder="Enter your complete delivery address..." required></textarea>
                     </div>
 
-                    <!-- ✅ Payment Section (Interactive) -->
+                    <!-- Payment Section -->
                     <div class="mb-5">
                         <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">
                             💳 Payment Options
@@ -134,10 +134,9 @@
 
                     <!-- Action Buttons -->
                     <div class="d-grid gap-3">
-                        <a asp-controller="Payment" asp-action="Pay" asp-route-id="@Model.OrderID"
-                           class="btn btn-success btn-lg fw-bold rounded-pill shadow-sm animate-btn">
+                        <button id="proceedPaymentBtn" class="btn btn-success btn-lg fw-bold rounded-pill shadow-sm animate-btn">
                             Proceed to Payment <i class="bi bi-arrow-right-circle ms-1"></i>
-                        </a>
+                        </button>
 
                         <a asp-controller="MenuItems" asp-action="Menu"
                            class="btn btn-outline-secondary btn-lg fw-bold rounded-pill shadow-sm">
@@ -146,7 +145,6 @@
                     </div>
                 </div>
 
-                <!-- Footer -->
                 <div class="card-footer text-center py-3 bg-light border-top">
                     <small class="text-muted">🔒 Secure Checkout • 100% Payment Protection</small>
                 </div>
@@ -155,7 +153,7 @@
     </div>
 </div>
 
-<!-- ✅ CSS Styling -->
+<!-- ✅ Styling -->
 <style>
     .delivery-card, .payment-card {
         background-color: #fff;
@@ -194,34 +192,48 @@
     }
 </style>
 
-<!-- ✅ JavaScript for Interactivity -->
+<!-- ✅ Script -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        // Delivery option selection
+        // Delivery option
         document.querySelectorAll('.delivery-card').forEach(card => {
             card.addEventListener('click', () => {
                 document.querySelectorAll('.delivery-card').forEach(c => c.classList.remove('active'));
                 card.classList.add('active');
-
                 const selected = card.dataset.value;
                 const charge = parseFloat(card.dataset.charge) || 0;
                 const basePrice = parseFloat(document.getElementById('basePrice').textContent);
                 const finalTotal = basePrice + charge;
-
                 document.getElementById('selectedDeliveryOption').value = selected;
                 document.getElementById('deliveryCharge').textContent = charge.toFixed(2);
                 document.getElementById('finalTotal').textContent = finalTotal.toFixed(2);
             });
         });
 
-        // Payment option selection
+        // Payment option
         document.querySelectorAll('.payment-card').forEach(card => {
             card.addEventListener('click', () => {
                 document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('active'));
                 card.classList.add('active');
                 document.getElementById('selectedPaymentOption').value = card.dataset.value;
             });
+        });
+
+        // Proceed button
+        const proceedBtn = document.getElementById('proceedPaymentBtn');
+        proceedBtn.addEventListener('click', () => {
+            const paymentOption = document.getElementById('selectedPaymentOption').value;
+            const orderId = '@Model.OrderID';
+            const finalTotal = document.getElementById('finalTotal').textContent;
+
+            if (paymentOption === "Card") {
+                window.location.href = `/Payment/PayByCard/${orderId}?amount=${finalTotal}`;
+            } else if (paymentOption === "Wallet") {
+                window.location.href = `/Payment/PayByWallet/${orderId}?amount=${finalTotal}`;
+            } else if (paymentOption === "Cash") {
+                window.location.href = `/Payment/CashOnDelivery/${orderId}`;
+            }
         });
     });
 </script>
