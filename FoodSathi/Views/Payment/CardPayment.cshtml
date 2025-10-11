@@ -1,33 +1,39 @@
 ﻿@{
-    ViewData["Title"] = "Card Payment";
+    ViewData["Title"] = "Card Payment - FoodSathi";
 }
 
+<!-- Main Container -->
 <div class="container my-5 d-flex justify-content-center align-items-center">
-    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5" style="max-width: 450px; width: 100%;">
+    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5" style="max-width: 460px; width: 100%;">
+
+        <!-- Header -->
         <div class="text-center mb-4">
-            <div class="bg-primary text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width:70px; height:70px;">
+            <div class="bg-success text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width:70px; height:70px;">
                 <i class="bi bi-credit-card fs-2"></i>
             </div>
-            <h3 class="fw-bold text-primary">Card Payment</h3>
-            <p class="text-muted mb-0">Pay securely using your Credit or Debit Card</p>
+            <h3 class="fw-bold text-success">Card Payment</h3>
+            <p class="text-muted mb-0">Secure checkout powered by <strong>FoodSathi</strong></p>
         </div>
 
-        <form method="post" action="/Order/ConfirmPayment">
+        <!-- Payment Form -->
+        <form id="paymentForm" method="post" action="/Order/ConfirmPayment">
             <input type="hidden" name="OrderId" value="@ViewBag.OrderId" />
             <input type="hidden" name="Amount" value="@ViewBag.Amount" />
 
+            <!-- Card Number -->
             <div class="mb-3">
                 <label class="form-label fw-semibold">Card Number</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-light"><i class="bi bi-credit-card-2-front"></i></span>
-                    <input type="text" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" required />
+                    <span class="input-group-text bg-light" id="cardIcon"><i class="bi bi-credit-card-2-front"></i></span>
+                    <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" required />
                 </div>
             </div>
 
+            <!-- Expiry & CVV -->
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label fw-semibold">Expiry Date</label>
-                    <input type="text" class="form-control" placeholder="MM/YY" maxlength="5" required />
+                    <input type="text" id="expiryDate" class="form-control" placeholder="MM/YY" maxlength="5" required />
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label fw-semibold">CVV</label>
@@ -35,20 +41,75 @@
                 </div>
             </div>
 
+            <!-- Cardholder Name -->
             <div class="mb-4">
                 <label class="form-label fw-semibold">Cardholder Name</label>
-                <input type="text" class="form-control" placeholder="John Doe" required />
+                <input type="text" class="form-control" placeholder="Roshan Adhikari" required />
             </div>
 
-            <button type="submit" class="btn btn-success w-100 py-2 fw-semibold shadow-sm">
+            <!-- Pay Button -->
+            <button type="submit" class="btn btn-success w-100 py-2 fw-semibold shadow-sm" id="payButton">
                 <i class="bi bi-lock-fill me-2"></i> Pay Rs. @ViewBag.Amount Securely
             </button>
 
             <div class="text-center mt-3">
                 <small class="text-muted">
-                    <i class="bi bi-shield-check text-success"></i> Your payment is encrypted and secure.
+                    <i class="bi bi-shield-check text-success"></i> Your payment is 100% encrypted and safe.
                 </small>
             </div>
         </form>
     </div>
 </div>
+
+<!-- Payment Processing Modal -->
+<div class="modal fade" id="processingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow rounded-4 text-center p-4">
+            <div class="spinner-border text-success mb-3" role="status"></div>
+            <h5 class="fw-bold text-success">Processing Payment...</h5>
+            <p class="text-muted mb-0">Please wait while we confirm your transaction.</p>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript Section -->
+<script>
+    // ✅ Format card number in groups of 4
+    const cardNumber = document.getElementById('cardNumber');
+    const cardIcon = document.getElementById('cardIcon');
+    const payForm = document.getElementById('paymentForm');
+    const processingModal = new bootstrap.Modal(document.getElementById('processingModal'));
+
+    cardNumber.addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\D/g, '').substring(0, 16);
+        const formatted = value.replace(/(.{4})/g, '$1 ').trim();
+        e.target.value = formatted;
+
+        // ✅ Detect Card Type (Visa/MasterCard)
+        if (/^4/.test(value)) {
+            cardIcon.innerHTML = '<i class="bi bi-credit-card-2-front text-primary"></i>'; // Visa
+        } else if (/^5[1-5]/.test(value)) {
+            cardIcon.innerHTML = '<i class="bi bi-credit-card-2-back text-warning"></i>'; // MasterCard
+        } else {
+            cardIcon.innerHTML = '<i class="bi bi-credit-card-2-front"></i>';
+        }
+    });
+
+    // ✅ Auto-format expiry date
+    document.getElementById('expiryDate').addEventListener('input', (e) => {
+        let value = e.target.value.replace(/\D/g, '').substring(0, 4);
+        if (value.length >= 3) {
+            value = value.replace(/^(\d{2})(\d{1,2})$/, '$1/$2');
+        }
+        e.target.value = value;
+    });
+
+    // ✅ Show "Processing" animation on submit
+    payForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        processingModal.show();
+        setTimeout(() => {
+            payForm.submit();
+        }, 2500); // simulate processing delay
+    });
+</script>
