@@ -51,5 +51,18 @@ namespace FoodSathi.Controllers
         }
 
 
+
+        // ✅ Confirmation Page
+        [HttpGet]
+        public async Task<IActionResult> OrderConfirmation(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
+        }
     }
 }
