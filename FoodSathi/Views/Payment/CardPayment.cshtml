@@ -2,20 +2,20 @@
     ViewData["Title"] = "Card Payment - FoodSathi";
 }
 
-<!-- Main Container -->
+<!-- ✅ Main Container -->
 <div class="container my-5 d-flex justify-content-center align-items-center">
-    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5" style="max-width: 460px; width: 100%;">
+    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5" style="max-width: 480px; width: 100%;">
 
-        <!-- Header -->
+        <!-- 💳 Header -->
         <div class="text-center mb-4">
-            <div class="bg-success text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3" style="width:70px; height:70px;">
-                <i class="bi bi-credit-card fs-2"></i>
+            <div class="bg-success bg-gradient text-white rounded-circle d-inline-flex justify-content-center align-items-center mb-3 shadow-sm" style="width:75px; height:75px;">
+                <i class="bi bi-credit-card fs-1"></i>
             </div>
-            <h3 class="fw-bold text-success">Card Payment</h3>
-            <p class="text-muted mb-0">Secure checkout powered by <strong>FoodSathi</strong></p>
+            <h3 class="fw-bold text-success">Secure Card Payment</h3>
+            <p class="text-muted small mb-0">Trusted & encrypted payment with <strong>FoodSathi</strong></p>
         </div>
 
-        <!-- Payment Form -->
+        <!-- ✅ Payment Form -->
         <form id="paymentForm" method="post" action="/Order/ConfirmPayment">
             <input type="hidden" name="OrderId" value="@ViewBag.OrderId" />
             <input type="hidden" name="Amount" value="@ViewBag.Amount" />
@@ -24,7 +24,9 @@
             <div class="mb-3">
                 <label class="form-label fw-semibold">Card Number</label>
                 <div class="input-group">
-                    <span class="input-group-text bg-light" id="cardIcon"><i class="bi bi-credit-card-2-front"></i></span>
+                    <span class="input-group-text bg-light" id="cardIcon">
+                        <i class="bi bi-credit-card-2-front"></i>
+                    </span>
                     <input type="text" id="cardNumber" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" required />
                 </div>
             </div>
@@ -47,21 +49,58 @@
                 <input type="text" class="form-control" placeholder="Roshan Adhikari" required />
             </div>
 
-            <!-- Pay Button -->
+            <!-- ✅ Pay Button -->
             <button type="submit" class="btn btn-success w-100 py-2 fw-semibold shadow-sm" id="payButton">
                 <i class="bi bi-lock-fill me-2"></i> Pay Rs. @ViewBag.Amount Securely
             </button>
 
             <div class="text-center mt-3">
                 <small class="text-muted">
-                    <i class="bi bi-shield-check text-success"></i> Your payment is 100% encrypted and safe.
+                    <i class="bi bi-shield-check text-success"></i> 100% Encrypted Payment
                 </small>
             </div>
         </form>
+
+        <!-- ✅ Payment Support Section -->
+        <div class="mt-5">
+            <h5 class="fw-bold text-dark border-bottom pb-2 mb-3 d-flex align-items-center">
+                <i class="bi bi-life-preserver text-success me-2"></i> Payment Support
+            </h5>
+
+            <div class="row g-3">
+                <!-- Send Email -->
+                <div class="col-12 col-md-6">
+                    <div class="support-card p-3 text-center border rounded-4 bg-light h-100 shadow-sm">
+                        <div class="icon text-primary mb-2">
+                            <i class="bi bi-envelope-fill fs-3"></i>
+                        </div>
+                        <h6 class="fw-semibold mb-1">Send Email</h6>
+                        <p class="small text-muted mb-2">Receive your payment confirmation instantly via email.</p>
+                        <button class="btn btn-outline-primary btn-sm w-100 fw-semibold send-email-btn">
+                            <i class="bi bi-send me-1"></i> Send Email
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Send Notification -->
+                <div class="col-12 col-md-6">
+                    <div class="support-card p-3 text-center border rounded-4 bg-light h-100 shadow-sm">
+                        <div class="icon text-success mb-2">
+                            <i class="bi bi-bell-fill fs-3"></i>
+                        </div>
+                        <h6 class="fw-semibold mb-1">Send Notification</h6>
+                        <p class="small text-muted mb-2">Get an instant app or browser notification update.</p>
+                        <button class="btn btn-outline-success btn-sm w-100 fw-semibold send-notify-btn">
+                            <i class="bi bi-bell me-1"></i> Send Notification
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<!-- Payment Processing Modal -->
+<!-- ✅ Processing Modal -->
 <div class="modal fade" id="processingModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow rounded-4 text-center p-4">
@@ -72,44 +111,77 @@
     </div>
 </div>
 
-<!-- JavaScript Section -->
+<!-- ✅ Toast Notification -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+    <div id="toastMessage" class="toast align-items-center text-white bg-success border-0 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body fw-semibold"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ JS Section -->
 <script>
-    // ✅ Format card number in groups of 4
     const cardNumber = document.getElementById('cardNumber');
     const cardIcon = document.getElementById('cardIcon');
     const payForm = document.getElementById('paymentForm');
     const processingModal = new bootstrap.Modal(document.getElementById('processingModal'));
+    const toastEl = document.getElementById('toastMessage');
+    const toast = new bootstrap.Toast(toastEl);
 
+    // Format card number
     cardNumber.addEventListener('input', (e) => {
         let value = e.target.value.replace(/\D/g, '').substring(0, 16);
-        const formatted = value.replace(/(.{4})/g, '$1 ').trim();
-        e.target.value = formatted;
-
-        // ✅ Detect Card Type (Visa/MasterCard)
-        if (/^4/.test(value)) {
-            cardIcon.innerHTML = '<i class="bi bi-credit-card-2-front text-primary"></i>'; // Visa
-        } else if (/^5[1-5]/.test(value)) {
-            cardIcon.innerHTML = '<i class="bi bi-credit-card-2-back text-warning"></i>'; // MasterCard
-        } else {
-            cardIcon.innerHTML = '<i class="bi bi-credit-card-2-front"></i>';
-        }
+        e.target.value = value.replace(/(.{4})/g, '$1 ').trim();
+        if (/^4/.test(value)) cardIcon.innerHTML = '<i class="bi bi-credit-card-2-front text-primary"></i>';
+        else if (/^5[1-5]/.test(value)) cardIcon.innerHTML = '<i class="bi bi-credit-card-2-back text-warning"></i>';
+        else cardIcon.innerHTML = '<i class="bi bi-credit-card-2-front"></i>';
     });
 
-    // ✅ Auto-format expiry date
+    // Format expiry date
     document.getElementById('expiryDate').addEventListener('input', (e) => {
         let value = e.target.value.replace(/\D/g, '').substring(0, 4);
-        if (value.length >= 3) {
-            value = value.replace(/^(\d{2})(\d{1,2})$/, '$1/$2');
-        }
+        if (value.length >= 3) value = value.replace(/^(\d{2})(\d{1,2})$/, '$1/$2');
         e.target.value = value;
     });
 
-    // ✅ Show "Processing" animation on submit
+    // Show “Processing” modal
     payForm.addEventListener('submit', (e) => {
         e.preventDefault();
         processingModal.show();
-        setTimeout(() => {
-            payForm.submit();
-        }, 2500); // simulate processing delay
+        setTimeout(() => payForm.submit(), 2500);
+    });
+
+    // ✅ Toast notification helper
+    function showToast(message, type = 'success') {
+        const toastBody = toastEl.querySelector('.toast-body');
+        toastBody.textContent = message;
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0 shadow-lg`;
+        toast.show();
+    }
+
+    // ✅ Email/Notification Simulation
+    document.querySelector('.send-email-btn').addEventListener('click', () => {
+        showToast('📧 Payment confirmation email sent successfully!');
+    });
+    document.querySelector('.send-notify-btn').addEventListener('click', () => {
+        showToast('🔔 Payment notification sent successfully!');
     });
 </script>
+
+<!-- ✅ Custom Styling -->
+<style>
+    .support-card {
+        transition: all 0.3s ease;
+    }
+
+        .support-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+    #toastMessage {
+        min-width: 280px;
+    }
+</style>
