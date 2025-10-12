@@ -9,6 +9,10 @@ namespace FoodSathi.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-        }
+
+
+    }
+
+        public DbSet<Feedback> Feedbacks { get; set; }
     }
 }
