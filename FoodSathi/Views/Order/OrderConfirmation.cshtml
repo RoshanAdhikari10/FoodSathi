@@ -1,11 +1,85 @@
 ﻿@{
-    ViewData["Title"] = "Order Confirmation";
+    ViewData["Title"] = "Cash on Delivery - Order Confirmed | FoodSathi";
 }
 
-<div class="text-center my-5">
-    <h2 class="text-success fw-bold"><i class="bi bi-check-circle-fill"></i> Order Confirmed!</h2>
-    <p class="lead text-muted">Thank you for your order! You’ll receive an update soon.</p>
-    <a asp-controller="MenuItems" asp-action="Menu" class="btn btn-success mt-3">
-        Back to Menu
-    </a>
+<div class="container my-5 d-flex justify-content-center align-items-center">
+    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5 text-center" style="max-width: 650px; width: 100%;">
+
+        <!-- ✅ Header Icon -->
+        <div class="mb-4">
+            <div class="rounded-circle bg-warning bg-opacity-10 d-inline-flex justify-content-center align-items-center animate__animated animate__fadeInDown" style="width: 80px; height: 80px;">
+                <i class="bi bi-bag-check-fill text-warning fs-1"></i>
+            </div>
+        </div>
+
+        <!-- ✅ Main Heading -->
+        <h2 class="fw-bold text-success mb-2">Order Placed Successfully!</h2>
+        <p class="lead text-muted mb-4">
+            Your <span class="fw-semibold text-success">Cash on Delivery</span> order has been received.
+            Our delivery partner will reach you soon.
+        </p>
+
+        <!-- ✅ Order Summary -->
+        <div class="bg-light rounded-4 p-4 text-start mx-auto shadow-sm" style="max-width: 500px;">
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-receipt-cutoff me-2 text-success"></i>Order Details
+            </h5>
+            <ul class="list-unstyled mb-3">
+                <li><span class="fw-semibold">Order ID:</span> #@ViewBag.OrderId</li>
+                <li><span class="fw-semibold">Total Amount:</span> Rs. @ViewBag.Amount</li>
+                <li><span class="fw-semibold">Estimated Delivery:</span> @ViewBag.EstimatedDelivery</li>
+
+            </ul>
+            <p class="text-muted small mb-0">
+                Please keep the exact change ready for a faster and contactless delivery.
+            </p>
+        </div>
+
+        <!-- ✅ Action Buttons -->
+        <div class="mt-4 d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
+            <a href="/Orders/Track" class="btn btn-outline-success px-4 fw-semibold">
+                <i class="bi bi-truck me-2"></i> Track Order
+            </a>
+            <a asp-controller="MenuItems" asp-action="Menu" class="btn btn-success px-4 fw-semibold">
+                <i class="bi bi-arrow-left me-2"></i> Back to Menu
+            </a>
+        </div>
+
+        <!-- ✅ Extra Section -->
+        <div class="mt-5 border-top pt-3">
+            <h6 class="fw-semibold mb-2 text-success">
+                <i class="bi bi-info-circle me-1"></i> Important Notice
+            </h6>
+            <p class="small text-muted mb-1">
+                Once your order is delivered, please confirm with our delivery partner.
+                You’ll receive a confirmation email and SMS shortly.
+            </p>
+        </div>
+    </div>
 </div>
+
+<!-- ✅ CSS for animation and polish -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+
+<style>
+    .card {
+        transition: all 0.3s ease;
+    }
+
+        .card:hover {
+            box-shadow: 0 0 25px rgba(0, 128, 0, 0.15);
+        }
+
+    .btn {
+        transition: all 0.2s ease;
+    }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 128, 0, 0.1);
+        }
+
+    .bg-light {
+        background-color: #f9f9f9 !important;
+    }
+</style>
