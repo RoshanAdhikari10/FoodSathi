@@ -1,15 +1,37 @@
 ﻿@{
-    ViewData["Title"] = "Wallet Payment";
+    ViewData["Title"] = "Wallet Payment - FoodSathi";
 }
 
-<div class="text-center my-5">
-    <h2 class="text-success fw-bold"><i class="bi bi-wallet2"></i> Digital Wallet Payment</h2>
-    <p class="text-muted">Pay securely using eSewa or Khalti.</p>
+<div class="container my-5 d-flex justify-content-center align-items-center">
+    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5 text-center" style="max-width: 520px; width: 100%;">
 
-    <a href="https://esewa.com.np/#/home" target="_blank" class="btn btn-success me-2">
-        Pay with eSewa
-    </a>
-    <a href="https://khalti.com/" target="_blank" class="btn btn-primary">
-        Pay with Khalti
-    </a>
+        <!-- Header -->
+        <div class="mb-4">
+            <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex justify-content-center align-items-center" style="width: 70px; height: 70px;">
+                <i class="bi bi-wallet2 text-success fs-2"></i>
+            </div>
+            <h3 class="fw-bold text-success mt-3 mb-2">Digital Wallet Payment</h3>
+            <p class="text-muted mb-0">Pay securely using your preferred wallet.</p>
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex flex-column flex-md-row justify-content-center align-items-center gap-3 mt-4">
+            <a href="https://esewa.com.np/#/home" target="_blank" class="btn btn-success btn-lg px-4 shadow-sm d-flex align-items-center justify-content-center">
+                <i class="bi bi-cash-coin me-2"></i> Pay with eSewa
+            </a>
+            <a href="https://khalti.com/" target="_blank" class="btn btn-primary btn-lg px-4 shadow-sm d-flex align-items-center justify-content-center">
+                <i class="bi bi-credit-card me-2"></i> Pay with Khalti
+            </a>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-4">
+            <p class="small text-muted">
+                Once payment is complete, please return to <span class="fw-semibold text-success">FoodSathi</span> to confirm your order.
+            </p>
+            <a href="/Checkout/Confirm" class="btn btn-outline-success mt-2 px-4">
+                <i class="bi bi-check-circle me-1"></i> Confirm Payment
+            </a>
+        </div>
+    </div>
 </div>
