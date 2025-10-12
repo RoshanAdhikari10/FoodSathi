@@ -1,21 +1,35 @@
 ﻿@{
-    ViewData["Title"] = "Feedback";
+    ViewData["Title"] = "Feedback - FoodSathi";
 }
 
 <div class="container my-5">
-    <div class="card shadow-lg border-0 rounded-4 p-4">
-        <h2 class="text-center text-primary mb-4">⭐ Product Feedback</h2>
+    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5">
+        <div class="text-center mb-4">
+            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
+                 style="width: 80px; height: 80px;">
+                <i class="bi bi-chat-heart text-success fs-1"></i>
+            </div>
+            <h2 class="fw-bold text-success mt-3">We Value Your Feedback</h2>
+            <p class="text-muted">Share your experience — your opinion helps us grow 🌱</p>
+        </div>
 
         <!-- Feedback Form -->
-        <form id="feedbackForm">
+        <form id="feedbackForm" class="mx-auto" style="max-width: 600px;">
             <div class="mb-3">
-                <label class="form-label">Product Name</label>
-                <input type="text" class="form-control" id="productName" placeholder="Enter product name" required />
+                <label class="form-label fw-semibold">Your Name / Email</label>
+                <input type="text" class="form-control form-control-lg rounded-3"
+                       id="userName" placeholder="e.g. roshan.adhikari@gmail.com" required>
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Your Rating</label>
-                <div id="starRating" class="fs-3 text-warning">
+                <label class="form-label fw-semibold">Product Name</label>
+                <input type="text" class="form-control form-control-lg rounded-3"
+                       id="productName" placeholder="Enter product name" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Your Rating</label>
+                <div id="starRating" class="fs-2 text-warning d-flex justify-content-center gap-2">
                     <i class="bi bi-star" data-value="1"></i>
                     <i class="bi bi-star" data-value="2"></i>
                     <i class="bi bi-star" data-value="3"></i>
@@ -24,56 +38,65 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Your Review</label>
-                <textarea class="form-control" id="reviewText" rows="3" placeholder="Write your experience..." required></textarea>
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Your Review</label>
+                <textarea class="form-control rounded-3" id="reviewText" rows="4"
+                          placeholder="Write your experience with this product..." required></textarea>
             </div>
 
             <div class="text-center">
-                <button type="submit" class="btn btn-success px-4">Submit Feedback</button>
+                <button type="submit" class="btn btn-success btn-lg px-5 shadow-sm rounded-pill">
+                    <i class="bi bi-send-fill me-2"></i>Submit Feedback
+                </button>
             </div>
         </form>
     </div>
 
+    <!-- Average Rating Summary -->
+    <div id="ratingSummary" class="text-center mt-5"></div>
+
     <!-- Feedback List -->
-    <div class="mt-5">
-        <h4 class="text-primary mb-3">💬 Recent Feedback</h4>
-        <div id="feedbackList" class="row gy-3"></div>
+    <div class="mt-4">
+        <h4 class="fw-bold text-success text-center mb-4">Recent Feedback 💬</h4>
+        <div id="feedbackList" class="row gy-4 justify-content-center"></div>
     </div>
 </div>
 
 @section Scripts {
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 
     <script>
         let rating = 0;
 
-        // Handle star click
+        // Star hover and click animations
         document.querySelectorAll('#starRating i').forEach(star => {
-            star.addEventListener('click', () => {
-                rating = parseInt(star.getAttribute('data-value'));
-                document.querySelectorAll('#starRating i').forEach(s => s.classList.replace('bi-star-fill', 'bi-star'));
-                for (let i = 0; i < rating; i++) {
-                    document.querySelectorAll('#starRating i')[i].classList.replace('bi-star', 'bi-star-fill');
-                }
-            });
+            star.addEventListener('mouseover', () => highlightStars(star.dataset.value));
+            star.addEventListener('mouseout', () => highlightStars(rating));
+            star.addEventListener('click', () => rating = parseInt(star.dataset.value));
         });
 
-        // Handle form submit
+        function highlightStars(count) {
+            document.querySelectorAll('#starRating i').forEach((s, i) => {
+                s.classList.toggle('bi-star-fill', i < count);
+                s.classList.toggle('bi-star', i >= count);
+            });
+        }
+
+        // Submit feedback
         document.getElementById("feedbackForm").addEventListener("submit", function (e) {
             e.preventDefault();
-
+            const user = document.getElementById("userName").value.trim();
             const product = document.getElementById("productName").value.trim();
             const review = document.getElementById("reviewText").value.trim();
 
-            if (!product || !review || rating === 0) {
-                alert("⚠️ Please complete all fields!");
+            if (!user || !product || !review || rating === 0) {
+                alert("⚠️ Please fill out all fields and give a rating!");
                 return;
             }
 
             const feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
-            feedbacks.push({
+            feedbacks.unshift({
+                user: user,
                 product: product,
                 review: review,
                 rating: rating,
@@ -81,12 +104,9 @@
             });
             localStorage.setItem("feedbacks", JSON.stringify(feedbacks));
 
-            // Reset
             document.getElementById("feedbackForm").reset();
             rating = 0;
-            document.querySelectorAll('#starRating i').forEach(s => s.classList.replace('bi-star-fill', 'bi-star'));
-
-            alert("✅ Feedback submitted successfully!");
+            highlightStars(0);
             loadFeedbacks();
         });
 
@@ -94,19 +114,34 @@
         function loadFeedbacks() {
             const feedbacks = JSON.parse(localStorage.getItem("feedbacks")) || [];
             const container = document.getElementById("feedbackList");
+            const summary = document.getElementById("ratingSummary");
 
             if (feedbacks.length === 0) {
-                container.innerHTML = `<p class='text-muted'>No feedback yet.</p>`;
+                container.innerHTML = `<p class="text-muted text-center">No feedback yet. Be the first to share your experience!</p>`;
+                summary.innerHTML = "";
                 return;
             }
 
+            // Average rating
+            const avgRating = (feedbacks.reduce((sum, f) => sum + f.rating, 0) / feedbacks.length).toFixed(1);
+            summary.innerHTML = `
+                <div class="card border-0 shadow-sm rounded-4 p-4 mx-auto" style="max-width: 400px;">
+                    <h5 class="fw-bold text-success mb-2">⭐ Average Rating</h5>
+                    <div class="fs-3 text-warning">${'⭐'.repeat(Math.round(avgRating))}</div>
+                    <p class="text-muted mb-0">${avgRating} / 5 from ${feedbacks.length} reviews</p>
+                </div>
+            `;
+
             container.innerHTML = feedbacks.map(f => `
-                <div class="col-md-6">
-                    <div class="card shadow-sm p-3 border-0">
-                        <h5 class="text-success">${f.product}</h5>
-                        <p>${'⭐'.repeat(f.rating)}</p>
-                        <p class="mb-1">${f.review}</p>
-                        <small class="text-muted">${f.date}</small>
+                <div class="col-md-5">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <h5 class="text-success fw-semibold mb-0">${f.product}</h5>
+                            <small class="text-muted">${f.date}</small>
+                        </div>
+                        <div class="text-warning mb-2">${'⭐'.repeat(f.rating)}</div>
+                        <p class="text-muted mb-2">${f.review}</p>
+                        <small class="text-secondary">– ${f.user}</small>
                     </div>
                 </div>
             `).join('');
@@ -114,4 +149,33 @@
 
         loadFeedbacks();
     </script>
+
+    <style>
+        #starRating i {
+            cursor: pointer;
+            transition: transform 0.25s ease, color 0.2s ease;
+        }
+
+            #starRating i:hover {
+                transform: scale(1.2);
+                color: #ffc107;
+            }
+
+        textarea:focus, input:focus {
+            box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+        }
+
+        .card {
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            }
+
+        #ratingSummary .card {
+            background: linear-gradient(135deg, #e9f8f1, #ffffff);
+        }
+    </style>
 }
