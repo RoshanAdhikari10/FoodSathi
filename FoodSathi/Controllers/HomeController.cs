@@ -21,7 +21,7 @@ namespace FoodSathi.Controllers
         // ✅ Home Page (Dynamic Featured Dishes)
         public async Task<IActionResult> Index()
         {
-          
+   
             var featuredItems = await _menuContext.MenuItems
                 .OrderByDescending(m => m.ItemID)
                 .Take(3)
