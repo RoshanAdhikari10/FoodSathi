@@ -1,4 +1,5 @@
 ﻿using FoodSathi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -17,6 +18,7 @@ namespace FoodSathi.Controllers
             _logger = logger;
             _menuContext = menuContext;
         }
+
 
         // ✅ Home Page (Dynamic Featured Dishes)
         public async Task<IActionResult> Index()
