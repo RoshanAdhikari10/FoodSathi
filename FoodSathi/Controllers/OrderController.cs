@@ -34,7 +34,10 @@ namespace FoodSathi.Controllers
             return RedirectToAction("Checkout", new { orderName = order.ItemName });
         }
 
-
+        public IActionResult Orders()
+        {
+            return View();
+        }
 
 
         [HttpGet("Order/Checkout/{orderName}")]
