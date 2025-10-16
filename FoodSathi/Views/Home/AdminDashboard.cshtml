@@ -2,5 +2,30 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<h1>Welcome, Admin!</h1>
-<p>Here you can manage users, products, orders, etc.</p>
+<div class="container my-5">
+    <div class="text-center">
+        <h1 class="text-warning fw-bold">🍴 FoodSathi Admin Dashboard</h1>
+        <p class="text-secondary">Welcome, Admin! Manage your users, orders, and products here.</p>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-lg rounded-4 p-4 text-center bg-light">
+                <h4 class="fw-semibold text-success">Manage Users</h4>
+                <a href="/Users/Index" class="btn btn-outline-success mt-2">Go</a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-lg rounded-4 p-4 text-center bg-light">
+                <h4 class="fw-semibold text-primary">Manage Orders</h4>
+                <a href="/Orders/Index" class="btn btn-outline-primary mt-2">Go</a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-lg rounded-4 p-4 text-center bg-light">
+                <h4 class="fw-semibold text-warning">Manage Products</h4>
+                <a href="/Products/Index" class="btn btn-outline-warning mt-2">Go</a>
+            </div>
+        </div>
+    </div>
+</div>
