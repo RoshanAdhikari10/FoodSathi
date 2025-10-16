@@ -19,6 +19,12 @@ namespace FoodSathi.Controllers
             _menuContext = menuContext;
         }
 
+        [Authorize(Roles = "Admin")]
+        public IActionResult AdminDashboard()
+        {
+            return View();
+        }
+
 
         // ✅ Home Page (Dynamic Featured Dishes)
         public async Task<IActionResult> Index()
