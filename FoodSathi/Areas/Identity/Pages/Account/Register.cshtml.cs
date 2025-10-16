@@ -26,15 +26,13 @@ namespace FoodSathi.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
-        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager)
+            IEmailSender emailSender)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -42,7 +40,6 @@ namespace FoodSathi.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
-            _roleManager = roleManager;
         }
 
         [BindProperty]
@@ -84,6 +81,7 @@ namespace FoodSathi.Areas.Identity.Pages.Account
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
+
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
 
@@ -93,19 +91,11 @@ namespace FoodSathi.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    // ✅ Ensure roles exist
-                    if (!await _roleManager.RoleExistsAsync("Admin"))
-                        await _roleManager.CreateAsync(new IdentityRole("Admin"));
-                    if (!await _roleManager.RoleExistsAsync("User"))
-                        await _roleManager.CreateAsync(new IdentityRole("User"));
-
-                    // ✅ Assign default "User" role to new users
-                    await _userManager.AddToRoleAsync(user, "User");
-
-                    // ✅ Email confirmation setup
+                    // ✅ Email confirmation
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
                     var callbackUrl = Url.Page(
                         "/Account/ConfirmEmail",
                         pageHandler: null,
@@ -122,16 +112,7 @@ namespace FoodSathi.Areas.Identity.Pages.Account
                     else
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-
-                        // ✅ Role-based redirect after registration
-                        if (await _userManager.IsInRoleAsync(user, "Admin"))
-                        {
-                            return LocalRedirect("~/Home/AdminDashboard");
-                        }
-                        else
-                        {
-                            return LocalRedirect("~/Home/Index");
-                        }
+                        return LocalRedirect(returnUrl);
                     }
                 }
 
@@ -140,12 +121,9 @@ namespace FoodSathi.Areas.Identity.Pages.Account
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
-
-                // Optional logging for debugging
-                _logger.LogWarning("User registration failed: {Errors}", string.Join(", ", result.Errors.Select(e => e.Description)));
             }
 
-            // If we got this far, something failed
+            // Something failed
             return Page();
         }
 
