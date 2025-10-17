@@ -2,82 +2,82 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="container my-5">
+<div class="dashboard-container">
     <div class="text-center mb-5">
         <h1 class="fw-bold text-gradient">🍴 FoodSathi Admin Dashboard</h1>
-        <p class="text-muted fs-5">Welcome back, <strong>Admin</strong> — manage your platform efficiently!</p>
+        <p class="text-light fs-5 opacity-75">Welcome back, <strong>Admin</strong> — manage orders, users, and products efficiently.</p>
     </div>
 
-    <div class="row g-4">
+    <div class="row g-4 justify-content-center">
         <!-- Manage Users -->
         <div class="col-lg-4 col-md-6">
-            <div class="card dashboard-card border-0 shadow-lg rounded-4 p-4 text-center h-100">
-                <div class="card-icon mb-3">
+            <div class="dashboard-card glass-card text-center p-4">
+                <div class="icon-circle bg-success bg-opacity-10 mb-3">
                     <i class="bi bi-people-fill text-success fs-1"></i>
                 </div>
-                <h4 class="fw-semibold text-dark">Manage Users</h4>
-                <p class="text-secondary">View, edit, or remove registered users from the system.</p>
-                <a href="/Users/Index" class="btn btn-success px-4 mt-2">Go</a>
+                <h4 class="fw-semibold text-white">Manage Users</h4>
+                <p class="text-light opacity-75">View and control registered users in FoodSathi.</p>
+                <a href="/Users/Index" class="btn btn-success rounded-pill px-4 mt-2">Go</a>
             </div>
         </div>
 
         <!-- Manage Orders -->
         <div class="col-lg-4 col-md-6">
-            <div class="card dashboard-card border-0 shadow-lg rounded-4 p-4 text-center h-100">
-                <div class="card-icon mb-3">
+            <div class="dashboard-card glass-card text-center p-4">
+                <div class="icon-circle bg-primary bg-opacity-10 mb-3">
                     <i class="bi bi-receipt-cutoff text-primary fs-1"></i>
                 </div>
-                <h4 class="fw-semibold text-dark">Manage Orders</h4>
-                <p class="text-secondary">Track and update customer orders and delivery status.</p>
-                <a href="/Orders/Index" class="btn btn-primary px-4 mt-2">Go</a>
+                <h4 class="fw-semibold text-white">Manage Orders</h4>
+                <p class="text-light opacity-75">Track, update, and process customer orders.</p>
+                <a href="/Orders/Index" class="btn btn-primary rounded-pill px-4 mt-2">Go</a>
             </div>
         </div>
 
         <!-- Manage Products -->
         <div class="col-lg-4 col-md-6">
-            <div class="card dashboard-card border-0 shadow-lg rounded-4 p-4 text-center h-100">
-                <div class="card-icon mb-3">
+            <div class="dashboard-card glass-card text-center p-4">
+                <div class="icon-circle bg-warning bg-opacity-10 mb-3">
                     <i class="bi bi-box-seam text-warning fs-1"></i>
                 </div>
-                <h4 class="fw-semibold text-dark">Manage Products</h4>
-                <p class="text-secondary">Add, update, or remove food items and their prices.</p>
-                <a href="/Products/Index" class="btn btn-warning px-4 mt-2 text-white">Go</a>
+                <h4 class="fw-semibold text-white">Manage Products</h4>
+                <p class="text-light opacity-75">Add, edit, or remove dishes and menus.</p>
+                <a href="/Products/Index" class="btn btn-warning rounded-pill px-4 mt-2 text-white">Go</a>
             </div>
         </div>
 
         <!-- Manage Reviews -->
         <div class="col-lg-4 col-md-6">
-            <div class="card dashboard-card border-0 shadow-lg rounded-4 p-4 text-center h-100">
-                <div class="card-icon mb-3">
+            <div class="dashboard-card glass-card text-center p-4">
+                <div class="icon-circle bg-danger bg-opacity-10 mb-3">
                     <i class="bi bi-chat-square-text-fill text-danger fs-1"></i>
                 </div>
-                <h4 class="fw-semibold text-dark">Manage Reviews</h4>
-                <p class="text-secondary">Monitor user feedback and take necessary actions.</p>
-                <a href="/Reviews/Index" class="btn btn-danger px-4 mt-2">Go</a>
+                <h4 class="fw-semibold text-white">Manage Reviews</h4>
+                <p class="text-light opacity-75">Monitor customer feedback and maintain quality.</p>
+                <a href="/Reviews/Index" class="btn btn-danger rounded-pill px-4 mt-2">Go</a>
             </div>
         </div>
 
         <!-- Analytics -->
         <div class="col-lg-4 col-md-6">
-            <div class="card dashboard-card border-0 shadow-lg rounded-4 p-4 text-center h-100">
-                <div class="card-icon mb-3">
+            <div class="dashboard-card glass-card text-center p-4">
+                <div class="icon-circle bg-info bg-opacity-10 mb-3">
                     <i class="bi bi-graph-up-arrow text-info fs-1"></i>
                 </div>
-                <h4 class="fw-semibold text-dark">Analytics</h4>
-                <p class="text-secondary">View detailed insights and performance metrics.</p>
-                <a href="/Analytics/Index" class="btn btn-info px-4 mt-2 text-white">Go</a>
+                <h4 class="fw-semibold text-white">Analytics</h4>
+                <p class="text-light opacity-75">View detailed stats, trends, and performance reports.</p>
+                <a href="/Analytics/Index" class="btn btn-info rounded-pill px-4 mt-2 text-white">Go</a>
             </div>
         </div>
 
         <!-- Settings -->
         <div class="col-lg-4 col-md-6">
-            <div class="card dashboard-card border-0 shadow-lg rounded-4 p-4 text-center h-100">
-                <div class="card-icon mb-3">
+            <div class="dashboard-card glass-card text-center p-4">
+                <div class="icon-circle bg-secondary bg-opacity-10 mb-3">
                     <i class="bi bi-gear-fill text-secondary fs-1"></i>
                 </div>
-                <h4 class="fw-semibold text-dark">Settings</h4>
-                <p class="text-secondary">Update system preferences and admin configurations.</p>
-                <a href="/Settings/Index" class="btn btn-secondary px-4 mt-2">Go</a>
+                <h4 class="fw-semibold text-white">Settings</h4>
+                <p class="text-light opacity-75">Configure app settings and admin preferences.</p>
+                <a href="/Settings/Index" class="btn btn-secondary rounded-pill px-4 mt-2">Go</a>
             </div>
         </div>
     </div>
@@ -85,31 +85,63 @@
 
 <!-- Styles -->
 <style>
+    body {
+        background: linear-gradient(135deg, #1f1f1f, #343a40);
+        min-height: 100vh;
+        color: #fff;
+        font-family: 'Poppins', sans-serif;
+    }
+
     .text-gradient {
-        background: linear-gradient(90deg, #ff7b00, #ffb100);
+        background: linear-gradient(90deg, #ff9100, #ffc107);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
-    .dashboard-card {
-        transition: all 0.3s ease;
-        background: #ffffff;
+    .dashboard-container {
+        max-width: 1200px;
+        margin: auto;
     }
 
-    .dashboard-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    .glass-card {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(12px);
+        border-radius: 20px;
+        transition: all 0.3s ease-in-out;
     }
 
-    .card-icon i {
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+    .icon-circle {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
         transition: transform 0.3s ease;
     }
 
-    .dashboard-card:hover .card-icon i {
+    .glass-card:hover .icon-circle {
         transform: scale(1.1);
     }
 
-    body {
-        background: #f7f9fc;
+    .btn {
+        transition: all 0.3s ease-in-out;
+        font-weight: 500;
+    }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+    .fw-semibold {
+        letter-spacing: 0.5px;
     }
 </style>
