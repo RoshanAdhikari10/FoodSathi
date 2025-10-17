@@ -2,7 +2,7 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="dashboard-container">
+<div class="dashboard-container py-5 px-3">
     <div class="text-center mb-5">
         <h1 class="fw-bold text-gradient">🍴 FoodSathi Admin Dashboard</h1>
         <p class="text-light fs-5 opacity-75">Welcome back, <strong>Admin</strong> — manage orders, users, and products efficiently.</p>
@@ -10,8 +10,8 @@
 
     <div class="row g-4 justify-content-center">
         <!-- Manage Users -->
-        <div class="col-lg-4 col-md-6">
-            <div class="dashboard-card glass-card text-center p-4">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+            <div class="dashboard-card glass-card text-center p-4 h-100">
                 <div class="icon-circle bg-success bg-opacity-10 mb-3">
                     <i class="bi bi-people-fill text-success fs-1"></i>
                 </div>
@@ -22,8 +22,8 @@
         </div>
 
         <!-- Manage Orders -->
-        <div class="col-lg-4 col-md-6">
-            <div class="dashboard-card glass-card text-center p-4">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+            <div class="dashboard-card glass-card text-center p-4 h-100">
                 <div class="icon-circle bg-primary bg-opacity-10 mb-3">
                     <i class="bi bi-receipt-cutoff text-primary fs-1"></i>
                 </div>
@@ -34,8 +34,8 @@
         </div>
 
         <!-- Manage Products -->
-        <div class="col-lg-4 col-md-6">
-            <div class="dashboard-card glass-card text-center p-4">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+            <div class="dashboard-card glass-card text-center p-4 h-100">
                 <div class="icon-circle bg-warning bg-opacity-10 mb-3">
                     <i class="bi bi-box-seam text-warning fs-1"></i>
                 </div>
@@ -46,8 +46,8 @@
         </div>
 
         <!-- Manage Reviews -->
-        <div class="col-lg-4 col-md-6">
-            <div class="dashboard-card glass-card text-center p-4">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+            <div class="dashboard-card glass-card text-center p-4 h-100">
                 <div class="icon-circle bg-danger bg-opacity-10 mb-3">
                     <i class="bi bi-chat-square-text-fill text-danger fs-1"></i>
                 </div>
@@ -58,8 +58,8 @@
         </div>
 
         <!-- Analytics -->
-        <div class="col-lg-4 col-md-6">
-            <div class="dashboard-card glass-card text-center p-4">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+            <div class="dashboard-card glass-card text-center p-4 h-100">
                 <div class="icon-circle bg-info bg-opacity-10 mb-3">
                     <i class="bi bi-graph-up-arrow text-info fs-1"></i>
                 </div>
@@ -70,8 +70,8 @@
         </div>
 
         <!-- Settings -->
-        <div class="col-lg-4 col-md-6">
-            <div class="dashboard-card glass-card text-center p-4">
+        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
+            <div class="dashboard-card glass-card text-center p-4 h-100">
                 <div class="icon-circle bg-secondary bg-opacity-10 mb-3">
                     <i class="bi bi-gear-fill text-secondary fs-1"></i>
                 </div>
@@ -99,7 +99,7 @@
     }
 
     .dashboard-container {
-        max-width: 1200px;
+        max-width: 1300px;
         margin: auto;
     }
 
@@ -109,6 +109,7 @@
         backdrop-filter: blur(12px);
         border-radius: 20px;
         transition: all 0.3s ease-in-out;
+        height: 100%;
     }
 
         .glass-card:hover {
@@ -143,5 +144,53 @@
 
     .fw-semibold {
         letter-spacing: 0.5px;
+    }
+
+    /* ✅ Responsive Fixes */
+    @@media (max-width: 991px) {
+        .dashboard-container
+
+    {
+        padding: 0 1rem;
+    }
+
+    .icon-circle {
+        width: 70px;
+        height: 70px;
+    }
+
+    .fs-1 {
+        font-size: 1.8rem !important;
+    }
+
+    h4 {
+        font-size: 1.2rem;
+    }
+
+    p {
+        font-size: 0.9rem;
+    }
+
+    }
+
+    @@media (max-width: 576px) {
+        h1
+
+    {
+        font-size: 1.8rem;
+    }
+
+    .dashboard-card {
+        padding: 1.5rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1.5rem;
+    }
+
+    .text-gradient {
+        font-size: 1.9rem;
+    }
+
     }
 </style>
