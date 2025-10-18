@@ -36,7 +36,9 @@ namespace FoodSathi.Controllers
 
         public IActionResult Orders()
         {
-            return View();
+            // Assuming you have an Order model in your database
+            var orders = _context.Orders.ToList();
+            return View(orders);
         }
 
 
