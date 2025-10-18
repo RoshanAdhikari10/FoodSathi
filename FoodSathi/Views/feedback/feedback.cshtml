@@ -4,36 +4,39 @@
     ViewData["Title"] = "Customer Feedback";
 }
 
-<div class="container my-5">
-    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5">
-        <div class="text-center mb-4">
-            <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
-                 style="width:80px;height:80px;">
-                <i class="bi bi-chat-heart text-success fs-1"></i>
-            </div>
-            <h2 class="fw-bold text-success mt-3">We Value Your Feedback</h2>
-            <p class="text-muted">Help us improve your FoodSathi experience 🌿</p>
+<div class="container py-5">
+
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <div class="bg-success bg-opacity-15 rounded-circle d-inline-flex align-items-center justify-content-center"
+             style="width:100px;height:100px;">
+            <i class="bi bi-chat-heart fs-1 text-success"></i>
         </div>
+        <h2 class="fw-bold text-gradient mt-3">We Value Your Feedback</h2>
+        <p class="text-muted fs-6">Your insights help us make FoodSathi even better 🌿</p>
+    </div>
 
-        <form id="feedbackForm" class="mx-auto" style="max-width:600px;">
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Your Name / Email</label>
-                <input type="text" name="UserName" class="form-control form-control-lg rounded-3" required />
+    <!-- Feedback Form Card -->
+    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5 mb-5">
+        <form id="feedbackForm" class="mx-auto" style="max-width:650px;">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Your Name / Email</label>
+                    <input type="text" name="UserName" class="form-control form-control-lg rounded-3" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Product Name</label>
+                    <input type="text" name="ProductName" class="form-control form-control-lg rounded-3" required />
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Product Name</label>
-                <input type="text" name="ProductName" class="form-control form-control-lg rounded-3" required />
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Your Rating</label>
+            <div class="my-3 text-center">
+                <label class="form-label fw-semibold d-block">Your Rating</label>
                 <div id="starRating" class="fs-2 text-warning d-flex justify-content-center gap-2">
-                    <i class="bi bi-star" data-value="1"></i>
-                    <i class="bi bi-star" data-value="2"></i>
-                    <i class="bi bi-star" data-value="3"></i>
-                    <i class="bi bi-star" data-value="4"></i>
-                    <i class="bi bi-star" data-value="5"></i>
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <i class="bi bi-star" data-value="@i"></i>
+                    }
                 </div>
                 <input type="hidden" name="Rating" id="ratingValue" />
             </div>
@@ -54,10 +57,10 @@
     <!-- Average Rating -->
     @if (Model.Any())
     {
-        <div class="text-center mt-5">
+        <div class="text-center mb-5">
             <div class="card border-0 shadow-sm rounded-4 p-4 mx-auto" style="max-width:400px;">
                 <h5 class="fw-bold text-success mb-2">⭐ Average Rating</h5>
-                <div class="fs-3 text-warning">
+                <div class="fs-3 text-warning mb-2">
                     @for (int i = 0; i < Math.Round(ViewBag.AvgRating); i++)
                     {
                         <i class="bi bi-star-fill"></i>
@@ -69,33 +72,31 @@
     }
 
     <!-- Feedback List -->
-    <div class="mt-4">
-        <h4 class="fw-bold text-success text-center mb-4">Recent Feedback 💬</h4>
-        <div class="row gy-4 justify-content-center">
-            @foreach (var f in Model)
-            {
-                <div class="col-md-5">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <h5 class="text-success fw-semibold mb-0">@f.ProductName</h5>
-                            <small class="text-muted">@f.Date.ToString("MMM dd, yyyy")</small>
-                        </div>
-                        <div class="text-warning mb-2">
-                            @for (int i = 0; i < f.Rating; i++)
-                            {
-                                <i class="bi bi-star-fill"></i>
-                            }
-                        </div>
-                        <p class="text-muted mb-2">@f.Review</p>
-                        <small class="text-secondary">– @f.UserName</small>
+    <h4 class="fw-bold text-success text-center mb-4">Recent Feedback 💬</h4>
+    <div class="row g-4 justify-content-center">
+        @foreach (var f in Model)
+        {
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <div class="card border-0 shadow-lg rounded-4 p-4 h-100 hover-card">
+                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
+                        <h5 class="text-success fw-semibold mb-0 text-truncate">@f.ProductName</h5>
+                        <small class="text-muted mb-1">@f.Date.ToString("MMM dd, yyyy")</small>
                     </div>
+                    <div class="text-warning mb-2 fs-5">
+                        @for (int i = 0; i < f.Rating; i++)
+                        {
+                            <i class="bi bi-star-fill"></i>
+                        }
+                    </div>
+                    <p class="text-muted mb-2">@f.Review</p>
+                    <small class="text-secondary">– @f.UserName</small>
                 </div>
-            }
-        </div>
+            </div>
+        }
     </div>
 </div>
 
-<!-- ✅ Thank You Modal -->
+<!-- Thank You Modal -->
 <div class="modal fade" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content text-center border-0 rounded-4 shadow-lg">
@@ -117,18 +118,23 @@
 
     <script>
         let rating = 0;
-        document.querySelectorAll('#starRating i').forEach(star => {
+        const stars = document.querySelectorAll('#starRating i');
+
+        stars.forEach(star => {
+            star.addEventListener('mouseover', () => {
+                stars.forEach((s, i) => s.classList.toggle('bi-star-fill', i < star.dataset.value));
+            });
+            star.addEventListener('mouseout', () => {
+                stars.forEach((s, i) => s.classList.toggle('bi-star-fill', i < rating));
+            });
             star.addEventListener('click', () => {
                 rating = parseInt(star.dataset.value);
                 document.getElementById("ratingValue").value = rating;
-                document.querySelectorAll('#starRating i').forEach(s => s.classList.replace('bi-star-fill', 'bi-star'));
-                for (let i = 0; i < rating; i++) {
-                    document.querySelectorAll('#starRating i')[i].classList.replace('bi-star', 'bi-star-fill');
-                }
+                stars.forEach((s, i) => s.classList.toggle('bi-star-fill', i < rating));
             });
         });
 
-        // ✅ AJAX Submit + Success Modal
+        // AJAX Submit
         document.getElementById("feedbackForm").addEventListener("submit", function (e) {
             e.preventDefault();
             const formData = new FormData(this);
@@ -143,8 +149,8 @@
                         const modal = new bootstrap.Modal(document.getElementById('thankYouModal'));
                         modal.show();
                         this.reset();
-                        document.querySelectorAll('#starRating i').forEach(s => s.classList.replace('bi-star-fill', 'bi-star'));
-                        setTimeout(() => location.reload(), 3000);
+                        stars.forEach(s => s.classList.replace('bi-star-fill', 'bi-star'));
+                        setTimeout(() => location.reload(), 2500);
                     } else {
                         alert('❌ Failed to submit feedback!');
                     }
@@ -153,13 +159,43 @@
     </script>
 
     <style>
+        .text-gradient {
+            background: linear-gradient(135deg, #6610f2, #0d6efd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hover-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            transition: all 0.3s ease-in-out;
+        }
+
         #starRating i {
             cursor: pointer;
             transition: transform 0.2s ease;
         }
 
             #starRating i:hover {
-                transform: scale(1.2);
+                transform: scale(1.3);
             }
+
+        .card-text {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        @@media (max-width: 576px) {
+            #starRating i
+
+        {
+            font-size: 1.5rem;
+        }
+
+        .card-text {
+            font-size: 0.9rem;
+        }
+
+        }
     </style>
 }
