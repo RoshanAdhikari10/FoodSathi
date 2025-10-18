@@ -1,4 +1,46 @@
-﻿@{
+﻿@model IEnumerable<FoodSathi.Models.Order>
+
+@{
     ViewData["Title"] = "My Orders";
 }
 
+<div class="container mt-5">
+    <h1 class="fw-bold mb-4">@ViewData["Title"]</h1>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info">No orders found.</div>
+    }
+    else
+    {
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Item Name</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Order Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.OrderID</td>
+                        <td>@order.ItemName</td>
+                        <td>@order.Quantity</td>
+                        <td>Rs. @order.TotalPrice</td>
+                        <td>@order.OrderDate.ToString("MMM dd, yyyy")</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@order.OrderID" class="btn btn-sm btn-outline-primary">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
