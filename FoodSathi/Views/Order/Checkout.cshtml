@@ -4,149 +4,144 @@
     ViewData["Title"] = "Checkout";
 }
 
-<div class="container my-5">
+<div class="container my-5 fade-in">
     <div class="row justify-content-center">
         <div class="col-md-10 col-lg-8">
-            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden glass-card">
 
                 <!-- Header -->
-                <div class="bg-success text-white text-center py-4">
-                    <h2 class="fw-bold mb-0"><i class="bi bi-bag-check-fill me-2"></i>Secure Checkout</h2>
-                    <p class="mb-0 opacity-75">Complete your order safely and quickly</p>
+                <div class="bg-gradient text-white text-center py-4">
+                    <h2 class="fw-bold mb-1"><i class="bi bi-bag-check-fill me-2"></i> Secure Checkout</h2>
+                    <p class="mb-0 opacity-75">Complete your order safely & easily 🛒</p>
                 </div>
 
                 <div class="card-body p-4 p-md-5">
 
-                    <!-- Order Summary -->
-                    <div class="mb-5">
+                    <!-- 🧾 Order Summary -->
+                    <section class="mb-5">
                         <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">
-                            🧾 Order Summary
+                            <i class="bi bi-receipt-cutoff me-2 text-success"></i>Order Summary
                         </h5>
+
                         <div class="order-summary">
                             <div class="d-flex justify-content-between mb-2">
-                                <span><strong>🍽️ Item:</strong></span>
-                                <span class="text-dark">@Model.ItemName</span>
+                                <span><strong>Item:</strong></span>
+                                <span>@Model.ItemName</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
-                                <span><strong>📦 Quantity:</strong></span>
-                                <span class="text-dark">@Model.Quantity</span>
+                                <span><strong>Quantity:</strong></span>
+                                <span>@Model.Quantity</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
-                                <span><strong>💰 Total Price:</strong></span>
-                                <span class="text-danger fw-semibold">Rs. <span id="basePrice">@Model.TotalPrice</span></span>
+                                <span><strong>Subtotal:</strong></span>
+                                <span class="text-danger">Rs. <span id="basePrice">@Model.TotalPrice</span></span>
                             </div>
                             <div class="d-flex justify-content-between mb-2">
-                                <span><strong>🕒 Order Date:</strong></span>
-                                <span class="text-secondary">@Model.OrderDate.ToString("MMMM dd, yyyy hh:mm tt")</span>
+                                <span><strong>Date:</strong></span>
+                                <span>@Model.OrderDate.ToString("MMM dd, yyyy hh:mm tt")</span>
                             </div>
                             <div class="d-flex justify-content-between mt-3 border-top pt-2">
-                                <span><strong>🚚 Delivery Charge:</strong></span>
-                                <span class="text-muted">Rs. <span id="deliveryCharge">0</span></span>
+                                <span><strong>Delivery Charge:</strong></span>
+                                <span>Rs. <span id="deliveryCharge">0</span></span>
                             </div>
                             <div class="d-flex justify-content-between border-top pt-2">
-                                <span class="fw-bold">💵 Final Total:</span>
+                                <span class="fw-bold">Final Total:</span>
                                 <span class="fw-bold text-success">Rs. <span id="finalTotal">@Model.TotalPrice</span></span>
                             </div>
                         </div>
-                    </div>
+                    </section>
 
-                    <!-- Delivery Options -->
-                    <div class="mb-5">
+                    <!-- 🚚 Delivery Option -->
+                    <section class="mb-5">
                         <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">
-                            🚚 Choose Your Delivery Option
+                            <i class="bi bi-truck me-2 text-success"></i>Choose Delivery Option
                         </h5>
 
                         <div class="row g-3 delivery-options">
                             <div class="col-12 col-md-4">
                                 <div class="delivery-card active" data-value="Standard" data-charge="0">
-                                    <div class="icon text-success mb-2"><i class="bi bi-truck fs-3"></i></div>
-                                    <h6 class="fw-bold">Standard</h6>
-                                    <p class="text-muted small mb-1">45–60 mins</p>
-                                    <span class="badge bg-success-subtle text-success">Free</span>
+                                    <i class="bi bi-truck fs-3 text-success"></i>
+                                    <h6 class="fw-bold mt-2">Standard</h6>
+                                    <small class="text-muted">45–60 mins</small>
+                                    <div><span class="badge bg-success-subtle text-success">Free</span></div>
                                 </div>
                             </div>
-
                             <div class="col-12 col-md-4">
                                 <div class="delivery-card" data-value="Express" data-charge="100">
-                                    <div class="icon text-danger mb-2"><i class="bi bi-lightning-charge-fill fs-3"></i></div>
-                                    <h6 class="fw-bold">Express</h6>
-                                    <p class="text-muted small mb-1">20–30 mins</p>
-                                    <span class="badge bg-danger-subtle text-danger">Rs. 100</span>
+                                    <i class="bi bi-lightning-charge-fill fs-3 text-danger"></i>
+                                    <h6 class="fw-bold mt-2">Express</h6>
+                                    <small class="text-muted">20–30 mins</small>
+                                    <div><span class="badge bg-danger-subtle text-danger">Rs. 100</span></div>
                                 </div>
                             </div>
-
                             <div class="col-12 col-md-4">
                                 <div class="delivery-card" data-value="Pickup" data-charge="0">
-                                    <div class="icon text-primary mb-2"><i class="bi bi-shop fs-3"></i></div>
-                                    <h6 class="fw-bold">Pickup</h6>
-                                    <p class="text-muted small mb-1">Collect from store</p>
-                                    <span class="badge bg-primary-subtle text-primary">No charge</span>
+                                    <i class="bi bi-shop fs-3 text-primary"></i>
+                                    <h6 class="fw-bold mt-2">Pickup</h6>
+                                    <small class="text-muted">Collect from outlet</small>
+                                    <div><span class="badge bg-primary-subtle text-primary">No Charge</span></div>
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" id="selectedDeliveryOption" name="DeliveryOption" value="Standard" />
+                    </section>
 
-                        <input type="hidden" id="selectedDeliveryOption" name="deliveryOption" value="Standard">
-                    </div>
-
-                    <!-- Address -->
-                    <div class="mb-5">
+                    <!-- 🏠 Delivery Address -->
+                    <section class="mb-5">
                         <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">
-                            🏠 Delivery Address
+                            <i class="bi bi-geo-alt-fill me-2 text-danger"></i>Delivery Address
                         </h5>
-                        <textarea id="deliveryAddress" class="form-control rounded-3 p-3" rows="3"
-                                  placeholder="Enter your complete delivery address..." required></textarea>
-                    </div>
+                        <textarea id="deliveryAddress" name="Address" class="form-control rounded-3 p-3" rows="3"
+                                  placeholder="Enter your complete address..." required></textarea>
+                    </section>
 
-                    <!-- Payment Section -->
-                    <div class="mb-5">
+                    <!-- 💳 Payment Options -->
+                    <section class="mb-5">
                         <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">
-                            💳 Payment Options
+                            <i class="bi bi-credit-card-2-front-fill me-2 text-primary"></i>Payment Method
                         </h5>
 
-                        <div class="row g-3 payment-options text-center">
+                        <div class="row g-3 text-center payment-options">
                             <div class="col-12 col-md-4">
                                 <div class="payment-card active" data-value="Card">
-                                    <div class="icon text-primary mb-2"><i class="bi bi-credit-card-fill fs-3"></i></div>
-                                    <h6 class="fw-bold">Credit/Debit Card</h6>
-                                    <p class="small text-muted mb-1">Pay securely online</p>
+                                    <i class="bi bi-credit-card-fill fs-3 text-primary"></i>
+                                    <h6 class="fw-bold mt-2">Card</h6>
+                                    <small class="text-muted">Visa / MasterCard</small>
                                 </div>
                             </div>
-
                             <div class="col-12 col-md-4">
                                 <div class="payment-card" data-value="Wallet">
-                                    <div class="icon text-success mb-2"><i class="bi bi-wallet2 fs-3"></i></div>
-                                    <h6 class="fw-bold">Digital Wallet</h6>
-                                    <p class="small text-muted mb-1">eSewa / Khalti</p>
+                                    <i class="bi bi-wallet2 fs-3 text-success"></i>
+                                    <h6 class="fw-bold mt-2">Digital Wallet</h6>
+                                    <small class="text-muted">eSewa / Khalti</small>
                                 </div>
                             </div>
-
                             <div class="col-12 col-md-4">
                                 <div class="payment-card" data-value="Cash">
-                                    <div class="icon text-secondary mb-2"><i class="bi bi-cash-coin fs-3"></i></div>
-                                    <h6 class="fw-bold">Cash on Delivery</h6>
-                                    <p class="small text-muted mb-1">Pay after delivery</p>
+                                    <i class="bi bi-cash-coin fs-3 text-secondary"></i>
+                                    <h6 class="fw-bold mt-2">Cash on Delivery</h6>
+                                    <small class="text-muted">Pay on arrival</small>
                                 </div>
                             </div>
                         </div>
+                        <input type="hidden" id="selectedPaymentOption" name="PaymentOption" value="Card" />
+                    </section>
 
-                        <input type="hidden" id="selectedPaymentOption" name="paymentOption" value="Card">
-                    </div>
-
-                    <!-- Action Buttons -->
+                    <!-- ✅ Action Buttons -->
                     <div class="d-grid gap-3">
-                        <button id="proceedPaymentBtn" class="btn btn-success btn-lg fw-bold rounded-pill shadow-sm animate-btn">
-                            Proceed to Payment <i class="bi bi-arrow-right-circle ms-1"></i>
+                        <button id="confirmOrderBtn" type="button" class="btn btn-gradient btn-lg fw-bold rounded-pill shadow-hover">
+                            Confirm & Pay <i class="bi bi-arrow-right-circle ms-1"></i>
                         </button>
-
                         <a asp-controller="MenuItems" asp-action="Menu"
-                           class="btn btn-outline-secondary btn-lg fw-bold rounded-pill shadow-sm">
+                           class="btn btn-outline-secondary btn-lg fw-bold rounded-pill shadow-hover">
                             <i class="bi bi-arrow-left-circle me-1"></i> Back to Menu
                         </a>
                     </div>
+
                 </div>
 
                 <div class="card-footer text-center py-3 bg-light border-top">
-                    <small class="text-muted">🔒 Secure Checkout • 100% Payment Protection</small>
+                    <small class="text-muted">🔒 Secure Checkout • Powered by FoodSathi ©2025</small>
                 </div>
             </div>
         </div>
@@ -155,83 +150,115 @@
 
 <!-- ✅ Styling -->
 <style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
     .delivery-card, .payment-card {
         background-color: #fff;
         border: 2px solid #e9ecef;
-        border-radius: 12px;
-        padding: 1.2rem;
+        border-radius: 15px;
+        padding: 1.3rem;
         cursor: pointer;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     }
 
         .delivery-card:hover, .payment-card:hover {
             transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
             border-color: #198754;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
         }
 
         .delivery-card.active, .payment-card.active {
             border-color: #198754;
             background-color: #f6fff9;
-            box-shadow: 0 4px 15px rgba(25, 135, 84, 0.2);
+            box-shadow: 0 4px 15px rgba(25, 135, 84, 0.25);
         }
 
-    .animate-btn {
-        transition: all 0.3s ease;
+    .btn-gradient {
+        background: linear-gradient(135deg, #198754, #0dcaf0);
+        border: none;
+        color: #fff;
+        transition: all 0.3s ease-in-out;
     }
 
-        .animate-btn:hover {
-            transform: scale(1.05);
-            background-color: #157347 !important;
+        .btn-gradient:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
     textarea:focus {
         box-shadow: 0 0 10px rgba(25, 135, 84, 0.3);
         outline: none;
     }
+
+    .fade-in {
+        animation: fadeInUp 0.7s ease both;
+    }
+
+    @@keyframes fadeInUp {
+        0%
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
 </style>
 
 <!-- ✅ Script -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        const deliveryCards = document.querySelectorAll('.delivery-card');
+        const paymentCards = document.querySelectorAll('.payment-card');
+        const basePriceEl = document.getElementById('basePrice');
+        const finalTotalEl = document.getElementById('finalTotal');
+        const deliveryChargeEl = document.getElementById('deliveryCharge');
+        const selectedDeliveryEl = document.getElementById('selectedDeliveryOption');
+        const selectedPaymentEl = document.getElementById('selectedPaymentOption');
 
-        // Delivery option
-        document.querySelectorAll('.delivery-card').forEach(card => {
+        // Delivery Selection
+        deliveryCards.forEach(card => {
             card.addEventListener('click', () => {
-                document.querySelectorAll('.delivery-card').forEach(c => c.classList.remove('active'));
+                deliveryCards.forEach(c => c.classList.remove('active'));
                 card.classList.add('active');
-                const selected = card.dataset.value;
-                const charge = parseFloat(card.dataset.charge) || 0;
-                const basePrice = parseFloat(document.getElementById('basePrice').textContent);
-                const finalTotal = basePrice + charge;
-                document.getElementById('selectedDeliveryOption').value = selected;
-                document.getElementById('deliveryCharge').textContent = charge.toFixed(2);
-                document.getElementById('finalTotal').textContent = finalTotal.toFixed(2);
+                const charge = parseFloat(card.dataset.charge);
+                const basePrice = parseFloat(basePriceEl.textContent);
+                const total = basePrice + charge;
+                deliveryChargeEl.textContent = charge.toFixed(2);
+                finalTotalEl.textContent = total.toFixed(2);
+                selectedDeliveryEl.value = card.dataset.value;
             });
         });
 
-        // Payment option
-        document.querySelectorAll('.payment-card').forEach(card => {
+        // Payment Selection
+        paymentCards.forEach(card => {
             card.addEventListener('click', () => {
-                document.querySelectorAll('.payment-card').forEach(c => c.classList.remove('active'));
+                paymentCards.forEach(c => c.classList.remove('active'));
                 card.classList.add('active');
-                document.getElementById('selectedPaymentOption').value = card.dataset.value;
+                selectedPaymentEl.value = card.dataset.value;
             });
         });
 
-        // Proceed button
-        const proceedBtn = document.getElementById('proceedPaymentBtn');
-        proceedBtn.addEventListener('click', () => {
-            const paymentOption = document.getElementById('selectedPaymentOption').value;
+        // Confirm Payment
+        document.getElementById('confirmOrderBtn').addEventListener('click', () => {
             const orderId = '@Model.OrderID';
-            const finalTotal = document.getElementById('finalTotal').textContent;
+            const finalTotal = finalTotalEl.textContent;
+            const method = selectedPaymentEl.value;
 
-            if (paymentOption === "Card") {
+            if (method === "Card") {
                 window.location.href = `/Payment/PayByCard/${orderId}?amount=${finalTotal}`;
-            } else if (paymentOption === "Wallet") {
+            } else if (method === "Wallet") {
                 window.location.href = `/Payment/PayByWallet/${orderId}?amount=${finalTotal}`;
-            } else if (paymentOption === "Cash") {
+            } else {
                 window.location.href = `/Payment/CashOnDelivery/${orderId}`;
             }
         });
