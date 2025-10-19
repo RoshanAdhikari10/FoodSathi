@@ -4,35 +4,35 @@
     ViewData["Title"] = "Customer Feedback";
 }
 
-<div class="container py-5">
+<div class="container py-5 fade-in">
 
     <!-- Header -->
     <div class="text-center mb-5">
-        <div class="bg-success bg-opacity-15 rounded-circle d-inline-flex align-items-center justify-content-center"
-             style="width:100px;height:100px;">
-            <i class="bi bi-chat-heart fs-1 text-success"></i>
+        <div class="bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center shadow-glow"
+             style="width:110px;height:110px;">
+            <i class="bi bi-chat-heart-fill fs-1 text-light"></i>
         </div>
-        <h2 class="fw-bold text-gradient mt-3">We Value Your Feedback</h2>
-        <p class="text-muted fs-6">Your insights help us make FoodSathi even better 🌿</p>
+        <h2 class="fw-bold text-gradient mt-4">We Value Your Feedback</h2>
+        <p class="text-muted fs-6 mb-0">Your insights help us make <span class="fw-semibold text-success">FoodSathi</span> even better 🌿</p>
     </div>
 
     <!-- Feedback Form Card -->
-    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5 mb-5">
-        <form id="feedbackForm" class="mx-auto" style="max-width:650px;">
-            <div class="row g-3">
+    <div class="card border-0 glass-card shadow-xl rounded-5 p-5 mb-5 mx-auto" style="max-width:720px;">
+        <form id="feedbackForm">
+            <div class="row g-4">
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Your Name / Email</label>
-                    <input type="text" name="UserName" class="form-control form-control-lg rounded-3" required />
+                    <input type="text" name="UserName" class="form-control form-control-lg rounded-4 shadow-sm" placeholder="John Doe / example@mail.com" required />
                 </div>
                 <div class="col-md-6">
                     <label class="form-label fw-semibold">Product Name</label>
-                    <input type="text" name="ProductName" class="form-control form-control-lg rounded-3" required />
+                    <input type="text" name="ProductName" class="form-control form-control-lg rounded-4 shadow-sm" placeholder="E.g., Paneer Momo" required />
                 </div>
             </div>
 
-            <div class="my-3 text-center">
-                <label class="form-label fw-semibold d-block">Your Rating</label>
-                <div id="starRating" class="fs-2 text-warning d-flex justify-content-center gap-2">
+            <div class="my-4 text-center">
+                <label class="form-label fw-semibold d-block mb-2">Your Rating</label>
+                <div id="starRating" class="fs-1 text-warning d-flex justify-content-center gap-3">
                     @for (int i = 1; i <= 5; i++)
                     {
                         <i class="bi bi-star" data-value="@i"></i>
@@ -43,11 +43,11 @@
 
             <div class="mb-4">
                 <label class="form-label fw-semibold">Your Review</label>
-                <textarea name="Review" class="form-control rounded-3" rows="4" required></textarea>
+                <textarea name="Review" class="form-control rounded-4 shadow-sm" rows="4" placeholder="Share your experience..." required></textarea>
             </div>
 
             <div class="text-center">
-                <button type="submit" class="btn btn-success btn-lg px-5 shadow-sm rounded-pill">
+                <button type="submit" class="btn btn-gradient btn-lg px-5 py-2 rounded-pill shadow-hover">
                     <i class="bi bi-send-fill me-2"></i>Submit Feedback
                 </button>
             </div>
@@ -57,16 +57,17 @@
     <!-- Average Rating -->
     @if (Model.Any())
     {
-        <div class="text-center mb-5">
-            <div class="card border-0 shadow-sm rounded-4 p-4 mx-auto" style="max-width:400px;">
-                <h5 class="fw-bold text-success mb-2">⭐ Average Rating</h5>
+        <div class="text-center mb-5 fade-in">
+            <div class="card glass-card border-0 rounded-5 shadow-lg p-4 mx-auto" style="max-width:420px;">
+                <h5 class="fw-bold text-success mb-3">⭐ Average Rating</h5>
                 <div class="fs-3 text-warning mb-2">
                     @for (int i = 0; i < Math.Round(ViewBag.AvgRating); i++)
                     {
                         <i class="bi bi-star-fill"></i>
                     }
                 </div>
-                <p class="text-muted mb-0">@ViewBag.AvgRating.ToString("0.0") / 5 from @Model.Count() reviews</p>
+                <h3 class="fw-bold mb-1 text-dark">@ViewBag.AvgRating.ToString("0.0") / 5</h3>
+                <p class="text-muted mb-0 small">Based on @Model.Count() verified reviews</p>
             </div>
         </div>
     }
@@ -77,10 +78,10 @@
         @foreach (var f in Model)
         {
             <div class="col-sm-12 col-md-6 col-lg-4">
-                <div class="card border-0 shadow-lg rounded-4 p-4 h-100 hover-card">
+                <div class="card border-0 glass-card rounded-4 p-4 h-100 hover-card shadow-hover">
                     <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap">
                         <h5 class="text-success fw-semibold mb-0 text-truncate">@f.ProductName</h5>
-                        <small class="text-muted mb-1">@f.Date.ToString("MMM dd, yyyy")</small>
+                        <small class="text-muted">@f.Date.ToString("MMM dd, yyyy")</small>
                     </div>
                     <div class="text-warning mb-2 fs-5">
                         @for (int i = 0; i < f.Rating; i++)
@@ -88,7 +89,7 @@
                             <i class="bi bi-star-fill"></i>
                         }
                     </div>
-                    <p class="text-muted mb-2">@f.Review</p>
+                    <p class="text-muted mb-3">"@f.Review"</p>
                     <small class="text-secondary">– @f.UserName</small>
                 </div>
             </div>
@@ -99,14 +100,14 @@
 <!-- Thank You Modal -->
 <div class="modal fade" id="thankYouModal" tabindex="-1" aria-labelledby="thankYouLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center border-0 rounded-4 shadow-lg">
+        <div class="modal-content text-center border-0 rounded-5 shadow-lg glass-card">
             <div class="modal-body p-5">
                 <div class="text-success mb-3">
                     <i class="bi bi-check-circle-fill fs-1"></i>
                 </div>
                 <h4 class="fw-bold text-success mb-2">Thank You!</h4>
                 <p class="text-muted">Your feedback has been successfully submitted 💚</p>
-                <button type="button" class="btn btn-success rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-gradient rounded-pill px-4 py-2 shadow-hover" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -149,6 +150,7 @@
                         const modal = new bootstrap.Modal(document.getElementById('thankYouModal'));
                         modal.show();
                         this.reset();
+                        rating = 0;
                         stars.forEach(s => s.classList.replace('bi-star-fill', 'bi-star'));
                         setTimeout(() => location.reload(), 2500);
                     } else {
@@ -159,41 +161,94 @@
     </script>
 
     <style>
+        /* 🌈 Premium Styles */
+        body {
+            background: linear-gradient(135deg, #f9fafc, #eef4f8);
+        }
+
         .text-gradient {
-            background: linear-gradient(135deg, #6610f2, #0d6efd);
+            background: linear-gradient(135deg, #0d6efd, #6610f2);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .hover-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        .bg-gradient {
+            background: linear-gradient(135deg, #198754, #28a745);
+        }
+
+        .btn-gradient {
+            background: linear-gradient(135deg, #198754, #0dcaf0);
+            color: #fff;
+            border: none;
             transition: all 0.3s ease-in-out;
+        }
+
+            .btn-gradient:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        .hover-card {
+            transition: all 0.3s ease-in-out;
+        }
+
+            .hover-card:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            }
+
+        .shadow-hover {
+            transition: all 0.3s ease-in-out;
+        }
+
+            .shadow-hover:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            }
+
+        .shadow-glow {
+            box-shadow: 0 0 20px rgba(25, 135, 84, 0.5);
         }
 
         #starRating i {
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: transform 0.25s ease, color 0.25s ease;
         }
 
             #starRating i:hover {
-                transform: scale(1.3);
+                transform: scale(1.2);
             }
 
-        .card-text {
-            font-size: 0.95rem;
-            color: #555;
+        .fade-in {
+            animation: fadeInUp 0.8s ease both;
+        }
+
+        @@keyframes fadeInUp {
+            0%
+
+        {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         }
 
         @@media (max-width: 576px) {
             #starRating i
 
         {
-            font-size: 1.5rem;
-        }
-
-        .card-text {
-            font-size: 0.9rem;
+            font-size: 1.6rem;
         }
 
         }
