@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FoodSathi.Data;
 using FoodSathi.Models;
+using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 
 namespace FoodSathi.Controllers
@@ -14,15 +15,21 @@ namespace FoodSathi.Controllers
             _context = context;
         }
 
-        // Display Feedback page
-        public IActionResult feedback()
+        // ===========================
+        // 🔹 FRONTEND SECTION (for users)
+        // ===========================
+        // Show feedback page
+        public IActionResult Feedback()
         {
-            var feedbacks = _context.Feedbacks.OrderByDescending(f => f.Date).ToList();
+            var feedbacks = _context.Feedbacks
+                .OrderByDescending(f => f.Date)
+                .ToList();
+
             ViewBag.AvgRating = feedbacks.Count > 0 ? feedbacks.Average(f => f.Rating) : 0;
             return View(feedbacks);
         }
 
-        // Submit feedback
+        // Handle feedback submission
         [HttpPost]
         public IActionResult SubmitFeedback(Feedback feedback)
         {
@@ -34,6 +41,39 @@ namespace FoodSathi.Controllers
             }
             return Json(new { success = false });
         }
+
+
+        // ===========================
+        // 🔹 ADMIN SECTION (manage feedback)
+        // ===========================
+        [Authorize(Roles = "Admin")]
+        public IActionResult Index()
+        {
+            var feedbacks = _context.Feedbacks
+                .OrderByDescending(f => f.Date)
+                .ToList();
+            return View(feedbacks);
+        }
+
+        [Authorize(Roles = "Admin")]
+        public IActionResult Details(int id)
+        {
+            var feedback = _context.Feedbacks.Find(id);
+            if (feedback == null) return NotFound();
+            return View(feedback);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var feedback = _context.Feedbacks.Find(id);
+            if (feedback != null)
+            {
+                _context.Feedbacks.Remove(feedback);
+                _context.SaveChanges();
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
-
