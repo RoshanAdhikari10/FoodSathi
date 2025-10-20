@@ -29,10 +29,9 @@ namespace FoodSathi.Controllers
         // ✅ Home Page (Dynamic Featured Dishes)
         public async Task<IActionResult> Index()
         {
-   
             var featuredItems = await _menuContext.MenuItems
-                .OrderByDescending(m => m.ItemID)
-                .Take(3)
+                .OrderByDescending(m => m.ItemID) // latest items first
+                .Take(3)                          // pick top 3
                 .ToListAsync();
 
             return View(featuredItems);
