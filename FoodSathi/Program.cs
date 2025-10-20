@@ -5,18 +5,23 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// =========================
 // ✅ Database connections
+// =========================
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                       ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
 builder.Services.AddDbContext<MenuDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Menupage")));
 
+// =========================
+// ✅ Add Identity with Roles
+// =========================
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// ✅ Add Identity with Roles
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
@@ -34,7 +39,9 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
+// =========================
 // ✅ Middleware
+// =========================
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -50,7 +57,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // ✅ must be before Authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
@@ -68,13 +75,25 @@ app.MapControllerRoute(
 app.MapRazorPages()
    .WithStaticAssets();
 
+// =========================
+// ✅ Ensure MenuDB tables exist
+// =========================
+using (var scope = app.Services.CreateScope())
+{
+    var menuDb = scope.ServiceProvider.GetRequiredService<MenuDbContext>();
+    menuDb.Database.EnsureCreated(); // Creates tables if missing
+}
+
+// =========================
 // ✅ Run role/user seeding after build
+// =========================
 await SeedRolesAndAdminAsync(app);
 
 app.Run();
 
-
-// 🔧 Helper method
+// =========================
+// 🔧 Helper method for seeding roles/admin
+// =========================
 async Task SeedRolesAndAdminAsync(WebApplication app)
 {
     using var scope = app.Services.CreateScope();
