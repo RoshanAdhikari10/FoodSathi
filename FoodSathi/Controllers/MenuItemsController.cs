@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FoodSathi.Models;
 
@@ -17,67 +18,79 @@ namespace FoodSathi.Controllers
             _context = context;
         }
 
-        // ✅ Home/Menu page
-        public async Task<IActionResult> Menu(string category, string search)
+        // GET: MenuItems
+        public async Task<IActionResult> Index()
         {
-            var items = from m in _context.MenuItems select m;
-
-            if (!string.IsNullOrEmpty(category))
-                items = items.Where(m => m.Category == category);
-
-            if (!string.IsNullOrEmpty(search))
-                items = items.Where(m => m.ItemName.Contains(search) || m.Description.Contains(search));
-
-            ViewBag.Categories = await _context.MenuItems
-                .Select(m => m.Category)
-                .Distinct()
-                .ToListAsync();
-
-            return View(await items.ToListAsync());
+            return View(await _context.MenuItems.ToListAsync());
         }
 
-        // ✅ CRUD Actions (same as yours)
+        // GET: MenuItems/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-            var menuItem = await _context.MenuItems.FirstOrDefaultAsync(m => m.ItemID == id);
-            if (menuItem == null) return NotFound();
+            var menuItem = await _context.MenuItems
+                .FirstOrDefaultAsync(m => m.ItemID == id);
+            if (menuItem == null)
+            {
+                return NotFound();
+            }
 
             return View(menuItem);
         }
 
-        public IActionResult Create() => View();
+        // GET: MenuItems/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
 
+        // POST: MenuItems/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ItemID,ItemName,Description,Price,ImageURL,IsAvailable,Category")] MenuItem menuItem)
+        public async Task<IActionResult> Create([Bind("ItemID,ItemName,Description,Price,ImagePath,Category,IsAvailable")] MenuItem menuItem)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(menuItem);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "✅ Menu item added successfully!";
-                return RedirectToAction(nameof(Menu));
+                return RedirectToAction(nameof(Index));
             }
             return View(menuItem);
         }
 
+        // GET: MenuItems/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
 
             var menuItem = await _context.MenuItems.FindAsync(id);
-            if (menuItem == null) return NotFound();
-
+            if (menuItem == null)
+            {
+                return NotFound();
+            }
             return View(menuItem);
         }
 
+        // POST: MenuItems/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ItemID,ItemName,Description,Price,ImageURL,IsAvailable,Category")] MenuItem menuItem)
+        public async Task<IActionResult> Edit(int id, [Bind("ItemID,ItemName,Description,Price,ImagePath,Category,IsAvailable")] MenuItem menuItem)
         {
-            if (id != menuItem.ItemID) return NotFound();
+            if (id != menuItem.ItemID)
+            {
+                return NotFound();
+            }
 
             if (ModelState.IsValid)
             {
@@ -85,30 +98,43 @@ namespace FoodSathi.Controllers
                 {
                     _context.Update(menuItem);
                     await _context.SaveChangesAsync();
-                    TempData["SuccessMessage"] = "✅ Menu item updated successfully!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!_context.MenuItems.Any(e => e.ItemID == menuItem.ItemID))
+                    if (!MenuItemExists(menuItem.ItemID))
+                    {
                         return NotFound();
-                    else throw;
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
-                return RedirectToAction(nameof(Menu));
+                return RedirectToAction(nameof(Index));
             }
             return View(menuItem);
         }
 
+        // GET: MenuItems/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-            var menuItem = await _context.MenuItems.FirstOrDefaultAsync(m => m.ItemID == id);
-            if (menuItem == null) return NotFound();
+            var menuItem = await _context.MenuItems
+                .FirstOrDefaultAsync(m => m.ItemID == id);
+            if (menuItem == null)
+            {
+                return NotFound();
+            }
 
             return View(menuItem);
         }
 
-        [HttpPost, ActionName("DeleteConfirmed")]
+        // POST: MenuItems/Delete/5
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -116,10 +142,15 @@ namespace FoodSathi.Controllers
             if (menuItem != null)
             {
                 _context.MenuItems.Remove(menuItem);
-                TempData["SuccessMessage"] = "🗑️ Menu item deleted successfully!";
-                await _context.SaveChangesAsync();
             }
-            return RedirectToAction(nameof(Menu));
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool MenuItemExists(int id)
+        {
+            return _context.MenuItems.Any(e => e.ItemID == id);
         }
     }
 }
