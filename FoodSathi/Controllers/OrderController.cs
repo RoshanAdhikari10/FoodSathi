@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using FoodSathi.Models;
+﻿using FoodSathi.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FoodSathi.Controllers
 {
+    [Authorize(Roles = "User")]
     public class OrderController : Controller
     {
         private readonly MenuDbContext _context;
