@@ -107,28 +107,12 @@
                         </p>
                         <p class="d-flex justify-content-between">
                             <span>Subtotal:</span>
-                            <span id="subtotal" class="fw-semibold">Rs. @grandTotal</span>
-                        </p>
-
-                        <!-- Delivery Selection -->
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold text-primary">🚚 Delivery Option</label>
-                            <select id="deliveryOption" class="form-select shadow-sm">
-                                <option value="0" selected>Free Delivery (3–5 days)</option>
-                                <option value="100">Express (1–2 days) — Rs. 100</option>
-                                <option value="50">Standard (2–4 days) — Rs. 50</option>
-                                <option value="-50">Pickup (Store) — Save Rs. 50</option>
-                            </select>
-                        </div>
-
-                        <p class="d-flex justify-content-between">
-                            <span>Delivery:</span>
-                            <span id="deliveryCharge" class="fw-semibold text-info">Rs. 0</span>
+                            <span class="fw-semibold text-success">Rs. @grandTotal</span>
                         </p>
                         <hr />
                         <p class="d-flex justify-content-between fs-5 fw-bold text-primary">
                             <span>Grand Total:</span>
-                            <span id="finalTotal" class="text-success">Rs. @grandTotal</span>
+                            <span class="text-success">Rs. @grandTotal</span>
                         </p>
 
                         <a asp-controller="Order" asp-action="Checkout"
@@ -142,39 +126,6 @@
         </div>
     }
 </div>
-
-@section Scripts {
-    <script>
-        const deliverySelect = document.getElementById("deliveryOption");
-        const deliveryChargeText = document.getElementById("deliveryCharge");
-        const finalTotalText = document.getElementById("finalTotal");
-        const subtotalValue = @grandTotal;
-
-        function formatCurrency(amount) {
-            return "Rs. " + amount.toLocaleString("en-IN");
-        }
-
-        function updateTotals() {
-            const deliveryCharge = parseInt(deliverySelect.value);
-            const finalTotal = subtotalValue + deliveryCharge;
-
-            finalTotalText.style.transition = "transform 0.2s ease, color 0.2s ease";
-            finalTotalText.style.transform = "scale(1.2)";
-            finalTotalText.style.color = "#198754";
-
-            setTimeout(() => {
-                finalTotalText.style.transform = "scale(1)";
-                finalTotalText.style.color = "";
-            }, 200);
-
-            deliveryChargeText.innerText = formatCurrency(deliveryCharge);
-            finalTotalText.innerText = formatCurrency(finalTotal);
-        }
-
-        updateTotals();
-        deliverySelect.addEventListener("change", updateTotals);
-    </script>
-}
 
 <style>
     select.form-select:focus {
@@ -193,33 +144,27 @@
 
     /* Responsive adjustments */
     @@media (max-width: 992px) {
-        table img
+        table img {
+            width: 60px;
+            height: 45px;
+        }
 
-    {
-        width: 60px;
-        height: 45px;
-    }
-
-    .table td, .table th {
-        font-size: 0.9rem;
-    }
-
+        .table td, .table th {
+            font-size: 0.9rem;
+        }
     }
 
     @@media (max-width: 576px) {
-        .card-body
+        .card-body {
+            padding: 0.8rem !important;
+        }
 
-    {
-        padding: 0.8rem !important;
-    }
+        .btn {
+            font-size: 0.9rem;
+        }
 
-    .btn {
-        font-size: 0.9rem;
-    }
-
-    table td, table th {
-        white-space: nowrap;
-    }
-
+        table td, table th {
+            white-space: nowrap;
+        }
     }
 </style>
