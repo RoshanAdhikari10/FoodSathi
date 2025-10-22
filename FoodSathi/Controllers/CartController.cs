@@ -1,9 +1,11 @@
 ﻿using FoodSathi.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FoodSathi.Controllers
 {
+    [Authorize(Roles = "User")]
     public class CartController : Controller
     {
         private readonly MenuDbContext _context;
