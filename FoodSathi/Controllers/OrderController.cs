@@ -1,6 +1,7 @@
 ﻿using FoodSathi.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace FoodSathi.Controllers
 {
@@ -14,6 +15,7 @@ namespace FoodSathi.Controllers
             _context = context;
         }
 
+        // 🛒 From "Buy Now" button
         [HttpPost]
         public IActionResult BuyNow(int itemId, int quantity)
         {
@@ -32,32 +34,74 @@ namespace FoodSathi.Controllers
             _context.Orders.Add(order);
             _context.SaveChanges();
 
-            // ✅ Redirect with ItemName in URL
-            return RedirectToAction("Checkout", new { orderName = order.ItemName });
+            return RedirectToAction("Checkout", new { orderId = order.OrderID });
         }
 
+        // ✅ Checkout for single or multiple items
+        [HttpGet]
+        public IActionResult Checkout(int? orderId = null, bool fromCart = false)
+        {
+            var viewModel = new CheckoutViewModel();
+
+            if (fromCart)
+            {
+                // ✅ From cart
+                var cartItems = _context.Carts
+                    .Include(c => c.MenuItem)
+                    .ToList();
+
+                if (cartItems == null || !cartItems.Any())
+                    return RedirectToAction("Menu", "MenuItems");
+
+                viewModel.FromCart = true;
+                viewModel.CartItems = cartItems;
+                viewModel.TotalAmount = cartItems.Sum(c => c.MenuItem.Price * c.Quantity);
+            }
+            else
+            {
+                // ✅ Single item (Buy Now)
+                var order = _context.Orders.FirstOrDefault(o => o.OrderID == orderId);
+                if (order == null)
+                    return RedirectToAction("Menu", "MenuItems");
+
+                viewModel.FromCart = false;
+                viewModel.SingleOrder = order;
+                viewModel.TotalAmount = order.TotalPrice;
+            }
+
+            return View(viewModel);
+        }
+
+        // ✅ Proceed to payment (from checkout)
+        [HttpPost]
+        public IActionResult ProceedToPayment(int? orderId, bool fromCart)
+        {
+            if (fromCart)
+            {
+                var cartItems = _context.Carts.Include(c => c.MenuItem).ToList();
+                if (!cartItems.Any())
+                    return RedirectToAction("Menu", "MenuItems");
+
+                decimal total = cartItems.Sum(c => c.MenuItem.Price * c.Quantity);
+                return RedirectToAction("CartPayment", "Payment", new { amount = total });
+            }
+            else
+            {
+                var order = _context.Orders.FirstOrDefault(o => o.OrderID == orderId);
+                if (order == null) return RedirectToAction("Menu", "MenuItems");
+
+                return RedirectToAction("PayByCard", "Payment", new { orderId = order.OrderID, amount = order.TotalPrice });
+            }
+        }
+
+        // ✅ All orders list
         public IActionResult Orders()
         {
-            // Assuming you have an Order model in your database
-            var orders = _context.Orders.ToList();
+            var orders = _context.Orders
+                .OrderByDescending(o => o.OrderDate)
+                .ToList();
             return View(orders);
         }
-
-
-        [HttpGet("Order/Checkout/{orderName}")]
-        public IActionResult Checkout(string orderName)
-        {
-            var order = _context.Orders
-                .Where(o => o.ItemName == orderName)
-                .OrderByDescending(o => o.OrderDate)  // ✅ Always latest
-                .FirstOrDefault();
-
-            if (order == null) return NotFound();
-
-            return View(order);
-        }
-
-
 
         // ✅ Confirmation Page
         [HttpGet]
@@ -65,9 +109,7 @@ namespace FoodSathi.Controllers
         {
             var order = await _context.Orders.FindAsync(id);
             if (order == null)
-            {
                 return NotFound();
-            }
 
             return View(order);
         }
