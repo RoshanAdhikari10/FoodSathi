@@ -28,6 +28,10 @@ namespace FoodSathi.Controllers
                 ItemName = item.ItemName,
                 Quantity = quantity,
                 TotalPrice = item.Price * quantity,
+                TotalAmount = item.Price * quantity,
+                Address = string.Empty,
+                DeliveryOption = "Standard",
+                PaymentMethod = "Pending",
                 OrderDate = DateTime.Now
             };
 
@@ -39,38 +43,42 @@ namespace FoodSathi.Controllers
 
         // ✅ Checkout for single or multiple items
         [HttpGet]
-        public IActionResult Checkout(int? orderId = null, bool fromCart = false)
+        public IActionResult Checkout(int? orderId)
         {
-            var viewModel = new CheckoutViewModel();
-
-            if (fromCart)
+            if (orderId.HasValue)
             {
-                // ✅ From cart
+                var order = _context.Orders.FirstOrDefault(o => o.OrderID == orderId);
+                if (order == null) return NotFound();
+
+                var model = new CheckoutViewModel
+                {
+                    FromCart = false,
+                    SingleOrder = order,
+                    TotalAmount = order.TotalAmount
+                };
+
+                return View(model);
+            }
+            else
+            {
+                // 🛒 Checkout from Cart
                 var cartItems = _context.Carts
                     .Include(c => c.MenuItem)
                     .ToList();
 
-                if (cartItems == null || !cartItems.Any())
-                    return RedirectToAction("Menu", "MenuItems");
+                var total = cartItems.Sum(c => c.MenuItem.Price * c.Quantity);
 
-                viewModel.FromCart = true;
-                viewModel.CartItems = cartItems;
-                viewModel.TotalAmount = cartItems.Sum(c => c.MenuItem.Price * c.Quantity);
+                var model = new CheckoutViewModel
+                {
+                    FromCart = true,
+                    CartItems = cartItems,
+                    TotalAmount = total
+                };
+
+                return View(model);
             }
-            else
-            {
-                // ✅ Single item (Buy Now)
-                var order = _context.Orders.FirstOrDefault(o => o.OrderID == orderId);
-                if (order == null)
-                    return RedirectToAction("Menu", "MenuItems");
-
-                viewModel.FromCart = false;
-                viewModel.SingleOrder = order;
-                viewModel.TotalAmount = order.TotalPrice;
-            }
-
-            return View(viewModel);
         }
+
 
         // ✅ Proceed to payment (from checkout)
         [HttpPost]
@@ -113,5 +121,30 @@ namespace FoodSathi.Controllers
 
             return View(order);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ConfirmOrder(CheckoutViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("Checkout", model);
+            }
+
+            var newOrder = new Order
+            {
+                Address = model.Address,
+                DeliveryOption = model.DeliveryOption,
+                PaymentMethod = model.PaymentOption,
+                TotalAmount = model.TotalAmount,
+                OrderDate = DateTime.Now
+            };
+
+            _context.Orders.Add(newOrder);
+            _context.SaveChanges();
+
+            return RedirectToAction("OrderConfirmation", new { id = newOrder.OrderID });
+        }
+
     }
 }
