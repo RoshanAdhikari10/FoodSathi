@@ -1,7 +1,8 @@
-﻿@model FoodSathi.Models.Order
+﻿@model FoodSathi.Models.CheckoutViewModel
 
 @{
     ViewData["Title"] = "Checkout";
+    var fromCart = Model.FromCart;
 }
 
 <div class="container my-5 fade-in">
@@ -24,29 +25,53 @@
                         </h5>
 
                         <div class="order-summary">
-                            <div class="d-flex justify-content-between mb-2">
-                                <span><strong>Item:</strong></span>
-                                <span>@Model.ItemName</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span><strong>Quantity:</strong></span>
-                                <span>@Model.Quantity</span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span><strong>Subtotal:</strong></span>
-                                <span class="text-danger">Rs. <span id="basePrice">@Model.TotalPrice</span></span>
-                            </div>
-                            <div class="d-flex justify-content-between mb-2">
-                                <span><strong>Date:</strong></span>
-                                <span>@Model.OrderDate.ToString("MMM dd, yyyy hh:mm tt")</span>
-                            </div>
+                            @if (fromCart)
+                            {
+                                <table class="table table-bordered text-center align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Qty</th>
+                                            <th>Price</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.CartItems)
+                                        {
+                                            <tr>
+                                                <td>@item.MenuItem.ItemName</td>
+                                                <td>@item.Quantity</td>
+                                                <td>Rs. @item.MenuItem.Price</td>
+                                                <td><strong>Rs. @(item.MenuItem.Price* item.Quantity)</strong></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span><strong>Item:</strong></span>
+                                    <span>@Model.SingleOrder?.ItemName</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span><strong>Quantity:</strong></span>
+                                    <span>@Model.SingleOrder?.Quantity</span>
+                                </div>
+                                <div class="d-flex justify-content-between mb-2">
+                                    <span><strong>Subtotal:</strong></span>
+                                    <span class="text-danger">Rs. <span id="basePrice">@Model.TotalAmount</span></span>
+                                </div>
+                            }
+
                             <div class="d-flex justify-content-between mt-3 border-top pt-2">
                                 <span><strong>Delivery Charge:</strong></span>
                                 <span>Rs. <span id="deliveryCharge">0</span></span>
                             </div>
                             <div class="d-flex justify-content-between border-top pt-2">
                                 <span class="fw-bold">Final Total:</span>
-                                <span class="fw-bold text-success">Rs. <span id="finalTotal">@Model.TotalPrice</span></span>
+                                <span class="fw-bold text-success">Rs. <span id="finalTotal">@Model.TotalAmount</span></span>
                             </div>
                         </div>
                     </section>
@@ -58,41 +83,41 @@
                         </h5>
 
                         <div class="row g-3 delivery-options">
-                            <div class="col-12 col-md-4">
+                            <div class="col-md-4">
                                 <div class="delivery-card active" data-value="Standard" data-charge="0">
                                     <i class="bi bi-truck fs-3 text-success"></i>
                                     <h6 class="fw-bold mt-2">Standard</h6>
                                     <small class="text-muted">45–60 mins</small>
-                                    <div><span class="badge bg-success-subtle text-success">Free</span></div>
+                                    <span class="badge bg-success-subtle text-success">Free</span>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4">
+                            <div class="col-md-4">
                                 <div class="delivery-card" data-value="Express" data-charge="100">
                                     <i class="bi bi-lightning-charge-fill fs-3 text-danger"></i>
                                     <h6 class="fw-bold mt-2">Express</h6>
                                     <small class="text-muted">20–30 mins</small>
-                                    <div><span class="badge bg-danger-subtle text-danger">Rs. 100</span></div>
+                                    <span class="badge bg-danger-subtle text-danger">Rs. 100</span>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4">
+                            <div class="col-md-4">
                                 <div class="delivery-card" data-value="Pickup" data-charge="0">
                                     <i class="bi bi-shop fs-3 text-primary"></i>
                                     <h6 class="fw-bold mt-2">Pickup</h6>
                                     <small class="text-muted">Collect from outlet</small>
-                                    <div><span class="badge bg-primary-subtle text-primary">No Charge</span></div>
+                                    <span class="badge bg-primary-subtle text-primary">No Charge</span>
                                 </div>
                             </div>
                         </div>
                         <input type="hidden" id="selectedDeliveryOption" name="DeliveryOption" value="Standard" />
                     </section>
 
-                    <!-- 🏠 Delivery Address -->
+                    <!-- 🏠 Address -->
                     <section class="mb-5">
                         <h5 class="fw-bold text-dark mb-3 border-bottom pb-2">
                             <i class="bi bi-geo-alt-fill me-2 text-danger"></i>Delivery Address
                         </h5>
-                        <textarea id="deliveryAddress" name="Address" class="form-control rounded-3 p-3" rows="3"
-                                  placeholder="Enter your complete address..." required></textarea>
+                        <textarea id="deliveryAddress" class="form-control rounded-3 p-3 shadow-sm"
+                                  placeholder="Enter your full address..." rows="3" required></textarea>
                     </section>
 
                     <!-- 💳 Payment Options -->
@@ -102,34 +127,37 @@
                         </h5>
 
                         <div class="row g-3 text-center payment-options">
-                            <div class="col-12 col-md-4">
+                            <div class="col-md-4">
                                 <div class="payment-card active" data-value="Card">
-                                    <i class="bi bi-credit-card-fill fs-3 text-primary"></i>
-                                    <h6 class="fw-bold mt-2">Card</h6>
+                                    <img src="/images/card.png" alt="Card" class="img-fluid mb-2" style="height: 40px;">
+                                    <h6 class="fw-bold mt-1">Card</h6>
                                     <small class="text-muted">Visa / MasterCard</small>
+                                    <div class="checkmark"><i class="bi bi-check-circle-fill text-success"></i></div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4">
+                            <div class="col-md-4">
                                 <div class="payment-card" data-value="Wallet">
-                                    <i class="bi bi-wallet2 fs-3 text-success"></i>
-                                    <h6 class="fw-bold mt-2">Digital Wallet</h6>
+                                    <img src="/images/esewa.png" alt="eSewa" class="img-fluid mb-2" style="height: 40px;">
+                                    <h6 class="fw-bold mt-1">Digital Wallet</h6>
                                     <small class="text-muted">eSewa / Khalti</small>
+                                    <div class="checkmark"><i class="bi bi-check-circle-fill text-success"></i></div>
                                 </div>
                             </div>
-                            <div class="col-12 col-md-4">
+                            <div class="col-md-4">
                                 <div class="payment-card" data-value="Cash">
-                                    <i class="bi bi-cash-coin fs-3 text-secondary"></i>
-                                    <h6 class="fw-bold mt-2">Cash on Delivery</h6>
-                                    <small class="text-muted">Pay on arrival</small>
+                                    <img src="/images/cash.png" alt="Cash" class="img-fluid mb-2" style="height: 40px;">
+                                    <h6 class="fw-bold mt-1">Cash on Delivery</h6>
+                                    <small class="text-muted">Pay when delivered</small>
+                                    <div class="checkmark"><i class="bi bi-check-circle-fill text-success"></i></div>
                                 </div>
                             </div>
                         </div>
-                        <input type="hidden" id="selectedPaymentOption" name="PaymentOption" value="Card" />
+                        <input type="hidden" id="selectedPaymentOption" value="Card" />
                     </section>
 
-                    <!-- ✅ Action Buttons -->
+                    <!-- ✅ Confirm -->
                     <div class="d-grid gap-3">
-                        <button id="confirmOrderBtn" type="button" class="btn btn-gradient btn-lg fw-bold rounded-pill shadow-hover">
+                        <button id="confirmOrderBtn" class="btn btn-gradient btn-lg fw-bold rounded-pill shadow-hover">
                             Confirm & Pay <i class="bi bi-arrow-right-circle ms-1"></i>
                         </button>
                         <a asp-controller="MenuItems" asp-action="Menu"
@@ -137,7 +165,6 @@
                             <i class="bi bi-arrow-left-circle me-1"></i> Back to Menu
                         </a>
                     </div>
-
                 </div>
 
                 <div class="card-footer text-center py-3 bg-light border-top">
@@ -148,119 +175,123 @@
     </div>
 </div>
 
-<!-- ✅ Styling -->
-<style>
-    .glass-card {
-        background: rgba(255, 255, 255, 0.9);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.25);
-    }
-
-    .delivery-card, .payment-card {
-        background-color: #fff;
-        border: 2px solid #e9ecef;
-        border-radius: 15px;
-        padding: 1.3rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-        .delivery-card:hover, .payment-card:hover {
-            transform: translateY(-4px);
-            border-color: #198754;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-        }
-
-        .delivery-card.active, .payment-card.active {
-            border-color: #198754;
-            background-color: #f6fff9;
-            box-shadow: 0 4px 15px rgba(25, 135, 84, 0.25);
-        }
-
-    .btn-gradient {
-        background: linear-gradient(135deg, #198754, #0dcaf0);
-        border: none;
-        color: #fff;
-        transition: all 0.3s ease-in-out;
-    }
-
-        .btn-gradient:hover {
-            transform: scale(1.03);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-        }
-
-    textarea:focus {
-        box-shadow: 0 0 10px rgba(25, 135, 84, 0.3);
-        outline: none;
-    }
-
-    .fade-in {
-        animation: fadeInUp 0.7s ease both;
-    }
-
-    @@keyframes fadeInUp {
-        0%
-
-    {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    }
-</style>
-
 <!-- ✅ Script -->
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const deliveryCards = document.querySelectorAll('.delivery-card');
-        const paymentCards = document.querySelectorAll('.payment-card');
-        const basePriceEl = document.getElementById('basePrice');
-        const finalTotalEl = document.getElementById('finalTotal');
-        const deliveryChargeEl = document.getElementById('deliveryCharge');
-        const selectedDeliveryEl = document.getElementById('selectedDeliveryOption');
-        const selectedPaymentEl = document.getElementById('selectedPaymentOption');
+    document.addEventListener("DOMContentLoaded", () => {
+        const deliveryCards = document.querySelectorAll(".delivery-card");
+        const paymentCards = document.querySelectorAll(".payment-card");
+        const deliveryChargeEl = document.getElementById("deliveryCharge");
+        const finalTotalEl = document.getElementById("finalTotal");
+        const confirmBtn = document.getElementById("confirmOrderBtn");
 
-        // Delivery Selection
+        let basePrice = parseFloat("@Model.TotalAmount");
+        let selectedPayment = "Card";
+        let selectedDelivery = "Standard";
+
         deliveryCards.forEach(card => {
-            card.addEventListener('click', () => {
-                deliveryCards.forEach(c => c.classList.remove('active'));
-                card.classList.add('active');
+            card.addEventListener("click", () => {
+                deliveryCards.forEach(c => c.classList.remove("active"));
+                card.classList.add("active");
+                selectedDelivery = card.dataset.value;
+
                 const charge = parseFloat(card.dataset.charge);
-                const basePrice = parseFloat(basePriceEl.textContent);
-                const total = basePrice + charge;
                 deliveryChargeEl.textContent = charge.toFixed(2);
-                finalTotalEl.textContent = total.toFixed(2);
-                selectedDeliveryEl.value = card.dataset.value;
+                finalTotalEl.textContent = (basePrice + charge).toFixed(2);
             });
         });
 
-        // Payment Selection
         paymentCards.forEach(card => {
-            card.addEventListener('click', () => {
-                paymentCards.forEach(c => c.classList.remove('active'));
-                card.classList.add('active');
-                selectedPaymentEl.value = card.dataset.value;
+            card.addEventListener("click", () => {
+                paymentCards.forEach(c => c.classList.remove("active"));
+                card.classList.add("active");
+                selectedPayment = card.dataset.value;
             });
         });
 
-        // Confirm Payment
-        document.getElementById('confirmOrderBtn').addEventListener('click', () => {
-            const orderId = '@Model.OrderID';
-            const finalTotal = finalTotalEl.textContent;
-            const method = selectedPaymentEl.value;
+        confirmBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+            const total = document.getElementById("finalTotal").textContent;
+            const orderId = "@Model.SingleOrder?.OrderID";
 
-            if (method === "Card") {
-                window.location.href = `/Payment/PayByCard/${orderId}?amount=${finalTotal}`;
-            } else if (method === "Wallet") {
-                window.location.href = `/Payment/PayByWallet/${orderId}?amount=${finalTotal}`;
+            if (selectedPayment === "Card") {
+                window.location.href = `/Payment/PayByCard/${orderId}?amount=${total}`;
+            } else if (selectedPayment === "Wallet") {
+                window.location.href = `/Payment/PayByWallet/${orderId}?amount=${total}`;
             } else {
                 window.location.href = `/Payment/CashOnDelivery/${orderId}`;
             }
         });
     });
 </script>
+
+<!-- 🎨 Styles -->
+<style>
+    .fade-in {
+        animation: fadeIn 0.6s ease-in-out;
+    }
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .delivery-card, .payment-card {
+        background: #fff;
+        border: 2px solid #dee2e6;
+        border-radius: 16px;
+        padding: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+        .delivery-card:hover, .payment-card:hover {
+            transform: translateY(-4px);
+            border-color: #0d6efd;
+            box-shadow: 0 4px 20px rgba(13,110,253,0.15);
+        }
+
+        .delivery-card.active, .payment-card.active {
+            border-color: #198754;
+            background-color: #f6fff8;
+        }
+
+    .checkmark {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        opacity: 0;
+        transition: opacity 0.2s;
+    }
+
+    .payment-card.active .checkmark {
+        opacity: 1;
+    }
+
+    .bg-gradient {
+        background: linear-gradient(135deg, #198754, #0d6efd);
+    }
+
+    .btn-gradient {
+        background: linear-gradient(90deg, #198754, #0d6efd);
+        color: white;
+        border: none;
+    }
+
+        .btn-gradient:hover {
+            background: linear-gradient(90deg, #157347, #0b5ed7);
+        }
+
+    .shadow-hover:hover {
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+</style>
