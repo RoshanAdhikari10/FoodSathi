@@ -1,191 +1,61 @@
 ﻿@{
-    ViewData["Title"] = "Card Payment - FoodSathi";
+    ViewData["Title"] = "Card Payment";
+    var orderId = ViewBag.OrderId;
+    var amount = ViewBag.Amount;
+    var fromCart = ViewBag.FromCart ?? false;
 }
 
-<div class="container my-5 d-flex justify-content-center align-items-center fade-in">
-    <div class="card border-0 shadow-lg rounded-5 glass-card p-5 text-center" style="max-width: 700px; width: 100%;">
+<div class="container my-5 d-flex justify-content-center align-items-center">
+    <div class="card shadow-lg border-0 rounded-4 p-4 text-center" style="max-width: 550px;">
+        <h3 class="fw-bold text-primary mb-4">💳 Card Payment</h3>
 
-        <!-- Header -->
-        <div class="mb-4">
-            <div class="rounded-circle bg-gradient d-inline-flex justify-content-center align-items-center shadow-glow"
-                 style="width: 90px; height: 90px;">
-                <i class="bi bi-credit-card-2-front text-light fs-1"></i>
-            </div>
-            <h3 class="fw-bold text-gradient mt-3 mb-2">Credit / Debit Card Payment</h3>
-            <p class="text-muted mb-0">Secure and encrypted payment for your FoodSathi order 🔒</p>
+        <div class="mb-3">
+            @if (!fromCart)
+            {
+                <p class="mb-1"><strong>Order ID:</strong> #@orderId</p>
+            }
+            <p class="mb-1"><strong>Total Amount:</strong> Rs. @amount</p>
         </div>
 
-        <!-- Simulated Payment Form -->
-        <form id="cardPaymentForm">
-            <div class="text-start mb-4">
-                <label class="form-label fw-semibold">Cardholder Name</label>
-                <input type="text" class="form-control form-control-lg rounded-4 shadow-sm"
-                       placeholder="John Doe" required />
+        <form asp-action="@(fromCart ? "PayByCardConfirmFromCart" : "PayByCardConfirm")" method="post">
+            @if (!fromCart)
+            {
+                <input type="hidden" name="orderId" value="@orderId" />
+            }
+
+            <div class="form-group mb-4">
+                <label for="cardNumber" class="fw-semibold mb-2">Card Number</label>
+                <input type="text" class="form-control shadow-sm rounded-pill text-center" placeholder="XXXX-XXXX-XXXX-XXXX" required />
             </div>
 
-            <div class="text-start mb-4">
-                <label class="form-label fw-semibold">Card Number</label>
-                <div class="input-group">
-                    <span class="input-group-text bg-light"><i class="bi bi-credit-card text-success"></i></span>
-                    <input type="text" maxlength="19"
-                           class="form-control form-control-lg rounded-end-4 shadow-sm"
-                           placeholder="xxxx xxxx xxxx xxxx" required oninput="formatCardNumber(this)" />
-                </div>
+            <div class="form-group mb-4 d-flex gap-2">
+                <input type="text" class="form-control shadow-sm rounded-pill text-center" placeholder="MM/YY" required />
+                <input type="text" class="form-control shadow-sm rounded-pill text-center" placeholder="CVV" required />
             </div>
 
-            <div class="row mb-4 text-start">
-                <div class="col-md-6 mb-3 mb-md-0">
-                    <label class="form-label fw-semibold">Expiry Date</label>
-                    <input type="text" maxlength="5"
-                           class="form-control form-control-lg rounded-4 shadow-sm"
-                           placeholder="MM/YY" required oninput="formatExpiry(this)" />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold">CVV</label>
-                    <input type="password" maxlength="3"
-                           class="form-control form-control-lg rounded-4 shadow-sm"
-                           placeholder="123" required />
-                </div>
-            </div>
-
-            <div class="text-center mb-3">
-                <h5 class="fw-bold text-success mb-0">Amount to Pay</h5>
-                <h3 class="fw-bold text-dark">Rs. 1,250</h3>
-            </div>
-
-            <div class="text-center mt-4">
-                <button type="submit" class="btn btn-gradient btn-lg px-5 py-2 rounded-pill shadow-hover">
-                    <i class="bi bi-lock-fill me-2"></i> Pay Securely
-                </button>
-            </div>
+            <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold shadow-sm">
+                💸 Confirm Card Payment
+            </button>
         </form>
-    </div>
-</div>
 
-<!-- Payment Success Modal -->
-<div class="modal fade" id="paymentSuccessModal" tabindex="-1" aria-labelledby="paymentSuccessLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content text-center border-0 rounded-5 shadow-lg glass-card">
-            <div class="modal-body p-5">
-                <div class="text-success mb-3">
-                    <i class="bi bi-check-circle-fill fs-1"></i>
-                </div>
-                <h4 class="fw-bold text-success mb-2">Payment Successful!</h4>
-                <p class="text-muted">Your payment has been processed successfully 🎉</p>
-                <button type="button" class="btn btn-gradient rounded-pill px-4 py-2 shadow-hover" data-bs-dismiss="modal">
-                    <i class="bi bi-arrow-right-circle me-2"></i> Continue
-                </button>
-            </div>
+        <div class="mt-3">
+            @if (!fromCart)
+            {
+                <a asp-controller="Order" asp-action="Details" asp-route-id="@orderId" class="text-secondary text-decoration-none">
+                    ← Back to Order
+                </a>
+            }
+            else
+            {
+                <a asp-controller="Cart" asp-action="Index" class="text-secondary text-decoration-none">
+                    ← Back to Cart
+                </a>
+            }
         </div>
     </div>
 </div>
 
-<!-- 🔧 Script Section -->
-<script>
-    // Format Card Number
-    function formatCardNumber(input) {
-        input.value = input.value.replace(/\D/g, '')
-            .replace(/(.{4})/g, '$1 ')
-            .trim();
-    }
-
-    // Format Expiry Date (MM/YY)
-    function formatExpiry(input) {
-        input.value = input.value.replace(
-            /[^0-9\/]/g, ''
-        ).replace(/^(\d{2})(\d{0,2})$/, '$1/$2');
-    }
-
-    // Simulate Payment Processing
-    document.getElementById("cardPaymentForm").addEventListener("submit", function (e) {
-        e.preventDefault();
-
-        const btn = this.querySelector("button[type='submit']");
-        btn.innerHTML = "⏳ Processing...";
-        btn.disabled = true;
-
-        // Simulate loading effect
-        setTimeout(() => {
-            const modal = new bootstrap.Modal(document.getElementById('paymentSuccessModal'));
-            modal.show();
-            btn.innerHTML = '<i class="bi bi-lock-fill me-2"></i> Pay Securely';
-            btn.disabled = false;
-        }, 1800);
-    });
-</script>
-
-<!-- 🎨 Styling Section -->
-<style>
-    body {
-        background: linear-gradient(135deg, #f9fafc, #eef4f8);
-    }
-
-    .bg-gradient {
-        background: linear-gradient(135deg, #198754, #28a745);
-    }
-
-    .text-gradient {
-        background: linear-gradient(135deg, #0d6efd, #6610f2);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .glass-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.25);
-    }
-
-    .btn-gradient {
-        background: linear-gradient(135deg, #198754, #0dcaf0);
-        color: #fff;
-        border: none;
-        transition: all 0.3s ease;
-    }
-
-        .btn-gradient:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-    .shadow-hover {
-        transition: all 0.3s ease-in-out;
-    }
-
-        .shadow-hover:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
-        }
-
-    .shadow-glow {
-        box-shadow: 0 0 25px rgba(25, 135, 84, 0.6);
-    }
-
-    .fade-in {
-        animation: fadeInUp 0.9s ease both;
-    }
-
-    @@keyframes fadeInUp {
-        0%
-
-    {
-        opacity: 0;
-        transform: translateY(25px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
-    }
-
-    @@media (max-width: 576px) {
-        .btn
-
-    {
-        width: 100%;
-    }
-
-    }
-</style>
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success text-center mt-3">@TempData["Success"]</div>
+}
