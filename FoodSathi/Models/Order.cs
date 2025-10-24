@@ -21,7 +21,7 @@ namespace FoodSathi.Models
         public decimal TotalPrice { get; set; }
 
         [Required]
-        public string Address { get; set; } // 🏠 User’s address
+        public string Address { get; set; } // 🏠 Delivery address
 
         [Required]
         public string DeliveryOption { get; set; } // 🚚 e.g. “Home Delivery”, “Pickup”
@@ -31,8 +31,18 @@ namespace FoodSathi.Models
 
         [Required]
         [DataType(DataType.Currency)]
-        public decimal TotalAmount { get; set; } // Final total after cart
+        public decimal TotalAmount { get; set; } // 💰 Final total
 
-        public DateTime OrderDate { get; set; }
+        public DateTime OrderDate { get; set; } = DateTime.Now;
+
+        // 👇 Added — to know which logged-in user placed the order
+        [Required]
+        [MaxLength(50)]
+        public string UserName { get; set; }
+
+
+        // 👇 Optional — you can track order status if you want
+        [MaxLength(20)]
+        public string PaymentStatus { get; set; } = "Pending";
     }
 }
