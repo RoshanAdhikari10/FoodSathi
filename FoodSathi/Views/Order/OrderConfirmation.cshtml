@@ -1,5 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Cash on Delivery - Order Confirmed | FoodSathi";
+    var fromCart = ViewBag.FromCart ?? false;
+    var orderId = ViewBag.OrderId;
+    var amount = ViewBag.Amount;
+    var itemCount = ViewBag.ItemCount ?? 0;
 }
 
 <div class="container my-5 d-flex justify-content-center align-items-center">
@@ -25,10 +29,16 @@
                 <i class="bi bi-receipt-cutoff me-2 text-success"></i>Order Details
             </h5>
             <ul class="list-unstyled mb-3">
-                <li><span class="fw-semibold">Order ID:</span> #@ViewBag.OrderId</li>
-                <li><span class="fw-semibold">Total Amount:</span> Rs. @ViewBag.Amount</li>
+                @if (!fromCart)
+                {
+                    <li><span class="fw-semibold">Order ID:</span> #@orderId</li>
+                }
+                else
+                {
+                    <li><span class="fw-semibold">Items in Cart:</span> @itemCount</li>
+                }
+                <li><span class="fw-semibold">Total Amount:</span> Rs. @amount</li>
                 <li><span class="fw-semibold">Estimated Delivery:</span> @ViewBag.EstimatedDelivery</li>
-
             </ul>
             <p class="text-muted small mb-0">
                 Please keep the exact change ready for a faster and contactless delivery.
