@@ -1,99 +1,109 @@
 ﻿@model IEnumerable<FoodSathi.Models.MenuItem>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Our Menu";
-
-    // Safe null handling
     var categories = ViewBag.Categories as List<string> ?? new List<string>();
     var menuItems = Model ?? new List<FoodSathi.Models.MenuItem>();
 }
 
-<div class="container mt-5">
-    <h2 class="text-center mb-4 text-primary fw-bold">🍴 Our Menu</h2>
+<div class="container py-5">
+    <h2 class="text-center mb-4 fw-bold text-primary display-6">🍴 Our Menu</h2>
 
     <!-- 🔍 Search + Category Filter -->
-    <div class="d-flex flex-wrap justify-content-center mb-4 gap-3">
-        <input id="searchInput" type="text" class="form-control w-50 shadow-sm rounded-pill px-4" placeholder="Search dishes..." />
+    <div class="menu-controls d-flex flex-wrap justify-content-center align-items-center gap-3 mb-5">
+        <input id="searchInput" type="text" class="form-control search-bar shadow-sm rounded-pill px-4" placeholder="🔍 Search dishes..." />
 
         <div class="btn-group flex-wrap" role="group">
             <button class="btn btn-outline-primary active rounded-pill px-4 fw-semibold" onclick="filterMenu('all', event)">All</button>
             @foreach (var category in categories)
             {
-                <button class="btn btn-outline-primary rounded-pill px-4 fw-semibold" onclick="filterMenu('@category', event)">@category</button>
+                <button class="btn btn-outline-primary rounded-pill px-4 fw-semibold" onclick="filterMenu('@category', event)">
+                    @category
+                </button>
             }
         </div>
     </div>
-    <!-- Add New Menu Item Button -->
+
+    <!-- ➕ Add Menu (Admin Only) -->
     @if (User.IsInRole("Admin"))
     {
         <div class="text-center mb-4">
-            <a asp-controller="MenuItems" asp-action="Create" class="btn btn-success rounded-pill shadow-sm fw-semibold">
+            <a asp-controller="MenuItems" asp-action="Create" class="btn btn-success rounded-pill px-4 shadow-sm fw-semibold">
                 ➕ Add New Menu Item
             </a>
         </div>
+
+
+        <a asp-controller="Home" asp-action="AdminDashboard" class="btn btn-outline-secondary rounded-pill px-4 mb-4">🏠 Back</a>
     }
 
     <!-- 🍔 Menu Grid -->
-    <div class="row" id="menuContainer">
+    <div class="row g-4" id="menuContainer">
         @if (!menuItems.Any())
         {
-            <p class="text-center text-muted">No menu items available.</p>
+            <p class="text-center text-muted fs-5">No menu items available at the moment.</p>
         }
         else
         {
             @foreach (var item in menuItems)
             {
-                <div class="col-md-4 col-lg-3 mb-4 menu-item" data-category="@item.Category" data-name="@item.ItemName?.ToLower()">
-                    <div class="card border-0 shadow-sm rounded-4 h-100 hover-card">
-                        <img src="@(!string.IsNullOrEmpty(item.ImagePath) ? Url.Content(item.ImagePath) : Url.Content("~/images/placeholder.png"))"
-                             class="card-img-top rounded-top-4"
-                             alt="@item.ItemName"
-                             style="height: 180px; object-fit: cover;">
-                        <div class="card-body d-flex flex-column text-center">
-                            <h5 class="fw-bold">@item.ItemName</h5>
+                <div class="col-12 col-sm-6 col-md-4 col-lg-3 menu-item" data-category="@item.Category" data-name="@item.ItemName?.ToLower()">
+                    <div class="card border-0 shadow-lg rounded-4 h-100 menu-card">
+                        <div class="menu-img-wrapper">
+                            <img src="@(!string.IsNullOrEmpty(item.ImagePath) ? Url.Content(item.ImagePath) : Url.Content("~/images/placeholder.png"))"
+                                 class="card-img-top rounded-top-4"
+                                 alt="@item.ItemName">
+                        </div>
+                        <div class="card-body d-flex flex-column text-center p-3">
+                            <h5 class="fw-bold text-dark">@item.ItemName</h5>
                             <p class="text-muted small flex-grow-1">@item.Description</p>
                             <p class="text-success fw-semibold fs-5">Rs. @item.Price</p>
-                            <p class="small">@((item.IsAvailable) ? "Available ✅" : "Not Available ❌")</p>
+                            <p class="small">@((item.IsAvailable) ? "✅ Available" : "❌ Not Available")</p>
 
-                            <!-- Quantity Selector -->
-                            <div class="input-group mb-2 justify-content-center" style="max-width:150px; margin:0 auto;">
-                                <button class="btn btn-outline-secondary btn-sm" type="button" onclick="decreaseQty(@item.ItemID)">-</button>
-                                <input type="text" id="qty-@item.ItemID" value="1" class="form-control text-center" readonly />
-                                <button class="btn btn-outline-secondary btn-sm" type="button" onclick="increaseQty(@item.ItemID)">+</button>
-                            </div>
+                            <!-- 👇 Role-based Buttons -->
+                            @if (User.IsInRole("User"))
+                            {
+                                <div class="input-group mb-2 justify-content-center" style="max-width:150px; margin:auto;">
+                                    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="decreaseQty(@item.ItemID)">−</button>
+                                    <input type="text" id="qty-@item.ItemID" value="1" class="form-control text-center" readonly />
+                                    <button class="btn btn-outline-secondary btn-sm" type="button" onclick="increaseQty(@item.ItemID)">+</button>
+                                </div>
 
-                            <!-- 🛒 Add to Cart -->
-                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline">
-                                <input type="hidden" name="itemId" value="@item.ItemID" />
-                                <input type="hidden" id="form-qty-@item.ItemID" name="quantity" value="1" />
-                                <button type="submit" class="btn btn-sm btn-success me-1 rounded-pill shadow-sm">🛒 Add to Cart</button>
-                            </form>
+                                <div class="d-flex justify-content-center flex-wrap gap-2">
+                                    <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                        <input type="hidden" name="itemId" value="@item.ItemID" />
+                                        <input type="hidden" id="form-qty-@item.ItemID" name="quantity" value="1" />
+                                        <button type="submit" class="btn btn-sm btn-success rounded-pill shadow-sm px-3">🛒 Add to Cart</button>
+                                    </form>
 
-                            <!-- ⚡ Buy Now -->
-                            <form asp-controller="Order" asp-action="BuyNow" method="post" class="d-inline">
-                                <input type="hidden" name="itemId" value="@item.ItemID" />
-                                <input type="hidden" id="buy-qty-@item.ItemID" name="quantity" value="1" />
-                                <button type="submit" class="btn btn-sm btn-primary rounded-pill shadow-sm">⚡ Buy Now</button>
-                            </form>
+                                    <form asp-controller="Order" asp-action="BuyNow" method="post">
+                                        <input type="hidden" name="itemId" value="@item.ItemID" />
+                                        <input type="hidden" id="buy-qty-@item.ItemID" name="quantity" value="1" />
+                                        <button type="submit" class="btn btn-sm btn-primary rounded-pill shadow-sm px-3">⚡ Buy Now</button>
+                                    </form>
+                                </div>
 
-                            <!-- Inside item loop -->
-                            @if (User.IsInRole("Admin"))
+                                <a asp-controller="MenuItems" asp-action="Details" asp-route-id="@item.ItemID" class="btn btn-sm btn-info rounded-pill mt-2">ℹ️ Details</a>
+                            }
+                            else if (User.IsInRole("Admin"))
                             {
                                 <hr />
                                 <div class="d-flex justify-content-center flex-wrap gap-2">
                                     <a asp-controller="MenuItems" asp-action="Edit" asp-route-id="@item.ItemID" class="btn btn-sm btn-warning">✏️ Edit</a>
                                     <a asp-controller="MenuItems" asp-action="Details" asp-route-id="@item.ItemID" class="btn btn-sm btn-info">ℹ️ Details</a>
-                                    <form asp-controller="MenuItems" asp-action="Delete" asp-route-id="@item.ItemID" method="post" class="d-inline">
+                                    <form asp-controller="MenuItems" asp-action="Delete" asp-route-id="@item.ItemID" method="post">
                                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this item?');">🗑️ Delete</button>
                                     </form>
                                 </div>
                             }
                             else
                             {
-                                <!-- Non-admin users just see the details -->
-                                <div class="d-flex justify-content-center">
-                                    <a asp-controller="MenuItems" asp-action="Details" asp-route-id="@item.ItemID" class="btn btn-sm btn-info">ℹ️ Details</a>
-                                </div>
+                                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-outline-primary btn-sm rounded-pill shadow-sm mt-3">
+                                    🔑 Login to Order
+                                </a>
                             }
                         </div>
                     </div>
@@ -107,30 +117,29 @@
     <script>
         // 🔢 Quantity Handling
         function increaseQty(id) {
-            const qtyInput = document.getElementById("qty-" + id);
-            const formQtyInput = document.getElementById("form-qty-" + id);
-            const buyQtyInput = document.getElementById("buy-qty-" + id);
-            let value = parseInt(qtyInput.value) || 1;
-            qtyInput.value = value + 1;
-            formQtyInput.value = qtyInput.value;
-            if (buyQtyInput) buyQtyInput.value = qtyInput.value;
+            const qty = document.getElementById("qty-" + id);
+            const formQty = document.getElementById("form-qty-" + id);
+            const buyQty = document.getElementById("buy-qty-" + id);
+            let value = parseInt(qty.value) || 1;
+            qty.value = value + 1;
+            formQty.value = qty.value;
+            if (buyQty) buyQty.value = qty.value;
         }
 
         function decreaseQty(id) {
-            const qtyInput = document.getElementById("qty-" + id);
-            const formQtyInput = document.getElementById("form-qty-" + id);
-            const buyQtyInput = document.getElementById("buy-qty-" + id);
-            let value = parseInt(qtyInput.value) || 1;
+            const qty = document.getElementById("qty-" + id);
+            const formQty = document.getElementById("form-qty-" + id);
+            const buyQty = document.getElementById("buy-qty-" + id);
+            let value = parseInt(qty.value) || 1;
             if (value > 1) {
-                qtyInput.value = value - 1;
-                formQtyInput.value = qtyInput.value;
-                if (buyQtyInput) buyQtyInput.value = qtyInput.value;
+                qty.value = value - 1;
+                formQty.value = qty.value;
+                if (buyQty) buyQty.value = qty.value;
             }
         }
 
-        // 🍽️ Filter by Category + Search
+        // 🔍 Category & Search Filtering
         const searchInput = document.getElementById('searchInput');
-
         function filterMenu(category, event) {
             if (event) {
                 document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
@@ -154,23 +163,58 @@
     </script>
 
     <style>
-        .hover-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        /* 🌟 Professional Look */
+        .menu-card {
+            transition: all 0.3s ease-in-out;
         }
 
-            .hover-card:hover {
+            .menu-card:hover {
                 transform: translateY(-8px);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             }
+
+        .menu-img-wrapper {
+            height: 180px;
+            overflow: hidden;
+            border-radius: 1rem 1rem 0 0;
+        }
+
+            .menu-img-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.4s ease;
+            }
+
+        .menu-card:hover img {
+            transform: scale(1.05);
+        }
 
         .btn-group .btn.active {
             background-color: #0d6efd;
             color: white;
         }
 
-        #searchInput:focus {
-            border-color: #0d6efd;
-            box-shadow: 0 0 5px rgba(13, 110, 253, 0.5);
+        .search-bar {
+            max-width: 400px;
+            min-width: 250px;
+        }
+
+        @@media (max-width: 768px) {
+            .menu-controls
+
+        {
+            flex-direction: column;
+        }
+
+        .search-bar {
+            width: 90%;
+        }
+
+        .btn-group {
+            justify-content: center;
+        }
+
         }
     </style>
 }
