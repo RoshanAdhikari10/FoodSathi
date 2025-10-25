@@ -175,7 +175,6 @@
     </div>
 </div>
 
-<!-- ✅ Script -->
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const deliveryCards = document.querySelectorAll(".delivery-card");
@@ -187,7 +186,9 @@
         let basePrice = parseFloat("@Model.TotalAmount");
         let selectedPayment = "Card";
         let selectedDelivery = "Standard";
+        const fromCart = @fromCart.ToString().ToLower();
 
+        // Delivery option selection
         deliveryCards.forEach(card => {
             card.addEventListener("click", () => {
                 deliveryCards.forEach(c => c.classList.remove("active"));
@@ -200,6 +201,7 @@
             });
         });
 
+        // Payment method selection
         paymentCards.forEach(card => {
             card.addEventListener("click", () => {
                 paymentCards.forEach(c => c.classList.remove("active"));
@@ -208,21 +210,38 @@
             });
         });
 
+        // Confirm button
         confirmBtn.addEventListener("click", (e) => {
             e.preventDefault();
             const total = document.getElementById("finalTotal").textContent;
-            const orderId = "@Model.SingleOrder?.OrderID";
+            const orderId = "@(Model?.SingleOrder?.OrderID ?? 0)"; // always has a number
 
             if (selectedPayment === "Card") {
-                window.location.href = `/Payment/PayByCard/${orderId}?amount=${total}`;
-            } else if (selectedPayment === "Wallet") {
-                window.location.href = `/Payment/PayByWallet/${orderId}?amount=${total}`;
-            } else {
-                window.location.href = `/Payment/CashOnDelivery/${orderId}`;
+                if (fromCart === "true") {
+                    window.location.href = `/Payment/PayByCardFromCart?amount=${total}`;
+                } else {
+                    window.location.href = `/Payment/PayByCard?id=${orderId}&amount=${total}`;
+                }
+            }
+            else if (selectedPayment === "Wallet") {
+                if (fromCart === "true") {
+                    window.location.href = `/Payment/PayByWalletFromCart?amount=${total}`;
+                } else {
+                    window.location.href = `/Payment/PayByWallet?id=${orderId}&amount=${total}`;
+                }
+            }
+            else { // Cash on delivery
+                if (fromCart === "true") {
+                    window.location.href = `/Payment/CashOnDeliveryFromCart`;
+                } else {
+                    window.location.href = `/Payment/CashOnDelivery?id=${orderId}`;
+                }
             }
         });
     });
 </script>
+
+
 
 <!-- 🎨 Styles -->
 <style>
