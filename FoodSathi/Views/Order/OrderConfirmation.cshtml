@@ -1,9 +1,50 @@
 ﻿@{
-    ViewData["Title"] = "Cash on Delivery - Order Confirmed | FoodSathi";
+    ViewData["Title"] = "Order Confirmed | FoodSathi";
+
     var fromCart = ViewBag.FromCart ?? false;
     var orderId = ViewBag.OrderId;
     var amount = ViewBag.Amount;
     var itemCount = ViewBag.ItemCount ?? 0;
+    var paymentMethod = ViewBag.PaymentMethod ?? "COD"; // COD, Card, eSewa, Khalti
+    var estimatedDelivery = ViewBag.EstimatedDelivery ?? "1-2 days";
+
+    // 🎨 Dynamic values based on payment method
+    string bgClass = "", iconClass = "", textClass = "", heading = "", message = "";
+
+    switch (paymentMethod)
+    {
+        case "Card":
+            bgClass = "bg-primary bg-opacity-10";
+            iconClass = "bi bi-credit-card-fill text-primary";
+            textClass = "text-primary";
+            heading = "Payment Successful!";
+            message = "Your payment via <span class='fw-semibold text-primary'>Card</span> was successful. Your order is confirmed.";
+            break;
+
+        case "eSewa":
+            bgClass = "bg-success bg-opacity-10";
+            iconClass = "bi bi-wallet2 text-success";
+            textClass = "text-success";
+            heading = "eSewa Payment Successful!";
+            message = "Your <span class='fw-semibold text-success'>eSewa</span> payment was successful. Your order is confirmed.";
+            break;
+
+        case "Khalti":
+            bgClass = "bg-info bg-opacity-10";
+            iconClass = "bi bi-wallet-fill text-info";
+            textClass = "text-info";
+            heading = "Khalti Payment Successful!";
+            message = "Your <span class='fw-semibold text-info'>Khalti</span> payment was successful. Your order is confirmed.";
+            break;
+
+        default:
+            bgClass = "bg-warning bg-opacity-10";
+            iconClass = "bi bi-bag-check-fill text-warning";
+            textClass = "text-success";
+            heading = "Order Placed Successfully!";
+            message = "Your <span class='fw-semibold text-success'>Cash on Delivery</span> order has been received. Our delivery partner will reach you soon.";
+            break;
+    }
 }
 
 <div class="container my-5 d-flex justify-content-center align-items-center">
@@ -11,17 +52,16 @@
 
         <!-- ✅ Header Icon -->
         <div class="mb-4">
-            <div class="rounded-circle bg-warning bg-opacity-10 d-inline-flex justify-content-center align-items-center animate__animated animate__fadeInDown" style="width: 80px; height: 80px;">
-                <i class="bi bi-bag-check-fill text-warning fs-1"></i>
+            <div class="rounded-circle @bgClass d-inline-flex justify-content-center align-items-center animate__animated animate__fadeInDown"
+                 style="width: 80px; height: 80px;">
+                <i class="@iconClass fs-1"></i>
             </div>
         </div>
 
         <!-- ✅ Main Heading -->
-        <h2 class="fw-bold text-success mb-2">Order Placed Successfully!</h2>
-        <p class="lead text-muted mb-4">
-            Your <span class="fw-semibold text-success">Cash on Delivery</span> order has been received.
-            Our delivery partner will reach you soon.
-        </p>
+        <h2 class="fw-bold @textClass mb-2">@heading</h2>
+
+        <p class="lead text-muted mb-4">@Html.Raw(message)</p>
 
         <!-- ✅ Order Summary -->
         <div class="bg-light rounded-4 p-4 text-start mx-auto shadow-sm" style="max-width: 500px;">
@@ -38,11 +78,16 @@
                     <li><span class="fw-semibold">Items in Cart:</span> @itemCount</li>
                 }
                 <li><span class="fw-semibold">Total Amount:</span> Rs. @amount</li>
-                <li><span class="fw-semibold">Estimated Delivery:</span> @ViewBag.EstimatedDelivery</li>
+                <li><span class="fw-semibold">Estimated Delivery:</span> @estimatedDelivery</li>
+                <li><span class="fw-semibold">Payment Method:</span> @paymentMethod</li>
             </ul>
-            <p class="text-muted small mb-0">
-                Please keep the exact change ready for a faster and contactless delivery.
-            </p>
+
+            @if (paymentMethod == "COD")
+            {
+                <p class="text-muted small mb-0">
+                    Please keep the exact change ready for a faster and contactless delivery.
+                </p>
+            }
         </div>
 
         <!-- ✅ Action Buttons -->
@@ -68,7 +113,6 @@
     </div>
 </div>
 
-<!-- ✅ CSS for animation and polish -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
 
 <style>
