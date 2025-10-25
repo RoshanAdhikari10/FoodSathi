@@ -32,7 +32,8 @@ namespace FoodSathi.Controllers
                 Address = string.Empty,
                 DeliveryOption = "Standard",
                 PaymentMethod = "Pending",
-                OrderDate = DateTime.Now
+                OrderDate = DateTime.Now,
+                UserName = User.Identity.Name // ✅ Assign logged-in username
             };
 
             _context.Orders.Add(order);
@@ -40,6 +41,7 @@ namespace FoodSathi.Controllers
 
             return RedirectToAction("Checkout", new { orderId = order.OrderID });
         }
+
 
         // ✅ Checkout for single or multiple items
         [HttpGet]
@@ -145,6 +147,19 @@ namespace FoodSathi.Controllers
 
             return RedirectToAction("OrderConfirmation", new { id = newOrder.OrderID });
         }
+
+        [HttpGet]
+        public IActionResult OrderConfirmationFromCart(decimal amount, int itemCount, string paymentMethod)
+        {
+            ViewBag.FromCart = true;
+            ViewBag.Amount = amount;
+            ViewBag.ItemCount = itemCount;
+            ViewBag.PaymentMethod = paymentMethod;
+            ViewBag.EstimatedDelivery = "1-2 days";
+
+            return View("OrderConfirmed"); // ✅ use your shared confirmation view
+        }
+
 
     }
 }
