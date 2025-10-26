@@ -24,7 +24,6 @@ namespace FoodSathi.Controllers
         [HttpGet]
         public async Task<IActionResult> PayByCard(int? id, decimal? amount)
         {
-            // Fix: validate parameters
             if (id == null || amount == null)
                 return BadRequest("Missing order ID or amount.");
 
@@ -94,30 +93,46 @@ namespace FoodSathi.Controllers
             if (!cartItems.Any())
                 return RedirectToAction("Index", "Cart");
 
+            // Get delivery info from cart items (first item as reference)
+            var firstCart = cartItems.First();
+            string address = firstCart.Address ?? "Not Provided";
+            string deliveryOption = firstCart.DeliveryOption ?? "Standard";
+
+            decimal totalAmount = 0;
+            int itemCount = 0;
+
             foreach (var c in cartItems)
             {
+                var itemTotal = c.Quantity * c.MenuItem.Price;
+                totalAmount += itemTotal;
+                itemCount++;
+
                 var order = new Order
                 {
                     ItemID = c.ItemID,
                     ItemName = c.MenuItem.ItemName,
                     Quantity = c.Quantity,
-                    TotalPrice = c.Quantity * c.MenuItem.Price,
-                    TotalAmount = c.Quantity * c.MenuItem.Price,
-                    Address = c.Address,
-                    DeliveryOption = c.DeliveryOption,
+                    TotalPrice = itemTotal,
+                    TotalAmount = itemTotal,
+                    Address = address,
+                    DeliveryOption = deliveryOption,
                     PaymentMethod = "Card",
                     PaymentStatus = "Paid",
                     UserName = userName,
                     OrderDate = DateTime.Now
                 };
-                _context.Orders.Add(order);
+                _context.Add(order);
             }
 
             _context.Carts.RemoveRange(cartItems);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "✅ Card payment successful for all cart items!";
-            return RedirectToAction("OrderConfirmation", "Order");
+            return RedirectToAction("OrderConfirmationFromCart", "Order", new
+            {
+                amount = totalAmount,
+                itemCount = itemCount,
+                paymentMethod = "Card"
+            });
         }
 
         // ====================================================
@@ -197,6 +212,11 @@ namespace FoodSathi.Controllers
             if (!cartItems.Any())
                 return RedirectToAction("Index", "Cart");
 
+            // Get delivery info from cart items
+            var firstCart = cartItems.First();
+            string address = firstCart.Address ?? "Not Provided";
+            string deliveryOption = firstCart.DeliveryOption ?? "Standard";
+
             decimal totalAmount = 0;
             int itemCount = 0;
 
@@ -204,7 +224,7 @@ namespace FoodSathi.Controllers
             {
                 var total = c.Quantity * c.MenuItem.Price;
                 totalAmount += total;
-                itemCount += 1;
+                itemCount++;
 
                 var order = new Order
                 {
@@ -213,28 +233,26 @@ namespace FoodSathi.Controllers
                     Quantity = c.Quantity,
                     TotalPrice = total,
                     TotalAmount = total,
-                    Address = c.Address,
-                    DeliveryOption = c.DeliveryOption,
+                    Address = address,
+                    DeliveryOption = deliveryOption,
                     PaymentMethod = walletType,
                     PaymentStatus = "Paid",
                     UserName = userName,
                     OrderDate = DateTime.Now
                 };
 
-                _context.Orders.Add(order);
+                _context.Add(order);
             }
 
             _context.Carts.RemoveRange(cartItems);
             await _context.SaveChangesAsync();
 
-            // Redirect with parameters
             return RedirectToAction("OrderConfirmationFromCart", "Order", new
             {
                 amount = totalAmount,
                 itemCount = itemCount,
                 paymentMethod = walletType
             });
-
         }
 
 
@@ -275,30 +293,46 @@ namespace FoodSathi.Controllers
             if (!cartItems.Any())
                 return RedirectToAction("Index", "Cart");
 
+            // Get delivery info from cart items
+            var firstCart = cartItems.First();
+            string address = firstCart.Address ?? "Not Provided";
+            string deliveryOption = firstCart.DeliveryOption ?? "Standard";
+
+            decimal totalAmount = 0;
+            int itemCount = 0;
+
             foreach (var c in cartItems)
             {
+                var itemTotal = c.Quantity * c.MenuItem.Price;
+                totalAmount += itemTotal;
+                itemCount++;
+
                 var order = new Order
                 {
                     ItemID = c.ItemID,
                     ItemName = c.MenuItem.ItemName,
                     Quantity = c.Quantity,
-                    TotalPrice = c.Quantity * c.MenuItem.Price,
-                    TotalAmount = c.Quantity * c.MenuItem.Price,
-                    Address = c.Address,
-                    DeliveryOption = c.DeliveryOption,
+                    TotalPrice = itemTotal,
+                    TotalAmount = itemTotal,
+                    Address = address,
+                    DeliveryOption = deliveryOption,
                     PaymentMethod = "Cash on Delivery",
                     PaymentStatus = "Pending",
                     UserName = userName,
                     OrderDate = DateTime.Now
                 };
-                _context.Orders.Add(order);
+                _context.Add(order);
             }
 
             _context.Carts.RemoveRange(cartItems);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "💵 Order placed successfully for all cart items! Please pay cash upon delivery.";
-            return RedirectToAction("OrderConfirmation", "Order");
+            return RedirectToAction("OrderConfirmationFromCart", "Order", new
+            {
+                amount = totalAmount,
+                itemCount = itemCount,
+                paymentMethod = "Cash on Delivery"
+            });
         }
     }
 }
