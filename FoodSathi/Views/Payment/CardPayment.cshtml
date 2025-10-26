@@ -9,6 +9,7 @@
     <div class="card shadow-lg border-0 rounded-4 p-4 text-center" style="max-width: 550px;">
         <h3 class="fw-bold text-primary mb-4">💳 Card Payment</h3>
 
+        <!-- Order Info -->
         <div class="mb-3">
             @if (!fromCart)
             {
@@ -17,20 +18,31 @@
             <p class="mb-1"><strong>Total Amount:</strong> Rs. @amount</p>
         </div>
 
+        <!-- Payment Form -->
         <form asp-action="@(fromCart ? "PayByCardConfirmFromCart" : "PayByCardConfirm")" method="post">
+            @Html.AntiForgeryToken()
+
             @if (!fromCart)
             {
                 <input type="hidden" name="orderId" value="@orderId" />
             }
+            else
+            {
+                <!-- Just for record keeping (not required by controller but useful) -->
+                <input type="hidden" name="amount" value="@amount" />
+            }
 
             <div class="form-group mb-4">
                 <label for="cardNumber" class="fw-semibold mb-2">Card Number</label>
-                <input type="text" class="form-control shadow-sm rounded-pill text-center" placeholder="XXXX-XXXX-XXXX-XXXX" required />
+                <input type="text" id="cardNumber" class="form-control shadow-sm rounded-pill text-center"
+                       placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" required />
             </div>
 
             <div class="form-group mb-4 d-flex gap-2">
-                <input type="text" class="form-control shadow-sm rounded-pill text-center" placeholder="MM/YY" required />
-                <input type="text" class="form-control shadow-sm rounded-pill text-center" placeholder="CVV" required />
+                <input type="text" class="form-control shadow-sm rounded-pill text-center"
+                       placeholder="MM/YY" maxlength="5" required />
+                <input type="text" class="form-control shadow-sm rounded-pill text-center"
+                       placeholder="CVV" maxlength="3" required />
             </div>
 
             <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold shadow-sm">
@@ -38,16 +50,19 @@
             </button>
         </form>
 
+        <!-- Back Link -->
         <div class="mt-3">
             @if (!fromCart)
             {
-                <a asp-controller="Order" asp-action="Details" asp-route-id="@orderId" class="text-secondary text-decoration-none">
+                <a asp-controller="Order" asp-action="Details" asp-route-id="@orderId"
+                   class="text-secondary text-decoration-none">
                     ← Back to Order
                 </a>
             }
             else
             {
-                <a asp-controller="Cart" asp-action="Index" class="text-secondary text-decoration-none">
+                <a asp-controller="Cart" asp-action="Index"
+                   class="text-secondary text-decoration-none">
                     ← Back to Cart
                 </a>
             }
