@@ -164,6 +164,77 @@
     </div>
 </div>
 
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const deliveryCards = document.querySelectorAll(".option-card[data-value]");
+        const paymentCards = document.querySelectorAll(".option-card:not([data-charge])");
+        const deliveryChargeEl = document.getElementById("deliveryCharge");
+        const finalTotalEl = document.getElementById("finalTotal");
+        const confirmBtn = document.getElementById("confirmOrderBtn");
+        let basePrice = parseFloat("@Model.TotalAmount");
+        let selectedDelivery = "Standard";
+        let selectedPayment = "Card";
+        const fromCart = @fromCart.ToString().ToLower();
+
+        // Handle delivery option
+        deliveryCards.forEach(card => {
+            card.addEventListener("click", () => {
+                if (!card.dataset.charge) return; // skip payment cards
+                deliveryCards.forEach(c => c.classList.remove("active"));
+                card.classList.add("active");
+
+                selectedDelivery = card.dataset.value;
+                const charge = parseFloat(card.dataset.charge);
+                deliveryChargeEl.textContent = charge.toFixed(2);
+                finalTotalEl.textContent = (basePrice + charge).toFixed(2);
+            });
+        });
+
+        // Handle payment selection
+        paymentCards.forEach(card => {
+            card.addEventListener("click", () => {
+                paymentCards.forEach(c => c.classList.remove("active"));
+                card.classList.add("active");
+                selectedPayment = card.dataset.value;
+            });
+        });
+
+        // Handle confirm button click
+        confirmBtn.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            const total = document.getElementById("finalTotal").textContent;
+            const orderId = "@(Model?.SingleOrder?.OrderID ?? 0)";
+            const address = document.getElementById("deliveryAddress").value.trim();
+
+            if (!address) {
+                alert("Please enter your delivery address before proceeding!");
+                return;
+            }
+
+            // Navigate to payment route
+            if (selectedPayment === "Card") {
+                if (fromCart === "true")
+                    window.location.href = `/Payment/PayByCardFromCart?amount=${total}`;
+                else
+                    window.location.href = `/Payment/PayByCard?id=${orderId}&amount=${total}`;
+            } else if (selectedPayment === "Wallet") {
+                if (fromCart === "true")
+                    window.location.href = `/Payment/PayByWalletFromCart?amount=${total}`;
+                else
+                    window.location.href = `/Payment/PayByWallet?id=${orderId}&amount=${total}`;
+            } else {
+                if (fromCart === "true")
+                    window.location.href = `/Payment/CashOnDeliveryFromCart`;
+                else
+                    window.location.href = `/Payment/CashOnDelivery?id=${orderId}`;
+            }
+        });
+    });
+</script>
+
+
 <!-- 🌈 Styles -->
 <style>
     .glass-container {
