@@ -28,23 +28,74 @@
                 <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
                     <div class="card shadow-sm border-0 rounded-4 overflow-hidden h-100">
                         <div class="card-body d-flex flex-column">
-                            <div class="d-flex justify-content-between align-items-start mb-3 flex-wrap">
+
+                            <!-- Order Header -->
+                            <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap">
                                 <span class="badge bg-primary rounded-pill mb-1">#@order.OrderID</span>
                                 <span class="text-muted small mb-1">@order.OrderDate.ToString("MMM dd, yyyy")</span>
                             </div>
 
-                            <h5 class="card-title fw-bold text-truncate">@order.ItemName</h5>
-                            <p class="card-text mb-2">Quantity: <strong>@order.Quantity</strong></p>
-                            <p class="card-text mb-3">Total: <span class="fw-bold text-success">Rs. @order.TotalPrice</span></p>
+                            <!-- Item Info -->
+                            <h5 class="card-title fw-bold">@order.ItemName</h5>
+                            <p class="card-text mb-1">Quantity: <strong>@order.Quantity</strong></p>
+                            <p class="card-text mb-2">Total: <span class="fw-bold text-success">Rs. @order.TotalPrice</span></p>
+                            <p class="card-text mb-2">Total Amount: <span class="fw-bold text-success">Rs. @order.TotalAmount</span></p>
 
-                            <div class="mt-auto d-flex justify-content-between align-items-center flex-wrap">
-                                <a asp-action="Details" asp-route-id="@order.OrderID" class="btn btn-sm btn-outline-primary rounded-pill px-3 mb-1">
-                                    <i class="bi bi-eye me-1"></i> View
-                                </a>
-                                <span class="badge @(order.TotalPrice > 1000 ? "bg-success" : "bg-warning") mb-1">
-                                    @(order.TotalPrice > 1000 ? "Premium" : "Standard")
-                                </span>
-                            </div>
+                            <!-- Payment Info with Tooltips -->
+                            <p class="card-text mb-3">
+                                Payment Method:
+                                <strong>
+                                    @switch (order.PaymentMethod)
+                                    {
+                                        case "eSewa":
+                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Paid via eSewa on @order.OrderDate.ToString("dd MMM yyyy")">💚 eSewa</span>
+                                            break;
+                                        case "Khalti":
+                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Paid via Khalti on @order.OrderDate.ToString("dd MMM yyyy")">💜 Khalti</span>
+                                            break;
+                                        case "IME Pay":
+                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Paid via IME Pay on @order.OrderDate.ToString("dd MMM yyyy")">🧡 IME Pay</span>
+                                            break;
+                                        case "Card":
+                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Paid via Card on @order.OrderDate.ToString("dd MMM yyyy")">💳 Card</span>
+                                            break;
+                                        case "Cash On Delivery":
+                                            @* Dynamic color based on PaymentStatus *@
+                                            if (order.PaymentStatus == "Paid")
+                                            {
+                                                <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Paid via Cash on Delivery on @order.OrderDate.ToString("dd MMM yyyy")">💵 COD Paid</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Cash on delivery, not yet paid">💵 COD Pending</span>
+                                            }
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">@order.PaymentMethod</span>
+                                            break;
+                                    }
+                                </strong>
+                            </p>
+
+                            <!-- Delivery Option with Tooltips -->
+                            <p class="card-text mb-3">
+                                Delivery Option:
+                                @switch (order.DeliveryOption)
+                                {
+                                    case "Standard":
+                                        <span class="badge bg-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Standard delivery will arrive in 3-5 days">Standard 🚚</span>
+                                        break;
+                                    case "Express":
+                                        <span class="badge bg-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Express delivery will arrive in 1-2 hours">Express ⚡</span>
+                                        break;
+                                    case "Pickup":
+                                        <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Pickup your order at our store">Pickup 🛍</span>
+                                        break;
+                                    default:
+                                        <span class="badge bg-light text-dark">N/A</span>
+                                        break;
+                                }
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -52,6 +103,16 @@
         </div>
     }
 </div>
+
+<!-- Enable Bootstrap tooltips -->
+@section Scripts {
+    <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    </script>
+}
 
 <style>
     .text-gradient {
@@ -69,13 +130,12 @@
     .badge {
         font-size: 0.85rem;
         padding: 0.45em 0.9em;
+        cursor: pointer;
     }
 
     h5.card-title {
         font-size: 1.1rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        margin-bottom: 0.3rem;
     }
 
     .card-text {
@@ -83,22 +143,13 @@
         color: #555;
     }
 
-    /* Make sure the cards shrink nicely on mobile */
     @@media (max-width: 576px) {
-        .card-title
+        .card-title {
+            font-size: 1rem;
+        }
 
-    {
-        font-size: 1rem;
-    }
-
-    .card-text {
-        font-size: 0.9rem;
-    }
-
-    .btn {
-        font-size: 0.8rem;
-        padding: 0.25rem 0.75rem;
-    }
-
+        .card-text {
+            font-size: 0.9rem;
+        }
     }
 </style>
