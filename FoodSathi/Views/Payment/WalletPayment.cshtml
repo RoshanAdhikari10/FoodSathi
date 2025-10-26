@@ -9,6 +9,7 @@
     <div class="card shadow-lg border-0 rounded-4 p-4 text-center" style="max-width: 550px;">
         <h3 class="fw-bold text-primary mb-4">💼 Wallet Payment</h3>
 
+        <!-- Payment Info -->
         <div class="mb-3">
             @if (fromCart)
             {
@@ -21,18 +22,29 @@
             <p class="mb-1"><strong>Total Amount:</strong> Rs. @amount</p>
         </div>
 
+        <!-- Payment Form -->
         <form asp-action="@((fromCart) ? "PayByWalletConfirmFromCart" : "PayByWalletConfirm")" method="post">
+            @Html.AntiForgeryToken()
+
             @if (!fromCart)
             {
+                <!-- Single order -->
                 <input type="hidden" name="orderId" value="@orderId" />
+            }
+            else
+            {
+                <!-- Optional hidden amount (for tracking) -->
+                <input type="hidden" name="amount" value="@amount" />
             }
 
             <div class="form-group mb-4">
                 <label for="walletType" class="fw-semibold mb-2">Select Wallet Type</label>
-                <select name="walletType" class="form-select shadow-sm rounded-pill text-center" required>
+                <select name="walletType" id="walletType"
+                        class="form-select shadow-sm rounded-pill text-center" required>
                     <option value="">-- Choose Wallet --</option>
                     <option value="eSewa">💚 eSewa</option>
                     <option value="Khalti">💜 Khalti</option>
+                    <option value="IME Pay">🧡 IME Pay</option>
                 </select>
             </div>
 
@@ -41,14 +53,17 @@
             </button>
         </form>
 
+        <!-- Back Links -->
         <div class="mt-3">
             @if (fromCart)
             {
-                <a asp-controller="Cart" asp-action="Index" class="text-secondary text-decoration-none">← Back to Cart</a>
+                <a asp-controller="Cart" asp-action="Index"
+                   class="text-secondary text-decoration-none">← Back to Cart</a>
             }
             else
             {
-                <a asp-controller="Order" asp-action="Details" asp-route-id="@orderId" class="text-secondary text-decoration-none">← Back to Order</a>
+                <a asp-controller="Order" asp-action="Details" asp-route-id="@orderId"
+                   class="text-secondary text-decoration-none">← Back to Order</a>
             }
         </div>
     </div>
