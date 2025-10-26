@@ -64,8 +64,10 @@ namespace FoodSathi.Controllers
             else
             {
                 // 🛒 Checkout from Cart
+                var userName = User.Identity?.Name ?? "Guest";
                 var cartItems = _context.Carts
                     .Include(c => c.MenuItem)
+                    .Where(c => c.UserName == userName)
                     .ToList();
 
                 var total = cartItems.Sum(c => c.MenuItem.Price * c.Quantity);
@@ -88,7 +90,12 @@ namespace FoodSathi.Controllers
         {
             if (fromCart)
             {
-                var cartItems = _context.Carts.Include(c => c.MenuItem).ToList();
+                var userName = User.Identity?.Name ?? "Guest";
+                var cartItems = _context.Carts
+                    .Include(c => c.MenuItem)
+                    .Where(c => c.UserName == userName)
+                    .ToList();
+
                 if (!cartItems.Any())
                     return RedirectToAction("Menu", "MenuItems");
 
@@ -107,7 +114,9 @@ namespace FoodSathi.Controllers
         // ✅ All orders list
         public IActionResult Orders()
         {
+            var userName = User.Identity?.Name ?? "Guest";
             var orders = _context.Orders
+                .Where(o => o.UserName == userName)
                 .OrderByDescending(o => o.OrderDate)
                 .ToList();
             return View(orders);
@@ -120,6 +129,14 @@ namespace FoodSathi.Controllers
             var order = await _context.Orders.FindAsync(id);
             if (order == null)
                 return NotFound();
+
+            // Set ViewBag values for confirmation page
+            ViewBag.FromCart = false;
+            ViewBag.OrderId = order.OrderID;
+            ViewBag.Amount = order.TotalAmount;
+            ViewBag.ItemCount = 1;
+            ViewBag.PaymentMethod = order.PaymentMethod;
+            ViewBag.EstimatedDelivery = "45-60 minutes";
 
             return View(order);
         }
@@ -139,7 +156,8 @@ namespace FoodSathi.Controllers
                 DeliveryOption = model.DeliveryOption,
                 PaymentMethod = model.PaymentOption,
                 TotalAmount = model.TotalAmount,
-                OrderDate = DateTime.Now
+                OrderDate = DateTime.Now,
+                UserName = User.Identity?.Name ?? "Guest"
             };
 
             _context.Orders.Add(newOrder);
@@ -155,11 +173,27 @@ namespace FoodSathi.Controllers
             ViewBag.Amount = amount;
             ViewBag.ItemCount = itemCount;
             ViewBag.PaymentMethod = paymentMethod;
-            ViewBag.EstimatedDelivery = "1-2 days";
+            ViewBag.EstimatedDelivery = "45-60 minutes";
 
-            return View("OrderConfirmed"); // ✅ use your shared confirmation view
+            return View("OrderConfirmation");
         }
 
+        // ✅ NEW: Update order delivery information before payment
+        [HttpPost]
+        public async Task<IActionResult> UpdateOrderDeliveryInfo(int orderId, string address, string deliveryOption)
+        {
+            var order = await _context.Orders.FindAsync(orderId);
 
+            if (order == null)
+                return Json(new { success = false, message = "Order not found" });
+
+            // Update order with delivery info
+            order.Address = address;
+            order.DeliveryOption = deliveryOption;
+
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Order updated successfully" });
+        }
     }
 }
