@@ -77,7 +77,7 @@
 
                 <div class="row g-4">
                     <div class="col-md-4">
-                        <div class="option-card active" data-value="Standard" data-charge="0">
+                        <div class="option-card delivery-option active" data-value="Standard" data-charge="0">
                             <i class="bi bi-truck fs-2 text-success"></i>
                             <h6 class="fw-bold mt-2">Standard</h6>
                             <small class="text-muted">45–60 mins</small>
@@ -85,7 +85,7 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="option-card" data-value="Express" data-charge="100">
+                        <div class="option-card delivery-option" data-value="Express" data-charge="100">
                             <i class="bi bi-lightning-charge-fill fs-2 text-danger"></i>
                             <h6 class="fw-bold mt-2">Express</h6>
                             <small class="text-muted">20–30 mins</small>
@@ -93,7 +93,7 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="option-card" data-value="Pickup" data-charge="0">
+                        <div class="option-card delivery-option" data-value="Pickup" data-charge="0">
                             <i class="bi bi-shop fs-2 text-primary"></i>
                             <h6 class="fw-bold mt-2">Pickup</h6>
                             <small class="text-muted">Collect yourself</small>
@@ -101,7 +101,6 @@
                         </div>
                     </div>
                 </div>
-                <input type="hidden" id="selectedDeliveryOption" name="DeliveryOption" value="Standard" />
             </section>
 
             <!-- 🏠 Address -->
@@ -121,28 +120,27 @@
 
                 <div class="row g-4 text-center">
                     <div class="col-md-4">
-                        <div class="option-card active" data-value="Card">
-                            <img src="/images/card.png" class="img-fluid mb-2" style="height: 40px;">
+                        <div class="option-card payment-option active" data-value="Card">
+                            <img src="/images/card.png" class="img-fluid mb-2" style="height: 40px;" alt="Card">
                             <h6 class="fw-bold">Card</h6>
                             <small class="text-muted">Visa / MasterCard</small>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="option-card" data-value="Wallet">
-                            <img src="/images/esewa.png" class="img-fluid mb-2" style="height: 40px;">
+                        <div class="option-card payment-option" data-value="Wallet">
+                            <img src="/images/esewa.png" class="img-fluid mb-2" style="height: 40px;" alt="Wallet">
                             <h6 class="fw-bold">Digital Wallet</h6>
                             <small class="text-muted">eSewa / Khalti</small>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="option-card" data-value="Cash">
-                            <img src="/images/cash.png" class="img-fluid mb-2" style="height: 40px;">
+                        <div class="option-card payment-option" data-value="Cash">
+                            <img src="/images/cash.png" class="img-fluid mb-2" style="height: 40px;" alt="Cash">
                             <h6 class="fw-bold">Cash on Delivery</h6>
                             <small class="text-muted">Pay when delivered</small>
                         </div>
                     </div>
                 </div>
-                <input type="hidden" id="selectedPaymentOption" value="Card" />
             </section>
 
             <!-- ✅ Confirm -->
@@ -167,20 +165,23 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const deliveryCards = document.querySelectorAll(".option-card[data-value]");
-        const paymentCards = document.querySelectorAll(".option-card:not([data-charge])");
+        // Separate delivery and payment option cards
+        const deliveryCards = document.querySelectorAll(".delivery-option");
+        const paymentCards = document.querySelectorAll(".payment-option");
+        
         const deliveryChargeEl = document.getElementById("deliveryCharge");
         const finalTotalEl = document.getElementById("finalTotal");
         const confirmBtn = document.getElementById("confirmOrderBtn");
+        
         let basePrice = parseFloat("@Model.TotalAmount");
         let selectedDelivery = "Standard";
         let selectedPayment = "Card";
         const fromCart = @fromCart.ToString().ToLower();
+        const orderId = "@(Model?.SingleOrder?.OrderID ?? 0)";
 
-        // Handle delivery option
+        // ✅ Handle delivery option selection
         deliveryCards.forEach(card => {
             card.addEventListener("click", () => {
-                if (!card.dataset.charge) return; // skip payment cards
                 deliveryCards.forEach(c => c.classList.remove("active"));
                 card.classList.add("active");
 
@@ -191,44 +192,112 @@
             });
         });
 
-        // Handle payment selection
+        // ✅ Handle payment method selection
         paymentCards.forEach(card => {
             card.addEventListener("click", () => {
                 paymentCards.forEach(c => c.classList.remove("active"));
                 card.classList.add("active");
                 selectedPayment = card.dataset.value;
+                
+                // Update button text based on payment method
+                if (selectedPayment === "Cash") {
+                    confirmBtn.innerHTML = 'Place Order (COD) <i class="bi bi-cash-coin ms-2"></i>';
+                } else {
+                    confirmBtn.innerHTML = 'Confirm & Pay <i class="bi bi-arrow-right-circle ms-2"></i>';
+                }
             });
         });
 
-        // Handle confirm button click
-        confirmBtn.addEventListener("click", (e) => {
+        // ✅ Handle confirm button click
+        confirmBtn.addEventListener("click", async (e) => {
             e.preventDefault();
 
-            const total = document.getElementById("finalTotal").textContent;
-            const orderId = "@(Model?.SingleOrder?.OrderID ?? 0)";
+            const finalTotal = document.getElementById("finalTotal").textContent;
             const address = document.getElementById("deliveryAddress").value.trim();
 
+            // Validate address
             if (!address) {
-                alert("Please enter your delivery address before proceeding!");
+                alert("⚠️ Please enter your delivery address before proceeding!");
                 return;
             }
 
-            // Navigate to payment route
-            if (selectedPayment === "Card") {
-                if (fromCart === "true")
-                    window.location.href = `/Payment/PayByCardFromCart?amount=${total}`;
-                else
-                    window.location.href = `/Payment/PayByCard?id=${orderId}&amount=${total}`;
-            } else if (selectedPayment === "Wallet") {
-                if (fromCart === "true")
-                    window.location.href = `/Payment/PayByWalletFromCart?amount=${total}`;
-                else
-                    window.location.href = `/Payment/PayByWallet?id=${orderId}&amount=${total}`;
+            // Show loading state
+            confirmBtn.disabled = true;
+            confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
+
+            // ✅ Update cart with delivery info before proceeding (for cart purchases)
+            if (fromCart) {
+                try {
+                    const response = await fetch('/Cart/UpdateCartDeliveryInfo', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `address=${encodeURIComponent(address)}&deliveryOption=${encodeURIComponent(selectedDelivery)}`
+                    });
+
+                    const result = await response.json();
+                    if (!result.success) {
+                        alert("Failed to update cart. Please try again.");
+                        confirmBtn.disabled = false;
+                        confirmBtn.innerHTML = 'Confirm & Pay <i class="bi bi-arrow-right-circle ms-2"></i>';
+                        return;
+                    }
+                } catch (error) {
+                    console.error("Error updating cart:", error);
+                    alert("An error occurred. Please try again.");
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = 'Confirm & Pay <i class="bi bi-arrow-right-circle ms-2"></i>';
+                    return;
+                }
             } else {
-                if (fromCart === "true")
+                // For single order, update the order record
+                try {
+                    const response = await fetch('/Order/UpdateOrderDeliveryInfo', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `orderId=${orderId}&address=${encodeURIComponent(address)}&deliveryOption=${encodeURIComponent(selectedDelivery)}`
+                    });
+
+                    const result = await response.json();
+                    if (!result.success) {
+                        alert("Failed to update order. Please try again.");
+                        confirmBtn.disabled = false;
+                        confirmBtn.innerHTML = 'Confirm & Pay <i class="bi bi-arrow-right-circle ms-2"></i>';
+                        return;
+                    }
+                } catch (error) {
+                    console.error("Error updating order:", error);
+                    alert("An error occurred. Please try again.");
+                    confirmBtn.disabled = false;
+                    confirmBtn.innerHTML = 'Confirm & Pay <i class="bi bi-arrow-right-circle ms-2"></i>';
+                    return;
+                }
+            }
+
+            // ✅ Navigate based on payment method
+            if (selectedPayment === "Card") {
+                if (fromCart) {
+                    window.location.href = `/Payment/PayByCardFromCart`;
+                } else {
+                    window.location.href = `/Payment/PayByCard?id=${orderId}&amount=${finalTotal}`;
+                }
+            } 
+            else if (selectedPayment === "Wallet") {
+                if (fromCart) {
+                    window.location.href = `/Payment/PayByWalletFromCart`;
+                } else {
+                    window.location.href = `/Payment/PayByWallet?id=${orderId}&amount=${finalTotal}`;
+                }
+            } 
+            else if (selectedPayment === "Cash") {
+                if (fromCart) {
                     window.location.href = `/Payment/CashOnDeliveryFromCart`;
-                else
+                } else {
                     window.location.href = `/Payment/CashOnDelivery?id=${orderId}`;
+                }
             }
         });
     });
@@ -292,15 +361,12 @@
         }
 
     @@media (max-width: 768px) {
-        .option-card
+        .option-card {
+            padding: 15px;
+        }
 
-    {
-        padding: 15px;
-    }
-
-    .checkout-wrapper {
-        border-radius: 20px;
-    }
-
+        .checkout-wrapper {
+            border-radius: 20px;
+        }
     }
 </style>
