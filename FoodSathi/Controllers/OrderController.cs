@@ -122,6 +122,40 @@ namespace FoodSathi.Controllers
             return View(orders); // Pass data to ManageOrders.cshtml
         }
 
+        [Authorize(Roles = "Admin")]
+        // POST: Update payment status via AJAX
+        [HttpPost]
+        public IActionResult UpdatePayment(int id, string paymentStatus)
+        {
+            var order = _context.Orders.Find(id);
+            if (order != null)
+            {
+                order.PaymentStatus = paymentStatus;
+                _context.SaveChanges();
+                return Ok();
+            }
+            return NotFound();
+        }
+
+        [HttpGet]
+        public IActionResult DetailsPartial(int id)
+        {
+            System.Diagnostics.Debug.WriteLine($"DetailsPartial called with ID: {id}");
+
+            var order = _context.Orders.Find(id);
+
+            if (order == null)
+            {
+                System.Diagnostics.Debug.WriteLine($"Order {id} not found");
+                return Content("<p class='text-danger'>Order not found!</p>", "text/html");
+            }
+
+            System.Diagnostics.Debug.WriteLine($"Order found: {order.ItemName}");
+            return PartialView("_OrderDetailsPartial", order);
+        }
+    
+
+
         [Authorize(Roles = "User")]
         // ✅ All orders list
         public IActionResult Orders()
