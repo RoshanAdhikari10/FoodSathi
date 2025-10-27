@@ -1,0 +1,14 @@
+﻿@model FoodSathi.Models.Order
+
+<div class="p-2">
+    <p><strong>Order ID:</strong> #@Model.OrderID</p>
+    <p><strong>User:</strong> @Model.UserName</p>
+    <p><strong>Item:</strong> @Model.ItemName</p>
+    <p><strong>Quantity:</strong> @Model.Quantity</p>
+    <p><strong>Total Price:</strong> ₹@Model.TotalPrice</p>
+    <p><strong>Address:</strong> @Model.Address</p>
+    <p><strong>Delivery Option:</strong> @Model.DeliveryOption</p>
+    <p><strong>Payment Method:</strong> @Model.PaymentMethod</p>
+    <p><strong>Payment Status:</strong> @Model.PaymentStatus</p>
+    <p><strong>Order Date:</strong> @Model.OrderDate.ToString("dd MMM yyyy hh:mm tt")</p>
+</div>
