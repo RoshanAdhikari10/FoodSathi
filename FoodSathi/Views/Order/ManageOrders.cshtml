@@ -64,17 +64,18 @@
                                 @order.PaymentMethod
                             </span>
                         </td>
-                        <td> <select class="form-select form-select-sm payment-status shadow-sm" data-id="@order.OrderID">
-                            <option value="Pending" selected="@(order.PaymentStatus == "Pending")">Pending</option>
-                            <option value="Paid" selected="@(order.PaymentStatus == "Paid")">Paid</option>
-                        </select>
+                        <td>
+                            <select class="form-select form-select-sm payment-status shadow-sm" data-id="@order.OrderID">
+                                <option value="Pending" selected="@(order.PaymentStatus == "Pending")">Pending</option>
+                                <option value="Paid" selected="@(order.PaymentStatus == "Paid")">Paid</option>
+                            </select>
                         </td>
+
                         <td>@order.OrderDate.ToString("dd MMM yyyy hh:mm tt")</td>
                         <td class="text-center">
-                            <a href="/Orders/Details/@order.OrderID"
-                               class="btn btn-sm btn-gradient-blue rounded-pill px-3 fw-semibold shadow-sm">
+                            <button class="btn btn-sm btn-gradient-blue rounded-pill px-3 fw-semibold shadow-sm view-btn" data-id="@order.OrderID">
                                 View
-                            </a>
+                            </button>
                         </td>
                     </tr>
                 }
@@ -83,23 +84,44 @@
     </div>
 </div>
 
+<!-- 🪟 Modal -->
+<div class="modal fade" id="orderModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content glass-modal text-white p-4 position-relative">
+            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
+            <h4 class="text-gradient fw-bold mb-4">📦 Order Details</h4>
+            <div id="orderDetails" class="small">
+                <p class="text-muted">Loading...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Styles {
 <style>
-    /* 🌈 Premium Gradient Title */
+    /* 🌈 Gradient Title */
     .text-gradient {
         background: linear-gradient(90deg, #00f5a0, #00d9f5);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
-    /* 🧊 Glass card */
+    /* 🧊 Glass Card */
     .glass-card {
         background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.15);
         backdrop-filter: blur(12px);
     }
 
-    /* ✨ Fade animation */
+    .glass-modal {
+        background: rgba(20, 20, 30, 0.9);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(15px);
+        box-shadow: 0 0 30px rgba(0, 255, 200, 0.1);
+    }
+
+    /* ✨ Animations */
     .fade-in {
         animation: fadeIn 0.6s ease-in-out;
     }
@@ -109,7 +131,6 @@
         to { opacity: 1; transform: translateY(0); }
     }
 
-    /* 🪄 Hover effects */
     .transition {
         transition: all 0.25s ease;
     }
@@ -127,22 +148,23 @@
         background-color: rgba(255, 255, 255, 0.1);
         color: #fff;
     }
+
     .search-box::placeholder {
         color: #aaa;
     }
 
-    /* 🌈 Gradient button */
+    /* 🌈 Gradient Button */
     .btn-gradient-blue {
         background: linear-gradient(90deg, #00c6ff, #0072ff);
         color: #fff;
         border: none;
     }
+
     .btn-gradient-blue:hover {
         background: linear-gradient(90deg, #0072ff, #00c6ff);
         transform: scale(1.05);
     }
 
-    /* 💳 Dropdown (Payment Status) */
     select.form-select-sm {
         background-color: rgba(255, 255, 255, 0.1);
         color: #fff;
@@ -154,7 +176,6 @@
         color: #fff;
     }
 
-    /* 📱 Responsive */
     @@media (max-width: 768px) {
         table th:nth-child(3),
         table td:nth-child(3),
@@ -163,18 +184,8 @@
             display: none;
         }
 
-        .btn-gradient-blue {
-            padding: 5px 10px;
-            font-size: 0.85rem;
-        }
-
-        .badge {
-            font-size: 0.75rem;
-        }
-
-        .glass-card {
-            padding: 1rem !important;
-        }
+        .glass-card { padding: 1rem !important; }
+        .btn-gradient-blue { font-size: 0.85rem; }
     }
 </style>
 }
@@ -185,7 +196,7 @@
     const paymentFilter = document.getElementById('paymentFilter');
     const table = document.getElementById('ordersTable');
 
-    // 🔍 Filter Logic
+    // 🔍 Filter Function
     function filterTable() {
         const search = searchInput.value.toLowerCase();
         const payment = paymentFilter.value;
@@ -194,9 +205,8 @@
             const user = row.cells[1].innerText.toLowerCase();
             const orderId = row.cells[0].innerText.toLowerCase();
             const paymentMethod = row.cells[6].innerText.trim();
-            const matches = 
-                (user.includes(search) || orderId.includes(search)) &&
-                (payment === "" || paymentMethod === payment);
+            const matches = (user.includes(search) || orderId.includes(search)) &&
+                            (payment === "" || paymentMethod === payment);
             row.style.display = matches ? "" : "none";
         });
     }
@@ -204,18 +214,34 @@
     searchInput.addEventListener('input', filterTable);
     paymentFilter.addEventListener('change', filterTable);
 
-    // 💳 Update Payment Status via AJAX
+    // 💳 AJAX Update Payment Status
     document.querySelectorAll('.payment-status').forEach(select => {
         select.addEventListener('change', e => {
             const id = e.target.dataset.id;
             const status = e.target.value;
-
             fetch(`/Orders/UpdatePayment/${id}?paymentStatus=${status}`, { method: 'POST' })
                 .then(() => {
                     const row = e.target.closest('tr');
                     row.style.backgroundColor = status === "Paid" ? "rgba(0,255,100,0.15)" : "rgba(255,100,100,0.15)";
                     setTimeout(() => row.style.backgroundColor = "", 600);
                 });
+        });
+    });
+
+    // 🪟 Modal View Handler
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            const orderId = e.target.dataset.id;
+            const modal = new bootstrap.Modal(document.getElementById('orderModal'));
+            const orderDetails = document.getElementById('orderDetails');
+            orderDetails.innerHTML = "<p class='text-muted'>Loading...</p>";
+
+            fetch(`/Orders/DetailsPartial/${orderId}`)
+                .then(res => res.text())
+                .then(html => orderDetails.innerHTML = html)
+                .catch(() => orderDetails.innerHTML = "<p class='text-danger'>Failed to load order details.</p>");
+
+            modal.show();
         });
     });
 </script>
