@@ -1,0 +1,173 @@
+﻿@model IEnumerable<FoodSathi.Models.Order>
+
+@{
+    ViewData["Title"] = "Manage Orders";
+}
+
+<div class="container py-5 fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-white fw-bold">🧾 Manage Orders</h2>
+        <span class="badge bg-gradient text-white px-3 py-2 rounded-pill">
+            Total Orders: @Model.Count()
+        </span>
+    </div>
+
+    <!-- 🔍 Filters -->
+    <div class="row mb-4 g-2">
+        <div class="col-md-4">
+            <input type="text" id="searchInput" class="form-control shadow-sm" placeholder="Search by Customer or Order ID">
+        </div>
+        <div class="col-md-3">
+            <select id="paymentFilter" class="form-select shadow-sm">
+                <option value="">All Payments</option>
+                <option value="Cash on Delivery">Cash on Delivery</option>
+                <option value="eSewa">eSewa</option>
+                <option value="Khalti">Khalti</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- 📦 Orders Table -->
+    <div class="table-responsive glass-card rounded-4 shadow-lg p-4">
+        <table class="table table-dark table-hover align-middle text-white mb-0" id="ordersTable">
+            <thead class="text-uppercase text-secondary small border-bottom">
+                <tr>
+                    <th>Order ID</th>
+                    <th>User Name</th>
+                    <th>Item</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                    <th>Delivery Option</th>
+                    <th>Payment Method</th>
+                    <th>Payment Status</th>
+                    <th>Order Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr class="order-row transition">
+                        <td>@order.OrderID</td>
+                        <td>@order.UserName</td>
+                        <td>@order.ItemName</td>
+                        <td>@order.Quantity</td>
+                        <td>₹@order.TotalPrice</td>
+                        <td>
+                            <span class="badge bg-info-subtle text-info fw-semibold px-3 py-2 rounded-pill">
+                                @order.DeliveryOption
+                            </span>
+                        </td>
+                        <td>
+                            <span class="badge bg-success-subtle text-success fw-semibold px-3 py-2 rounded-pill">
+                                @order.PaymentMethod
+                            </span>
+                        </td>
+                        <td>
+                            <select class="form-select form-select-sm payment-status shadow-sm" data-id="@order.OrderID">
+                                <option value="Pending" selected="@(order.PaymentStatus == "Pending")">Pending</option>
+                                <option value="Paid" selected="@(order.PaymentStatus == "Paid")">Paid</option>
+                            </select>
+                        </td>
+
+                        <td>@order.OrderDate.ToString("dd MMM yyyy hh:mm tt")</td>
+                        <td>
+                            <a href="/Orders/Details/@order.OrderID" 
+                               class="btn btn-sm btn-gradient-blue rounded-pill px-3">
+                                View
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Styles {
+<style>
+    /* 🧊 Glass effect */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+    }
+
+    .fade-in {
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @@keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .transition {
+        transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .order-row:hover {
+        transform: scale(1.01);
+        background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    /* 🌈 Gradient button */
+    .btn-gradient-blue {
+        background: linear-gradient(90deg, #00c6ff, #0072ff);
+        color: #fff;
+        border: none;
+    }
+
+    .btn-gradient-blue:hover {
+        background: linear-gradient(90deg, #0072ff, #00c6ff);
+    }
+
+    select.form-select-sm {
+        min-width: 110px;
+    }
+</style>
+}
+
+@section Scripts {
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const paymentFilter = document.getElementById('paymentFilter');
+    const table = document.getElementById('ordersTable');
+
+    // 🔍 Filter Function
+    function filterTable() {
+        const search = searchInput.value.toLowerCase();
+        const payment = paymentFilter.value;
+
+        Array.from(table.tBodies[0].rows).forEach(row => {
+            const user = row.cells[1].innerText.toLowerCase();
+            const orderId = row.cells[0].innerText.toLowerCase();
+            const paymentMethod = row.cells[6].innerText.trim();
+
+            const matches = 
+                (user.includes(search) || orderId.includes(search)) &&
+                (payment === "" || paymentMethod === payment);
+
+            row.style.display = matches ? "" : "none";
+        });
+    }
+
+    searchInput.addEventListener('input', filterTable);
+    paymentFilter.addEventListener('change', filterTable);
+
+    // 💳 AJAX: Update Payment Status
+    document.querySelectorAll('.payment-status').forEach(select => {
+        select.addEventListener('change', e => {
+            const id = e.target.dataset.id;
+            const status = e.target.value;
+
+            fetch(`/Orders/UpdatePayment/${id}?paymentStatus=${status}`, { method: 'POST' })
+                .then(() => {
+                    const row = e.target.closest('tr');
+                    row.style.backgroundColor = status === "Paid" ? "rgba(0,255,100,0.15)" : "rgba(255,100,100,0.15)";
+                    setTimeout(() => row.style.backgroundColor = "", 600);
+                });
+        });
+    });
+</script>
+}
