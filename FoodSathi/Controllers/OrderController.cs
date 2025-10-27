@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FoodSathi.Controllers
 {
-    [Authorize(Roles = "User")]
+    [Authorize(Roles = "User,Admin")]
     public class OrderController : Controller
     {
         private readonly MenuDbContext _context;
@@ -14,7 +14,7 @@ namespace FoodSathi.Controllers
         {
             _context = context;
         }
-
+        [Authorize(Roles = "User")]
         // 🛒 From "Buy Now" button
         [HttpPost]
         public IActionResult BuyNow(int itemId, int quantity)
@@ -42,7 +42,7 @@ namespace FoodSathi.Controllers
             return RedirectToAction("Checkout", new { orderId = order.OrderID });
         }
 
-
+        [Authorize(Roles = "User")]
         // ✅ Checkout for single or multiple items
         [HttpGet]
         public IActionResult Checkout(int? orderId)
@@ -83,7 +83,7 @@ namespace FoodSathi.Controllers
             }
         }
 
-
+        [Authorize(Roles = "User")]
         // ✅ Proceed to payment (from checkout)
         [HttpPost]
         public IActionResult ProceedToPayment(int? orderId, bool fromCart)
@@ -110,7 +110,19 @@ namespace FoodSathi.Controllers
                 return RedirectToAction("PayByCard", "Payment", new { orderId = order.OrderID, amount = order.TotalPrice });
             }
         }
+        // ✅ Admin: Manage All Orders
+        [Authorize(Roles = "Admin")]
+        public IActionResult ManageOrders()
+        {
+            // Get all orders sorted by most recent
+            var orders = _context.Orders
+                .OrderByDescending(o => o.OrderDate)
+                .ToList();
 
+            return View(orders); // Pass data to ManageOrders.cshtml
+        }
+
+        [Authorize(Roles = "User")]
         // ✅ All orders list
         public IActionResult Orders()
         {
@@ -121,7 +133,7 @@ namespace FoodSathi.Controllers
                 .ToList();
             return View(orders);
         }
-
+        [Authorize(Roles = "User")]
         // ✅ Confirmation Page
         [HttpGet]
         public async Task<IActionResult> OrderConfirmation(int id)
@@ -140,7 +152,7 @@ namespace FoodSathi.Controllers
 
             return View(order);
         }
-
+        [Authorize(Roles = "User")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ConfirmOrder(CheckoutViewModel model)
@@ -165,7 +177,7 @@ namespace FoodSathi.Controllers
 
             return RedirectToAction("OrderConfirmation", new { id = newOrder.OrderID });
         }
-
+        [Authorize(Roles = "User")]
         [HttpGet]
         public IActionResult OrderConfirmationFromCart(decimal amount, int itemCount, string paymentMethod)
         {
@@ -177,7 +189,7 @@ namespace FoodSathi.Controllers
 
             return View("OrderConfirmation");
         }
-
+        [Authorize(Roles = "User")]
         // ✅ NEW: Update order delivery information before payment
         [HttpPost]
         public async Task<IActionResult> UpdateOrderDeliveryInfo(int orderId, string address, string deliveryOption)
