@@ -1,82 +1,51 @@
 ﻿@model IEnumerable<FoodSathi.Models.Order>
-
 @{
-    ViewData["Title"] = "Manage Orders";
+    ViewData["Title"] = "Manage Orders | FoodSathi";
 }
-
-<div class="container-fluid py-5 fade-in">
-    <!-- 🔹 Header -->
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
-        <h2 class="text-gradient fw-bold m-0">🧾 Manage Orders</h2>
-        <span class="badge bg-gradient-info text-white px-4 py-2 rounded-pill fs-6 shadow-sm">
-            Total Orders: @Model.Count()
-        </span>
-    </div>
-
-    <!-- 🔍 Filters -->
-    <div class="row mb-4 g-3 align-items-center">
-        <div class="col-md-5 col-lg-4">
-            <input type="text" id="searchInput" class="form-control shadow-sm search-box" placeholder="🔎 Search by Customer or Order ID">
-        </div>
-        <div class="col-md-4 col-lg-3">
-            <select id="paymentFilter" class="form-select shadow-sm filter-select">
-                <option value="">All Payments</option>
-                <option value="Cash on Delivery">Cash on Delivery</option>
-                <option value="eSewa">eSewa</option>
-                <option value="Khalti">Khalti</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- 📦 Orders Table -->
-    <div class="table-responsive glass-card rounded-4 shadow-lg p-3 p-md-4">
-        <table class="table table-dark table-hover align-middle text-white mb-0" id="ordersTable">
-            <thead class="text-uppercase text-secondary small border-bottom border-secondary">
+<div class="container py-4">
+    <h3 class="fw-bold mb-3 text-center text-primary">📦 Manage Orders</h3>
+    <div class="table-responsive shadow-sm rounded-3">
+        <table class="table table-hover align-middle">
+            <thead class="table-dark">
                 <tr>
                     <th>Order ID</th>
                     <th>User</th>
                     <th>Item</th>
-                    <th>Qty</th>
-                    <th>Total</th>
-                    <th>Delivery</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
                     <th>Payment</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th class="text-center">Action</th>
+                    <th>Delivery Status</th>
+                    <th>Order Date</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var order in Model)
                 {
-                    <tr class="order-row transition">
+                    <tr>
                         <td>#@order.OrderID</td>
-                        <td class="fw-semibold">@order.UserName</td>
+                        <td>@order.UserName</td>
                         <td>@order.ItemName</td>
                         <td>@order.Quantity</td>
-                        <td class="fw-semibold text-success">₹@order.TotalPrice</td>
-                        <td>
-                            <span class="badge bg-info-subtle text-info px-3 py-2 rounded-pill small fw-semibold">
-                                @order.DeliveryOption
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill small fw-semibold">
-                                @order.PaymentMethod
-                            </span>
-                        </td>
+                        <td>Rs. @order.TotalPrice</td>
+                        <!-- Payment Dropdown -->
                         <td>
                             <select class="form-select form-select-sm payment-status shadow-sm" data-id="@order.OrderID">
                                 <option value="Pending" selected="@(order.PaymentStatus == "Pending")">Pending</option>
                                 <option value="Paid" selected="@(order.PaymentStatus == "Paid")">Paid</option>
                             </select>
                         </td>
-
-                        <td>@order.OrderDate.ToString("dd MMM yyyy hh:mm tt")</td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-gradient-blue rounded-pill px-3 fw-semibold shadow-sm view-btn" data-id="@order.OrderID">
-                                View
-                            </button>
+                        <!-- Delivery Status Dropdown -->
+                        <td>
+                            <select class="form-select form-select-sm delivery-status shadow-sm" data-id="@order.OrderID">
+                                <option value="Order Placed" selected="@(order.DeliveryStatus == "Order Placed")">Order Placed</option>
+                                <option value="Preparing" selected="@(order.DeliveryStatus == "Preparing")">Preparing</option>
+                                <option value="Out for Delivery" selected="@(order.DeliveryStatus == "Out for Delivery")">Out for Delivery</option>
+                                <option value="Delivered" selected="@(order.DeliveryStatus == "Delivered")">Delivered</option>
+                                <option value="Ready for Pickup" selected="@(order.DeliveryStatus == "Ready for Pickup")">Ready for Pickup</option>
+                                <option value="Picked Up" selected="@(order.DeliveryStatus == "Picked Up")">Picked Up</option>
+                            </select>
                         </td>
+                        <td>@order.OrderDate.ToString("MMM dd, yyyy - hh:mm tt")</td>
                     </tr>
                 }
             </tbody>
@@ -84,165 +53,66 @@
     </div>
 </div>
 
-<!-- 🪟 Modal -->
-<div class="modal fade" id="orderModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content glass-modal text-white p-4 position-relative">
-            <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
-            <h4 class="text-gradient fw-bold mb-4">📦 Order Details</h4>
-            <div id="orderDetails" class="small">
-                <p class="text-muted">Loading...</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-@section Styles {
-<style>
-    /* 🌈 Gradient Title */
-    .text-gradient {
-        background: linear-gradient(90deg, #00f5a0, #00d9f5);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    /* 🧊 Glass Card */
-    .glass-card {
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(12px);
-    }
-
-    .glass-modal {
-        background: rgba(20, 20, 30, 0.9);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        backdrop-filter: blur(15px);
-        box-shadow: 0 0 30px rgba(0, 255, 200, 0.1);
-    }
-
-    /* ✨ Animations */
-    .fade-in {
-        animation: fadeIn 0.6s ease-in-out;
-    }
-
-    @@keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .transition {
-        transition: all 0.25s ease;
-    }
-
-    .order-row:hover {
-        transform: scale(1.01);
-        background: rgba(255, 255, 255, 0.08);
-    }
-
-    /* 🎨 Inputs */
-    .search-box, .filter-select {
-        border: none;
-        border-radius: 12px;
-        padding: 10px 15px;
-        background-color: rgba(255, 255, 255, 0.1);
-        color: #fff;
-    }
-
-    .search-box::placeholder {
-        color: #aaa;
-    }
-
-    /* 🌈 Gradient Button */
-    .btn-gradient-blue {
-        background: linear-gradient(90deg, #00c6ff, #0072ff);
-        color: #fff;
-        border: none;
-    }
-
-    .btn-gradient-blue:hover {
-        background: linear-gradient(90deg, #0072ff, #00c6ff);
-        transform: scale(1.05);
-    }
-
-    select.form-select-sm {
-        background-color: rgba(255, 255, 255, 0.1);
-        color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    select.form-select-sm option {
-        background-color: #1a1a1a;
-        color: #fff;
-    }
-
-    @@media (max-width: 768px) {
-        table th:nth-child(3),
-        table td:nth-child(3),
-        table th:nth-child(6),
-        table td:nth-child(6) {
-            display: none;
-        }
-
-        .glass-card { padding: 1rem !important; }
-        .btn-gradient-blue { font-size: 0.85rem; }
-    }
-</style>
-}
-
 @section Scripts {
-<script>
-    const searchInput = document.getElementById('searchInput');
-    const paymentFilter = document.getElementById('paymentFilter');
-    const table = document.getElementById('ordersTable');
+    <script>
+        // 💰 Update Payment Status
+        document.querySelectorAll('.payment-status').forEach(select => {
+            select.addEventListener('change', e => {
+                const id = e.target.dataset.id;
+                const status = e.target.value;
 
-    // 🔍 Filter Function
-    function filterTable() {
-        const search = searchInput.value.toLowerCase();
-        const payment = paymentFilter.value;
-
-        Array.from(table.tBodies[0].rows).forEach(row => {
-            const user = row.cells[1].innerText.toLowerCase();
-            const orderId = row.cells[0].innerText.toLowerCase();
-            const paymentMethod = row.cells[6].innerText.trim();
-            const matches = (user.includes(search) || orderId.includes(search)) &&
-                            (payment === "" || paymentMethod === payment);
-            row.style.display = matches ? "" : "none";
-        });
-    }
-
-    searchInput.addEventListener('input', filterTable);
-    paymentFilter.addEventListener('change', filterTable);
-
-    // 💳 AJAX Update Payment Status
-    document.querySelectorAll('.payment-status').forEach(select => {
-        select.addEventListener('change', e => {
-            const id = e.target.dataset.id;
-            const status = e.target.value;
-            fetch(`/Orders/UpdatePayment/${id}?paymentStatus=${status}`, { method: 'POST' })
-                .then(() => {
-                    const row = e.target.closest('tr');
-                    row.style.backgroundColor = status === "Paid" ? "rgba(0,255,100,0.15)" : "rgba(255,100,100,0.15)";
-                    setTimeout(() => row.style.backgroundColor = "", 600);
+                fetch(`/Order/UpdatePayment?id=${id}&paymentStatus=${status}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        const row = e.target.closest('tr');
+                        row.style.backgroundColor = "rgba(0,255,100,0.1)";
+                        setTimeout(() => row.style.backgroundColor = "", 700);
+                        console.log('✅ Payment status updated successfully');
+                    } else {
+                        console.error('❌ Failed to update payment status');
+                        alert('Failed to update payment status');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error:', error);
+                    alert('Error updating payment status');
                 });
+            });
         });
-    });
 
-    // 🪟 Modal View Handler
-    document.querySelectorAll('.view-btn').forEach(btn => {
-        btn.addEventListener('click', e => {
-            const orderId = e.target.dataset.id;
-            const modal = new bootstrap.Modal(document.getElementById('orderModal'));
-            const orderDetails = document.getElementById('orderDetails');
-            orderDetails.innerHTML = "<p class='text-muted'>Loading...</p>";
+        // 🚚 Update Delivery Status
+        document.querySelectorAll('.delivery-status').forEach(select => {
+            select.addEventListener('change', e => {
+                const id = e.target.dataset.id;
+                const status = e.target.value;
 
-            fetch(`/Orders/DetailsPartial/${orderId}`)
-                .then(res => res.text())
-                .then(html => orderDetails.innerHTML = html)
-                .catch(() => orderDetails.innerHTML = "<p class='text-danger'>Failed to load order details.</p>");
-
-            modal.show();
+                fetch(`/Order/UpdateDeliveryStatus?id=${id}&status=${status}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        const row = e.target.closest('tr');
+                        row.style.backgroundColor = "rgba(0,150,255,0.1)";
+                        setTimeout(() => row.style.backgroundColor = "", 700);
+                        console.log('✅ Delivery status updated successfully');
+                    } else {
+                        console.error('❌ Failed to update delivery status');
+                        alert('Failed to update delivery status');
+                    }
+                })
+                .catch(error => {
+                    console.error('❌ Error:', error);
+                    alert('Error updating delivery status');
+                });
+            });
         });
-    });
-</script>
+    </script>
 }
