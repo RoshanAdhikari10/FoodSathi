@@ -153,7 +153,67 @@ namespace FoodSathi.Controllers
             System.Diagnostics.Debug.WriteLine($"Order found: {order.ItemName}");
             return PartialView("_OrderDetailsPartial", order);
         }
-    
+        // 🟢 Track Order Page
+        [HttpGet]
+        public async Task<IActionResult> Track(int? id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderID == id);
+            if (order == null)
+                return NotFound();
+
+            // Determine status based on delivery type
+            string status = "";
+            string nextStep = "";
+
+            if (order.DeliveryOption == "Home Delivery")
+            {
+                if (order.PaymentStatus == "Pending")
+                {
+                    status = "Preparing your order";
+                    nextStep = "Awaiting payment confirmation or packaging.";
+                }
+                else
+                {
+                    status = "Out for Delivery";
+                    nextStep = "Our delivery partner is on the way!";
+                }
+            }
+            else if (order.DeliveryOption == "Pickup")
+            {
+                if (order.PaymentStatus == "Pending")
+                {
+                    status = "Preparing your pickup order";
+                    nextStep = "Please wait for pickup confirmation.";
+                }
+                else
+                {
+                    status = "Ready for Pickup";
+                    nextStep = "You can pick up your order from our store.";
+                }
+            }
+
+            ViewBag.Status = status;
+            ViewBag.NextStep = nextStep;
+            return View(order);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateDeliveryStatus(int id, string status)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null) return NotFound();
+
+            order.DeliveryStatus = status;
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+
+
 
 
         [Authorize(Roles = "User")]
