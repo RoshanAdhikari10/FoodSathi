@@ -1,174 +1,246 @@
 ﻿@model FoodSathi.Models.Order
+
 @{
     ViewData["Title"] = "Track Order | FoodSathi";
 
     string deliveryType = Model.DeliveryOption ?? "Home Delivery";
     string paymentMethod = Model.PaymentMethod ?? "COD";
     string paymentStatus = Model.PaymentStatus ?? "Pending";
+    string deliveryStatus = Model.DeliveryStatus ?? "Preparing";
 
-    // 🚚 Delivery timeline steps
-    List<string> steps;
+    List<string> steps = deliveryType == "Pickup"
+        ? new List<string> { "Order Placed", "Preparing", "Ready for Pickup", "Picked Up" }
+        : new List<string> { "Order Placed", "Preparing", "Out for Delivery", "Delivered" };
 
-    if (deliveryType == "Pickup")
-    {
-        steps = new List<string> { "Order Placed", "Preparing", "Ready for Pickup", "Picked Up" };
-    }
-    else // Home Delivery or others
-    {
-        steps = new List<string> { "Order Placed", "Preparing", "Out for Delivery", "Delivered" };
-    }
+    int currentIndex = deliveryType == "Pickup"
+        ? deliveryStatus switch
+        {
+            "Picked Up" => 3,
+            "Ready for Pickup" => 2,
+            "Preparing" => 1,
+            _ => 0
+        }
+        : deliveryStatus switch
+        {
+            "Delivered" => 3,
+            "Out for Delivery" => 2,
+            "Preparing" => 1,
+            _ => 0
+        };
 
-    // Example current step index (you can later make it dynamic from admin update)
-    int currentIndex = paymentStatus == "Completed" ? steps.Count - 1 : 1;
+    bool isDelivered = currentIndex == steps.Count - 1;
 }
 
-<div class="container my-5">
-    <div class="card shadow-lg border-0 rounded-4 p-4 text-center">
-        <h2 class="fw-bold text-success mb-3">
-            <i class="bi bi-truck me-2"></i> Track Your Order
-        </h2>
+<div class="container py-5">
+    <div class="glass-card shadow-lg rounded-5 overflow-hidden animate__animated animate__fadeInUp">
 
-        <div class="mb-4 text-muted">
-            <strong>Order ID:</strong> #@Model.OrderID <br />
-            <strong>User:</strong> @Model.UserName <br />
-            <strong>Item:</strong> @Model.ItemName <br />
-            <strong>Quantity:</strong> @Model.Quantity <br />
-            <strong>Total:</strong> Rs. @Model.TotalAmount <br />
-            <strong>Payment:</strong> @paymentMethod (@paymentStatus) <br />
-            <strong>Delivery:</strong> @deliveryType
+        <!-- 🌈 Header -->
+        <div class="p-4 bg-header text-white text-center">
+            <h2 class="fw-bold mb-1"><i class="bi bi-truck me-2"></i> Track Your Order</h2>
+            <p class="text-light opacity-75 mb-0">Follow your FoodSathi journey — from kitchen to doorstep 🍱</p>
         </div>
 
-        <!-- 🚚 Dynamic Delivery Progress -->
-        <div class="progress-tracker position-relative mt-4 mb-4">
-            @for (int i = 0; i < steps.Count; i++)
-            {
-                var completed = i <= currentIndex ? "completed" : "";
-                <div class="step @completed">
-                    <div class="circle">
-                        <i class="bi @(i < currentIndex ? "bi-check-lg" : "bi-clock")"></i>
+        <!-- 🧾 Order Info -->
+        <div class="px-4 py-4 text-center">
+            <div class="d-flex flex-wrap justify-content-center gap-4 text-start text-muted small mb-3">
+                <div><strong>Order ID:</strong> #@Model.OrderID</div>
+                <div><strong>User:</strong> @Model.UserName</div>
+                <div><strong>Item:</strong> @Model.ItemName</div>
+                <div><strong>Qty:</strong> @Model.Quantity</div>
+                <div><strong>Total:</strong> Rs. @Model.TotalAmount</div>
+                <div><strong>Payment:</strong> @paymentMethod (@paymentStatus)</div>
+                <div><strong>Delivery:</strong> @deliveryType</div>
+            </div>
+
+            <hr class="my-4 opacity-50" />
+
+            <!-- 🚚 Progress Tracker -->
+            <div class="progress-tracker position-relative" id="progressTracker">
+                @for (int i = 0; i < steps.Count; i++)
+                {
+                    var completed = i <= currentIndex ? "completed" : "";
+                    <div class="step @completed">
+                        <div class="circle @(isDelivered && i == steps.Count - 1 ? "pulse-check" : "")">
+                            <i class="bi @(i < currentIndex ? "bi-check-lg" : "bi-clock")"></i>
+                        </div>
+                        <p>@steps[i]</p>
                     </div>
-                    <p>@steps[i]</p>
-                </div>
-            }
-        </div>
+                }
+            </div>
 
-        <!-- 🕒 Delivery Message -->
-        <div class="mt-4">
-            @if (deliveryType == "Pickup")
-            {
-                if (currentIndex == 3)
+            <!-- 💬 Status Message -->
+            <div id="deliveryMessage" class="mt-4 animate__animated animate__fadeIn">
+                @switch (deliveryStatus)
                 {
-                    <h5 class="text-success fw-bold">🎉 Order Picked Up!</h5>
-                    <p class="text-muted">Thank you for collecting your order. Enjoy your meal!</p>
+                    case "Delivered":
+                        <h5 class="fw-bold text-success">✅ Order Delivered!</h5>
+                        <p class="text-muted">Your meal has arrived fresh and hot! Bon appétit 🍽️</p>
+        ;
+                        break;
+                    case "Out for Delivery":
+                        <h5 class="fw-bold text-primary">🚚 Out for Delivery</h5>
+                        <p class="text-muted">Our rider is en route to your doorstep 🚴‍♂️</p>
+        ;
+                        break;
+                    case "Preparing":
+                        <h5 class="fw-bold text-warning">🍳 Preparing Your Order</h5>
+                        <p class="text-muted">Our chefs are cooking your delicious meal with care 👨‍🍳</p>
+        ;
+                        break;
+                    case "Ready for Pickup":
+                        <h5 class="fw-bold text-info">📦 Ready for Pickup</h5>
+                        <p class="text-muted">Your order is ready — collect it anytime!</p>
+        ;
+                        break;
+                    case "Picked Up":
+                        <h5 class="fw-bold text-success">✅ Picked Up!</h5>
+                        <p class="text-muted">Enjoy your meal and thank you for choosing FoodSathi!</p>
+        ;
+                        break;
+                    default:
+                        <h5 class="fw-bold text-secondary">🕒 Order Placed</h5>
+                        <p class="text-muted">We’ve received your order and will begin soon!</p>
+        ;
+                        break;
                 }
-                else if (currentIndex == 2)
-                {
-                    <h5 class="text-info fw-bold">📦 Ready for Pickup</h5>
-                    <p class="text-muted">You can now visit our store to collect your order.</p>
-                }
-                else
-                {
-                    <h5 class="text-warning fw-bold">🍳 Preparing Your Order</h5>
-                    <p class="text-muted">Our chef is getting your order ready.</p>
-                }
-            }
-            else
-            {
-                if (currentIndex == 3)
-                {
-                    <h5 class="text-success fw-bold">🎉 Order Delivered!</h5>
-                    <p class="text-muted">Thank you for ordering with FoodSathi!</p>
-                }
-                else if (currentIndex == 2)
-                {
-                    <h5 class="text-primary fw-bold">🚚 Out for Delivery</h5>
-                    <p class="text-muted">Our delivery partner will reach you soon.</p>
-                }
-                else
-                {
-                    <h5 class="text-warning fw-bold">🍳 Preparing Your Order</h5>
-                    <p class="text-muted">Your food is being prepared freshly.</p>
-                }
-            }
-        </div>
+            </div>
 
-        <!-- 🔁 Auto Refresh Info -->
-        <p class="text-muted small mt-4">(This page auto-refreshes every 10 seconds for live updates)</p>
+            <p class="text-muted small mt-3">(Auto-refreshes every 10s for live tracking)</p>
 
-        <!-- 🔙 Back -->
-        <div class="mt-3">
-            <a asp-controller="MenuItems" asp-action="Menu" class="btn btn-success px-4 fw-semibold">
-                <i class="bi bi-arrow-left me-2"></i> Back to Menu
-            </a>
+            <!-- 🔙 Back Button -->
+            <div class="mt-4">
+                <a asp-controller="MenuItems" asp-action="Menu" class="btn btn-gradient px-4 fw-semibold">
+                    <i class="bi bi-arrow-left me-2"></i> Back to Menu
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- ✅ Bootstrap Icons + Animations -->
+<!-- Dependencies -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
 
 <style>
+    /* 🌟 Glass Effect Card */
+    .glass-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(14px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 🌈 Header Gradient */
+    .bg-header {
+        background: linear-gradient(135deg, #ff914d, #ff5757);
+    }
+
+    /* 🛤️ Progress Tracker */
     .progress-tracker {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        margin: 50px auto;
+        max-width: 680px;
         position: relative;
-        margin: 40px auto;
-        max-width: 650px;
     }
 
         .progress-tracker::before {
             content: "";
             position: absolute;
-            top: 20px;
+            top: 22px;
             left: 0;
             right: 0;
-            height: 4px;
-            background-color: #e0e0e0;
-            z-index: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ddd, #f1f1f1);
+            border-radius: 4px;
         }
 
     .step {
         text-align: center;
-        width: calc(100% / 4);
+        flex: 1;
         position: relative;
-        z-index: 1;
     }
 
-        .step .circle {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: #e0e0e0;
-            margin: 0 auto 10px auto;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #fff;
-            transition: all 0.3s ease;
+    .circle {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: #bfbfbf;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto 8px;
+        color: white;
+        font-size: 1.4rem;
+        transition: all 0.4s ease;
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+    }
+
+    .completed .circle {
+        background: linear-gradient(135deg, #28a745, #2ecc71);
+        box-shadow: 0 0 15px rgba(40, 167, 69, 0.6);
+    }
+
+    .step p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #999;
+    }
+
+    .completed p {
+        color: #28a745;
+        font-weight: 600;
+    }
+
+    /* ✅ Pulse Animation */
+    @@keyframes pulseCheck {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.6);
         }
 
-        .step.completed .circle {
-            background-color: #28a745;
-            box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+        50% {
+            transform: scale(1.15);
+            box-shadow: 0 0 20px 5px rgba(40, 167, 69, 0.3);
         }
 
-        .step.completed p {
-            color: #28a745;
-            font-weight: 600;
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.6);
         }
+    }
 
-        .step p {
-            font-size: 0.9rem;
-            margin-top: 5px;
-            color: #888;
+    .pulse-check {
+        animation: pulseCheck 1.2s infinite ease-in-out;
+    }
+
+    /* 🌸 Premium Button */
+    .btn-gradient {
+        background: linear-gradient(135deg, #ff914d, #ff5757);
+        border: none;
+        color: #fff;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+    }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 87, 87, 0.4);
         }
 </style>
 
+<!-- 🔁 Live Update -->
 <script>
-    // Auto-refresh every 10 seconds for real-time updates
     setInterval(() => {
-        location.reload();
+        fetch(window.location.href)
+            .then(res => res.text())
+            .then(html => {
+                const doc = new DOMParser().parseFromString(html, "text/html");
+                document.querySelector("#progressTracker").innerHTML =
+                    doc.querySelector("#progressTracker").innerHTML;
+                document.querySelector("#deliveryMessage").innerHTML =
+                    doc.querySelector("#deliveryMessage").innerHTML;
+            });
     }, 10000);
 </script>
