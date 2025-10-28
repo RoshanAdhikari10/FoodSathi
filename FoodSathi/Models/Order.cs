@@ -35,14 +35,15 @@ namespace FoodSathi.Models
 
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
-        // 👇 Added — to know which logged-in user placed the order
         [Required]
         [MaxLength(50)]
         public string UserName { get; set; }
 
-
-        // 👇 Optional — you can track order status if you want
         [MaxLength(20)]
         public string PaymentStatus { get; set; } = "Pending";
+
+        public bool FromCart { get; set; } = false; // 🛒 NEW — true if placed from cart
+
+        public string DeliveryStatus { get; set; } = "Order Placed";
     }
 }
