@@ -179,6 +179,23 @@
             const activeCategory = document.querySelector('.btn-group .btn.active')?.textContent.trim() || 'All';
             filterMenu(activeCategory === 'All' ? 'all' : activeCategory);
         });
+
+                function filterMenu(category, event) {
+            if (event) {
+                document.querySelectorAll('.btn-group .btn').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+            }
+
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('.menu-item').forEach(item => {
+                const itemCategory = item.dataset.category;
+                const itemName = item.dataset.name;
+                const matchesCategory = (category === 'all' || itemCategory === category);
+                const matchesSearch = itemName.includes(query);
+                item.style.display = (matchesCategory && matchesSearch) ? 'block' : 'none';
+            });
+        }
+
     </script>
 
     <style>
