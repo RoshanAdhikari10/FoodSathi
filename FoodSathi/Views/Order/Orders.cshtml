@@ -35,6 +35,22 @@
                                 <span class="text-muted small mb-1">@order.OrderDate.ToString("MMM dd, yyyy")</span>
                             </div>
 
+                            <!-- 🛒 Order Type -->
+                            @if (order.FromCart)
+                            {
+                                <span class="badge bg-dark mb-3" data-bs-toggle="tooltip" data-bs-placement="top"
+                                      title="This order was placed from your shopping cart.">
+                                    🛒 From Cart
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary mb-3" data-bs-toggle="tooltip" data-bs-placement="top"
+                                      title="This order was placed directly using Buy Now.">
+                                    ⚡ Single Item
+                                </span>
+                            }
+
                             <!-- Item Info -->
                             <h5 class="card-title fw-bold">@order.ItemName</h5>
                             <p class="card-text mb-1">Quantity: <strong>@order.Quantity</strong></p>
@@ -48,26 +64,31 @@
                                     @switch (order.PaymentMethod)
                                     {
                                         case "eSewa":
-                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Paid via eSewa on @order.OrderDate.ToString("dd MMM yyyy")">💚 eSewa</span>
+                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                  title="Paid via eSewa on @order.OrderDate.ToString("dd MMM yyyy")">💚 eSewa</span>
                                             break;
                                         case "Khalti":
-                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Paid via Khalti on @order.OrderDate.ToString("dd MMM yyyy")">💜 Khalti</span>
+                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                  title="Paid via Khalti on @order.OrderDate.ToString("dd MMM yyyy")">💜 Khalti</span>
                                             break;
                                         case "IME Pay":
-                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Paid via IME Pay on @order.OrderDate.ToString("dd MMM yyyy")">🧡 IME Pay</span>
+                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                  title="Paid via IME Pay on @order.OrderDate.ToString("dd MMM yyyy")">🧡 IME Pay</span>
                                             break;
                                         case "Card":
-                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Paid via Card on @order.OrderDate.ToString("dd MMM yyyy")">💳 Card</span>
+                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                  title="Paid via Card on @order.OrderDate.ToString("dd MMM yyyy")">💳 Card</span>
                                             break;
                                         case "Cash On Delivery":
-                                            @* Dynamic color based on PaymentStatus *@
                                             if (order.PaymentStatus == "Paid")
                                             {
-                                                <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top" title="Paid via Cash on Delivery on @order.OrderDate.ToString("dd MMM yyyy")">💵 COD Paid</span>
+                                                <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                      title="Paid via Cash on Delivery on @order.OrderDate.ToString("dd MMM yyyy")">💵 COD Paid</span>
                                             }
                                             else
                                             {
-                                                <span class="badge bg-warning" data-bs-toggle="tooltip" data-bs-placement="top" title="Cash on delivery, not yet paid">💵 COD Pending</span>
+                                                <span class="badge bg-warning" data-bs-toggle="tooltip" data-bs-placement="top"
+                                                      title="Cash on delivery, not yet paid">💵 COD Pending</span>
                                             }
                                             break;
                                         default:
@@ -83,19 +104,30 @@
                                 @switch (order.DeliveryOption)
                                 {
                                     case "Standard":
-                                        <span class="badge bg-info" data-bs-toggle="tooltip" data-bs-placement="top" title="Standard delivery will arrive in 3-5 days">Standard 🚚</span>
+                                        <span class="badge bg-info" data-bs-toggle="tooltip" data-bs-placement="top"
+                                              title="Standard delivery will arrive in 3–5 days">Standard 🚚</span>
                                         break;
                                     case "Express":
-                                        <span class="badge bg-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Express delivery will arrive in 1-2 hours">Express ⚡</span>
+                                        <span class="badge bg-danger" data-bs-toggle="tooltip" data-bs-placement="top"
+                                              title="Express delivery will arrive in 1–2 hours">Express ⚡</span>
                                         break;
                                     case "Pickup":
-                                        <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Pickup your order at our store">Pickup 🛍</span>
+                                        <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
+                                              title="Pickup your order at our store">Pickup 🛍</span>
                                         break;
                                     default:
                                         <span class="badge bg-light text-dark">N/A</span>
                                         break;
                                 }
                             </p>
+
+                            <div class="mt-auto">
+                                <a href="@Url.Action("Track", "Order", new { id = order.OrderID })"
+                                   class="btn btn-outline-primary w-100 rounded-pill fw-semibold">
+                                    🚀 Track Order
+                                </a>
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -121,17 +153,25 @@
         -webkit-text-fill-color: transparent;
     }
 
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    .card {
         transition: all 0.3s ease-in-out;
     }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
 
     .badge {
         font-size: 0.85rem;
         padding: 0.45em 0.9em;
         cursor: pointer;
+        transition: transform 0.2s ease-in-out;
     }
+
+        .badge:hover {
+            transform: scale(1.1);
+        }
 
     h5.card-title {
         font-size: 1.1rem;
