@@ -14,61 +14,55 @@
     switch (paymentMethod)
     {
         case "Card":
-            bgClass = "bg-primary bg-opacity-10";
-            iconClass = "bi bi-credit-card-fill text-primary";
+            bgClass = "bg-gradient-primary";
+            iconClass = "bi bi-credit-card-fill text-white";
             textClass = "text-primary";
             heading = "Payment Successful!";
-            message = "Your payment via <span class='fw-semibold text-primary'>Card</span> was successful. Your order is confirmed.";
+            message = "Your payment via <span class='fw-semibold'>Card</span> was successful. Your order is confirmed.";
             break;
 
         case "eSewa":
-            bgClass = "bg-success bg-opacity-10";
-            iconClass = "bi bi-wallet2 text-success";
+            bgClass = "bg-gradient-success";
+            iconClass = "bi bi-wallet2 text-white";
             textClass = "text-success";
             heading = "eSewa Payment Successful!";
-            message = "Your <span class='fw-semibold text-success'>eSewa</span> payment was successful. Your order is confirmed.";
+            message = "Your <span class='fw-semibold'>eSewa</span> payment was successful. Your order is confirmed.";
             break;
 
         case "Khalti":
-            bgClass = "bg-info bg-opacity-10";
-            iconClass = "bi bi-wallet-fill text-info";
+            bgClass = "bg-gradient-info";
+            iconClass = "bi bi-wallet-fill text-white";
             textClass = "text-info";
             heading = "Khalti Payment Successful!";
-            message = "Your <span class='fw-semibold text-info'>Khalti</span> payment was successful. Your order is confirmed.";
+            message = "Your <span class='fw-semibold'>Khalti</span> payment was successful. Your order is confirmed.";
             break;
 
         default:
-            bgClass = "bg-warning bg-opacity-10";
-            iconClass = "bi bi-bag-check-fill text-warning";
-            textClass = "text-success";
+            bgClass = "bg-gradient-warning";
+            iconClass = "bi bi-bag-check-fill text-white";
+            textClass = "text-warning";
             heading = "Order Placed Successfully!";
-            message = "Your <span class='fw-semibold text-success'>Cash on Delivery</span> order has been received. Our delivery partner will reach you soon.";
+            message = "Your <span class='fw-semibold'>Cash on Delivery</span> order has been received. Our delivery partner will reach you soon.";
             break;
     }
 }
 
-<div class="container my-5 d-flex justify-content-center align-items-center">
-    <div class="card shadow-lg border-0 rounded-4 p-4 p-md-5 text-center" style="max-width: 650px; width: 100%;">
+<div class="container py-5">
+    <div class="card shadow-lg border-0 rounded-5 p-5 mx-auto text-center" style="max-width: 700px; background: #ffffffcc;">
 
         <!-- ✅ Header Icon -->
-        <div class="mb-4">
-            <div class="rounded-circle @bgClass d-inline-flex justify-content-center align-items-center animate__animated animate__fadeInDown"
-                 style="width: 80px; height: 80px;">
-                <i class="@iconClass fs-1"></i>
-            </div>
+        <div class="mb-4 mx-auto d-inline-flex rounded-circle @bgClass justify-content-center align-items-center animate__animated animate__fadeInDown" style="width: 90px; height: 90px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
+            <i class="@iconClass fs-1"></i>
         </div>
 
         <!-- ✅ Main Heading -->
-        <h2 class="fw-bold @textClass mb-2">@heading</h2>
-
+        <h2 class="fw-bold @textClass mb-3">@heading</h2>
         <p class="lead text-muted mb-4">@Html.Raw(message)</p>
 
         <!-- ✅ Order Summary -->
-        <div class="bg-light rounded-4 p-4 text-start mx-auto shadow-sm" style="max-width: 500px;">
-            <h5 class="fw-bold mb-3">
-                <i class="bi bi-receipt-cutoff me-2 text-success"></i>Order Details
-            </h5>
-            <ul class="list-unstyled mb-3">
+        <div class="bg-light rounded-4 p-4 shadow-sm mx-auto" style="max-width: 550px;">
+            <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-receipt-cutoff me-2 text-success"></i>Order Details</h5>
+            <ul class="list-unstyled mb-3 fs-6">
                 @if (!fromCart)
                 {
                     <li><span class="fw-semibold">Order ID:</span> #@orderId</li>
@@ -85,29 +79,26 @@
             @if (paymentMethod == "COD")
             {
                 <p class="text-muted small mb-0">
-                    Please keep the exact change ready for a faster and contactless delivery.
+                    💡 Please keep the exact change ready for a faster and contactless delivery.
                 </p>
             }
         </div>
 
         <!-- ✅ Action Buttons -->
-        <div class="mt-4 d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
-            <a href="/Orders/Track" class="btn btn-outline-success px-4 fw-semibold">
+        <div class="mt-5 d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
+            <a href="/Order/Track/@orderId" class="btn btn-outline-success px-5 py-2 fw-semibold rounded-pill shadow-sm hover-scale">
                 <i class="bi bi-truck me-2"></i> Track Order
             </a>
-            <a asp-controller="MenuItems" asp-action="Menu" class="btn btn-success px-4 fw-semibold">
+            <a asp-controller="MenuItems" asp-action="Index" class="btn btn-success px-5 py-2 fw-semibold rounded-pill shadow-sm hover-scale">
                 <i class="bi bi-arrow-left me-2"></i> Back to Menu
             </a>
         </div>
 
         <!-- ✅ Extra Section -->
-        <div class="mt-5 border-top pt-3">
-            <h6 class="fw-semibold mb-2 text-success">
-                <i class="bi bi-info-circle me-1"></i> Important Notice
-            </h6>
-            <p class="small text-muted mb-1">
-                Once your order is delivered, please confirm with our delivery partner.
-                You’ll receive a confirmation email and SMS shortly.
+        <div class="mt-5 border-top pt-4">
+            <h6 class="fw-semibold mb-2 text-success"><i class="bi bi-info-circle me-1"></i> Important Notice</h6>
+            <p class="small text-muted mb-0">
+                Once your order is delivered, please confirm with our delivery partner. You’ll receive a confirmation email and SMS shortly.
             </p>
         </div>
     </div>
@@ -116,22 +107,48 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
 
 <style>
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(135deg,#4e54c8,#8f94fb);
+    }
+
+    .bg-gradient-success {
+        background: linear-gradient(135deg,#11998e,#38ef7d);
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(135deg,#36d1dc,#5b86e5);
+    }
+
+    .bg-gradient-warning {
+        background: linear-gradient(135deg,#f7971e,#ffd200);
+    }
+
     .card {
-        transition: all 0.3s ease;
+        transition: all 0.3s ease, transform 0.3s ease;
     }
 
         .card:hover {
-            box-shadow: 0 0 25px rgba(0, 128, 0, 0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
 
     .btn {
-        transition: all 0.2s ease;
+        transition: all 0.3s ease;
     }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 128, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 128, 0, 0.2);
         }
+
+    .hover-scale:hover {
+        transform: scale(1.05);
+    }
 
     .bg-light {
         background-color: #f9f9f9 !important;
