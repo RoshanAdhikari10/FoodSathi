@@ -13,6 +13,8 @@ namespace FoodSathi.Models
 
         public DbSet<Order> Orders { get; set; }   // 👈 Added for Cart
 
+        public DbSet<Feedback> Feedbacks { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
