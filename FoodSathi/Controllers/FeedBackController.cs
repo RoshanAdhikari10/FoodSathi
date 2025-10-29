@@ -29,17 +29,24 @@ namespace FoodSathi.Controllers
             return View(feedbacks);
         }
 
-        // Handle feedback submission
+        // ✅ Handle feedback submission properly
         [HttpPost]
+        [ValidateAntiForgeryToken] // important for security
         public IActionResult SubmitFeedback(Feedback feedback)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Feedbacks.Add(feedback);
-                _context.SaveChanges();
-                return Json(new { success = true });
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                return Json(new { success = false, errors });
             }
-            return Json(new { success = false });
+
+            feedback.Date = DateTime.Now; // ensure date is set
+            _context.Feedbacks.Add(feedback);
+            _context.SaveChanges();
+
+            return Json(new { success = true });
         }
 
 
