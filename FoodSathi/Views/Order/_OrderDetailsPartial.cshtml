@@ -1,0 +1,29 @@
+﻿@model FoodSathi.Models.Order
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <p><strong>🆔 Order ID:</strong> #@Model.OrderID</p>
+        <p><strong>👤 Customer:</strong> @Model.UserName</p>
+        <p><strong>🍽️ Item:</strong> @Model.ItemName</p>
+        <p><strong>🔢 Quantity:</strong> @Model.Quantity</p>
+        <p><strong>💵 Item Total:</strong> <span class="text-success fw-bold">₹@Model.TotalPrice</span></p>
+    </div>
+    <div class="col-md-6">
+        <p><strong>💰 Total Amount:</strong> <span class="text-success fw-bold fs-5">₹@Model.TotalAmount</span></p>
+        <p><strong>🚚 Delivery:</strong> @Model.DeliveryOption</p>
+        <p><strong>💳 Payment:</strong> @Model.PaymentMethod</p>
+        <p>
+            <strong>📊 Status:</strong>
+            <span class="badge bg-@(Model.PaymentStatus == "Paid" ? "success" : "warning") px-3 py-2">
+                @Model.PaymentStatus
+            </span>
+        </p>
+        <p><strong>📅 Order Date:</strong> @Model.OrderDate.ToString("dddd, dd MMMM yyyy hh:mm tt")</p>
+    </div>
+    <div class="col-12 mt-3">
+        <p><strong>🏠 Delivery Address:</strong></p>
+        <div class="bg-dark bg-opacity-50 p-3 rounded">
+            @Model.Address
+        </div>
+    </div>
+</div>
