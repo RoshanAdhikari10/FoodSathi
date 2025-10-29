@@ -35,21 +35,7 @@
                                 <span class="text-muted small mb-1">@order.OrderDate.ToString("MMM dd, yyyy")</span>
                             </div>
 
-                            <!-- 🛒 Order Type -->
-                            @if (order.FromCart)
-                            {
-                                <span class="badge bg-dark mb-3" data-bs-toggle="tooltip" data-bs-placement="top"
-                                      title="This order was placed from your shopping cart.">
-                                    🛒 From Cart
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-secondary mb-3" data-bs-toggle="tooltip" data-bs-placement="top"
-                                      title="This order was placed directly using Buy Now.">
-                                    ⚡ Single Item
-                                </span>
-                            }
+                            
 
                             <!-- Item Info -->
                             <h5 class="card-title fw-bold">@order.ItemName</h5>
@@ -105,11 +91,11 @@
                                 {
                                     case "Standard":
                                         <span class="badge bg-info" data-bs-toggle="tooltip" data-bs-placement="top"
-                                              title="Standard delivery will arrive in 3–5 days">Standard 🚚</span>
+                                              title="Standard delivery will arrive in 45–60 mins">Standard 🚚</span>
                                         break;
                                     case "Express":
                                         <span class="badge bg-danger" data-bs-toggle="tooltip" data-bs-placement="top"
-                                              title="Express delivery will arrive in 1–2 hours">Express ⚡</span>
+                                              title="Express delivery will arrive in 20–30 mins">Express ⚡</span>
                                         break;
                                     case "Pickup":
                                         <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
