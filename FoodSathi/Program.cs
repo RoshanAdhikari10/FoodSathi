@@ -2,6 +2,7 @@
 using FoodSathi.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,27 +54,36 @@ else
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+// ✅ Serve wwwroot (images, css, js)
+app.UseStaticFiles(); // This automatically serves all files from wwwroot
+
+// ✅ (Optional) – if you plan to serve other custom folders later (not needed now)
+// app.UseStaticFiles(new StaticFileOptions
+// {
+//     FileProvider = new PhysicalFileProvider(
+//         Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
+//     RequestPath = ""
+// });
 
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapStaticAssets();
+// ✅ Remove MapStaticAssets completely
+// app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "checkoutByName",
     pattern: "Order/Checkout/{orderName}",
     defaults: new { controller = "Order", action = "Checkout" });
 
-app.MapRazorPages()
-   .WithStaticAssets();
+app.MapRazorPages();
 
 // =========================
 // ✅ Ensure MenuDB tables exist
