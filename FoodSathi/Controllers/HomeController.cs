@@ -29,13 +29,26 @@ namespace FoodSathi.Controllers
         // ✅ Home Page (Dynamic Featured Dishes)
         public async Task<IActionResult> Index()
         {
+            // 🍽️ Fetch top 3 latest menu items
             var featuredItems = await _menuContext.MenuItems
-                .OrderByDescending(m => m.ItemID) // latest items first
-                .Take(3)                          // pick top 3
+                .OrderByDescending(m => m.ItemID)
+                .Take(3)
                 .ToListAsync();
+
+            // 💬 Fetch top 3 feedback with high ratings (4 or 5 stars)
+            var topFeedbacks = await _menuContext.Feedbacks
+                .Where(f => f.Rating >= 4)
+                .OrderByDescending(f => f.Rating)
+                .ThenByDescending(f => f.Date)
+                .Take(3)
+                .ToListAsync();
+
+            // Pass both to View
+            ViewBag.TopFeedbacks = topFeedbacks;
 
             return View(featuredItems);
         }
+
 
         // Error Page
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
