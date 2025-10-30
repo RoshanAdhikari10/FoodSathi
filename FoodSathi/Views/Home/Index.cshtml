@@ -53,11 +53,85 @@
 
         <!-- Explore Full Menu Button -->
         <div class="mt-5">
-            <a asp-controller="MenuItems" asp-action="Menu"
+            <a asp-controller="MenuItems" asp-action="Index"
                class="btn btn-gradient btn-lg rounded-pill shadow-lg px-5 py-3 fw-semibold">
                 🍴 Explore Full Menu
             </a>
         </div>
+    </div>
+</section>
+<!-- 💬 Customer Feedback Section -->
+<section class="customer-feedback py-5 bg-light">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-4 text-gradient">💬 What Our Customers Say</h2>
+
+        @if (ViewBag.TopFeedbacks != null && ((List<FoodSathi.Models.Feedback>)ViewBag.TopFeedbacks).Count > 0)
+        {
+            <div class="row g-4 justify-content-center">
+                @foreach (var feedback in ViewBag.TopFeedbacks)
+                {
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-0 rounded-4 h-100 p-4 feedback-card hover-lift">
+                            <div class="text-center mb-3">
+                                <!-- Avatar with first letter of user's name -->
+                                <div class="avatar-circle bg-primary text-white mx-auto mb-2" style="width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2rem;">
+                                    @feedback.Name.Substring(0, 1).ToUpper()
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1">@feedback.Name</h5>
+                                <p class="text-muted small mb-0">
+                                    <i class="bi bi-box-seam"></i> @feedback.ProductName
+                                </p>
+                            </div>
+
+                            <!-- Rating Stars -->
+                            <div class="text-warning mb-3 text-center">
+                                @for (int i = 0; i < feedback.Rating; i++)
+                                {
+                                    <i class="bi bi-star-fill"></i>
+                                }
+                                @for (int i = feedback.Rating; i < 5; i++)
+                                {
+                                    <i class="bi bi-star"></i>
+                                }
+                            </div>
+
+                            <!-- Feedback Message -->
+                            <p class="text-secondary fst-italic mb-2">
+                                <i class="bi bi-quote"></i>
+                                @(feedback.Message.Length > 100 ? feedback.Message.Substring(0, 100) + "..." : feedback.Message)
+                            </p>
+
+                            <!-- Submitted Date -->
+                            <small class="text-muted">
+                                <i class="bi bi-calendar3"></i>
+                                @feedback.SubmittedDate.ToString("MMM dd, yyyy")
+                            </small>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!-- View All / Share Buttons -->
+            <div class="mt-5 d-flex justify-content-center flex-wrap gap-3">
+                <a asp-controller="Feedback" asp-action="Index" class="btn btn-primary btn-lg rounded-pill px-4">
+                    <i class="bi bi-chat-left-text"></i> View All Feedback
+                </a>
+                <a asp-controller="Feedback" asp-action="Index" class="btn btn-outline-primary btn-lg rounded-pill px-4">
+                    <i class="bi bi-plus-circle"></i> Share Your Experience
+                </a>
+            </div>
+        }
+        else
+        {
+            <!-- Empty State -->
+            <div class="empty-state py-5">
+                <i class="bi bi-chat-left-dots fs-1 text-muted mb-3"></i>
+                <p class="text-muted fs-5 mb-4">No feedback yet. Be the first to share your experience!</p>
+                <a asp-controller="Feedback" asp-action="Create" class="btn btn-primary btn-lg rounded-pill px-5">
+                    <i class="bi bi-plus-circle"></i> Write First Review
+                </a>
+            </div>
+        }
     </div>
 </section>
 
@@ -280,4 +354,22 @@
         z-index: 2;
         max-width: 700px;
     }
+
+    .customer-feedback {
+        background: linear-gradient(180deg, #fff, #f8f9fa);
+    }
+
+    .feedback-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .feedback-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+    .text-warning i {
+        margin-right: 2px;
+    }
+
 </style>
