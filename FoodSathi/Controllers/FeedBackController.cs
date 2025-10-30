@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿// ============================================
+// 3. Controllers/FeedbackController.cs
+// ============================================
 using FoodSathi.Data;
 using FoodSathi.Models;
-using Microsoft.AspNetCore.Authorization;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
-namespace FoodSathi.Controllers
+namespace FeedbackApp.Controllers
 {
     public class FeedbackController : Controller
     {
@@ -15,72 +17,96 @@ namespace FoodSathi.Controllers
             _context = context;
         }
 
-        // ===========================
-        // 🔹 FRONTEND SECTION (for users)
-        // ===========================
-        // Show feedback page
-        public IActionResult Feedback()
+        // GET: Feedback/Index - Show all feedback
+        public async Task<IActionResult> Index()
         {
-            var feedbacks = _context.Feedbacks
-                .OrderByDescending(f => f.Date)
-                .ToList();
-
-            ViewBag.AvgRating = feedbacks.Count > 0 ? feedbacks.Average(f => f.Rating) : 0;
-            return View(feedbacks);
+            try
+            {
+                var feedbacks = await _context.Feedbacks
+                    .OrderByDescending(f => f.SubmittedDate)
+                    .ToListAsync();
+                return View(feedbacks);
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Error loading feedback: " + ex.Message;
+                return View(new List<Feedback>());
+            }
         }
 
-        // ✅ Handle feedback submission properly
-        [HttpPost]
-        [ValidateAntiForgeryToken] // important for security
-        public IActionResult SubmitFeedback(Feedback feedback)
+        // GET: Feedback/Create
+        public IActionResult Create()
         {
-            if (!ModelState.IsValid)
+            // Check if user is authenticated
+            if (User.Identity.IsAuthenticated)
             {
-                var errors = ModelState.Values.SelectMany(v => v.Errors)
-                    .Select(e => e.ErrorMessage)
-                    .ToList();
-                return Json(new { success = false, errors });
+                ViewBag.UserName = User.Identity.Name;
+                ViewBag.UserEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
+            }
+            return View();
+        }
+
+        // POST: Feedback/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Feedback feedback)
+        {
+            try
+            {
+                // If user is authenticated, get their info
+                if (User.Identity.IsAuthenticated)
+                {
+                    feedback.UserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                    feedback.Name = User.Identity.Name;
+                    feedback.Email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? feedback.Email;
+                }
+
+                feedback.SubmittedDate = DateTime.Now;
+
+                // Remove validation for fields that are auto-filled
+                ModelState.Remove("UserId");
+                ModelState.Remove("Name");
+                ModelState.Remove("Email");
+
+                if (ModelState.IsValid)
+                {
+                    _context.Add(feedback);
+                    await _context.SaveChangesAsync();
+                    TempData["Success"] = "Thank you for your feedback!";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                // If we get here, something failed, redisplay form
+                if (User.Identity.IsAuthenticated)
+                {
+                    ViewBag.UserName = User.Identity.Name;
+                    ViewBag.UserEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
+                }
+                return View(feedback);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Error saving feedback: " + ex.Message);
+                return View(feedback);
+            }
+        }
+
+      
+        // GET: Feedback/MyFeedback - Show current user's feedback
+        public async Task<IActionResult> MyFeedback()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction(nameof(Index));
             }
 
-            feedback.Date = DateTime.Now; // ensure date is set
-            _context.Feedbacks.Add(feedback);
-            _context.SaveChanges();
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var feedbacks = await _context.Feedbacks
+                .Where(f => f.UserId == userId)
+                .OrderByDescending(f => f.SubmittedDate)
+                .ToListAsync();
 
-            return Json(new { success = true });
-        }
-
-
-        // ===========================
-        // 🔹 ADMIN SECTION (manage feedback)
-        // ===========================
-        [Authorize(Roles = "Admin")]
-        public IActionResult Index()
-        {
-            var feedbacks = _context.Feedbacks
-                .OrderByDescending(f => f.Date)
-                .ToList();
-            return View(feedbacks);
-        }
-
-        [Authorize(Roles = "Admin")]
-        public IActionResult Details(int id)
-        {
-            var feedback = _context.Feedbacks.Find(id);
-            if (feedback == null) return NotFound();
-            return View(feedback);
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPost]
-        public IActionResult Delete(int id)
-        {
-            var feedback = _context.Feedbacks.Find(id);
-            if (feedback != null)
-            {
-                _context.Feedbacks.Remove(feedback);
-                _context.SaveChanges();
-            }
-            return RedirectToAction(nameof(Index));
+            return View("Index", feedbacks);
         }
     }
 }
