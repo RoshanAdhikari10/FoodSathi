@@ -12,7 +12,6 @@ namespace FoodSathi.Data
 
 
     }
-
         public DbSet<Feedback> Feedbacks { get; set; }
     }
 }
