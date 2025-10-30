@@ -1,181 +1,161 @@
 ﻿@model IEnumerable<FoodSathi.Models.Order>
 
 @{
-    ViewData["Title"] = "My Orders";
+    ViewData["Title"] = "My Orders - FoodSathi";
 }
 
-<div class="container py-5">
-    <!-- Page Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start mb-5">
-        <div>
-            <h1 class="fw-bold text-gradient mb-2">📦 @ViewData["Title"]</h1>
-            <p class="text-muted">All your recent orders, neatly organized and easy to track.</p>
+<div class="container py-5 fade-in">
+    <!-- 🌟 Header -->
+    <div class="text-center mb-5 position-relative">
+        <div class="logo-circle mx-auto d-flex align-items-center justify-content-center shadow-glow mb-3">
+            <i class="bi bi-basket2-fill fs-1 text-light"></i>
         </div>
+        <h2 class="fw-bold text-gradient">📦 My Orders</h2>
+        <p class="text-muted">Track your active and completed orders easily</p>
     </div>
 
-    @if (Model == null || !Model.Any())
-    {
-        <div class="alert alert-info shadow-sm text-center">
-            <i class="bi bi-info-circle fs-3 me-2"></i>No orders found.
-            <a href="/" class="fw-semibold text-decoration-none">Browse Menu</a>
-        </div>
-    }
-    else
-    {
-        <div class="row g-4">
-            @foreach (var order in Model)
-            {
-                <div class="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3">
-                    <div class="card shadow-sm border-0 rounded-4 overflow-hidden h-100">
-                        <div class="card-body d-flex flex-column">
-
-                            <!-- Order Header -->
-                            <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap">
-                                <span class="badge bg-primary rounded-pill mb-1">#@order.OrderID</span>
-                                <span class="text-muted small mb-1">@order.OrderDate.ToString("MMM dd, yyyy")</span>
-                            </div>
-
-                            
-
-                            <!-- Item Info -->
-                            <h5 class="card-title fw-bold">@order.ItemName</h5>
-                            <p class="card-text mb-1">Quantity: <strong>@order.Quantity</strong></p>
-                            <p class="card-text mb-2">Total: <span class="fw-bold text-success">Rs. @order.TotalPrice</span></p>
-                            <p class="card-text mb-2">Total Amount: <span class="fw-bold text-success">Rs. @order.TotalAmount</span></p>
-
-                            <!-- Payment Info with Tooltips -->
-                            <p class="card-text mb-3">
-                                Payment Method:
-                                <strong>
-                                    @switch (order.PaymentMethod)
-                                    {
-                                        case "eSewa":
-                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                  title="Paid via eSewa on @order.OrderDate.ToString("dd MMM yyyy")">💚 eSewa</span>
-                                            break;
-                                        case "Khalti":
-                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                  title="Paid via Khalti on @order.OrderDate.ToString("dd MMM yyyy")">💜 Khalti</span>
-                                            break;
-                                        case "IME Pay":
-                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                  title="Paid via IME Pay on @order.OrderDate.ToString("dd MMM yyyy")">🧡 IME Pay</span>
-                                            break;
-                                        case "Card":
-                                            <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                  title="Paid via Card on @order.OrderDate.ToString("dd MMM yyyy")">💳 Card</span>
-                                            break;
-                                        case "Cash On Delivery":
-                                            if (order.PaymentStatus == "Paid")
-                                            {
-                                                <span class="badge bg-success" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                      title="Paid via Cash on Delivery on @order.OrderDate.ToString("dd MMM yyyy")">💵 COD Paid</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-warning" data-bs-toggle="tooltip" data-bs-placement="top"
-                                                      title="Cash on delivery, not yet paid">💵 COD Pending</span>
-                                            }
-                                            break;
-                                        default:
-                                            <span class="badge bg-secondary">@order.PaymentMethod</span>
-                                            break;
-                                    }
-                                </strong>
-                            </p>
-
-                            <!-- Delivery Option with Tooltips -->
-                            <p class="card-text mb-3">
-                                Delivery Option:
-                                @switch (order.DeliveryOption)
-                                {
-                                    case "Standard":
-                                        <span class="badge bg-info" data-bs-toggle="tooltip" data-bs-placement="top"
-                                              title="Standard delivery will arrive in 45–60 mins">Standard 🚚</span>
-                                        break;
-                                    case "Express":
-                                        <span class="badge bg-danger" data-bs-toggle="tooltip" data-bs-placement="top"
-                                              title="Express delivery will arrive in 20–30 mins">Express ⚡</span>
-                                        break;
-                                    case "Pickup":
-                                        <span class="badge bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top"
-                                              title="Pickup your order at our store">Pickup 🛍</span>
-                                        break;
-                                    default:
-                                        <span class="badge bg-light text-dark">N/A</span>
-                                        break;
-                                }
-                            </p>
-
-                            <div class="mt-auto">
-                                <a href="@Url.Action("Track", "Order", new { id = order.OrderID })"
-                                   class="btn btn-outline-primary w-100 rounded-pill fw-semibold">
-                                    🚀 Track Order
-                                </a>
-                            </div>
-
-                        </div>
-                    </div>
+    <!-- 🧭 Split Layout -->
+    <div class="row g-4">
+        <!-- LEFT: Processing / Unfinished Orders -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-warning bg-gradient text-dark fw-bold text-center rounded-top-4">
+                    <i class="bi bi-hourglass-split me-1"></i> Processing / Unfinished Orders
                 </div>
-            }
+                <div class="card-body">
+                    @{
+                        var processingOrders = Model
+                        .Where(o => o.DeliveryStatus != "Delivered" && o.DeliveryStatus != "Cancelled")
+                        .ToList();
+                    }
+
+                    @if (processingOrders.Count == 0)
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-emoji-neutral fs-3"></i>
+                            <p class="mt-2">No ongoing orders at the moment.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var order in processingOrders)
+                        {
+                            <div class="border-start border-warning border-4 rounded-3 p-3 mb-3 bg-light shadow-sm position-relative">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <h6 class="fw-bold mb-0">@order.ItemName</h6>
+                                    <span class="badge bg-warning text-dark">@order.DeliveryStatus</span>
+                                </div>
+
+                                <p class="small text-muted mb-1"><i class="bi bi-box-seam"></i> Quantity: @order.Quantity</p>
+                                <p class="small text-muted mb-1"><i class="bi bi-cash-coin"></i> Total: ₹@order.TotalPrice</p>
+                                <p class="small text-muted mb-1"><i class="bi bi-house-door"></i> Address: @order.Address</p>
+                                <p class="small text-muted mb-1"><i class="bi bi-truck"></i> Delivery: @order.DeliveryOption</p>
+                                <p class="small text-muted mb-2"><i class="bi bi-credit-card-2-front"></i> Payment: @order.PaymentMethod</p>
+                                <p class="small mb-2 text-secondary"><i class="bi bi-clock-history"></i> Placed on: @order.OrderDate.ToString("MMM dd, yyyy - hh:mm tt")</p>
+
+                                <!-- 🚀 Track Button -->
+                                <div class="text-end">
+                                    <a href="@Url.Action("Track", "Order", new { id = order.OrderID })" class="btn btn-sm btn-outline-warning rounded-pill shadow-sm">
+                                        <i class="bi bi-geo-alt"></i> Track
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
         </div>
-    }
+
+        <!-- RIGHT: Delivered / Finished Orders -->
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-success bg-gradient text-white fw-bold text-center rounded-top-4">
+                    <i class="bi bi-check2-circle me-1"></i> Delivered / Finished Orders
+                </div>
+                <div class="card-body">
+                    @{
+                        var completedOrders = Model
+                        .Where(o => o.DeliveryStatus == "Delivered" || o.DeliveryStatus == "Cancelled")
+                        .ToList();
+                    }
+
+                    @if (completedOrders.Count == 0)
+                    {
+                        <div class="text-center text-muted py-4">
+                            <i class="bi bi-emoji-smile fs-3"></i>
+                            <p class="mt-2">No completed orders yet.</p>
+                        </div>
+                    }
+                    else
+                    {
+                        foreach (var order in completedOrders)
+                        {
+                            var badgeClass = order.DeliveryStatus == "Delivered" ? "bg-success" : "bg-danger";
+                            var icon = order.DeliveryStatus == "Delivered" ? "bi-check-circle" : "bi-x-circle";
+                            <div class="border-start border-success border-4 rounded-3 p-3 mb-3 bg-light shadow-sm">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <h6 class="fw-bold mb-0">@order.ItemName</h6>
+                                    <span class="badge @badgeClass">
+                                        <i class="bi @icon"></i> @order.DeliveryStatus
+                                    </span>
+                                </div>
+
+                                <p class="small text-muted mb-1"><i class="bi bi-box-seam"></i> Quantity: @order.Quantity</p>
+                                <p class="small text-muted mb-1"><i class="bi bi-cash-coin"></i> Total: ₹@order.TotalPrice</p>
+                                <p class="small text-muted mb-1"><i class="bi bi-house-door"></i> Address: @order.Address</p>
+                                <p class="small text-muted mb-1"><i class="bi bi-truck"></i> Delivery: @order.DeliveryOption</p>
+                                <p class="small text-muted mb-2"><i class="bi bi-credit-card-2-front"></i> Payment: @order.PaymentMethod</p>
+                                <p class="small mb-0 text-secondary"><i class="bi bi-calendar-check"></i> Ordered on: @order.OrderDate.ToString("MMM dd, yyyy - hh:mm tt")</p>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<!-- Enable Bootstrap tooltips -->
-@section Scripts {
-    <script>
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    </script>
-}
-
+<!-- ✨ CSS Animation & Styles -->
 <style>
+    .fade-in {
+        animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .logo-circle {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ff9800, #ffb74d);
+    }
+
     .text-gradient {
-        background: linear-gradient(135deg, #6610f2, #0d6efd);
+        background: linear-gradient(90deg, #ff9800, #f44336);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
-    .card {
-        transition: all 0.3s ease-in-out;
+    .shadow-glow {
+        box-shadow: 0 0 15px rgba(255, 193, 7, 0.6);
     }
 
-        .card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-    .badge {
-        font-size: 0.85rem;
-        padding: 0.45em 0.9em;
-        cursor: pointer;
-        transition: transform 0.2s ease-in-out;
-    }
-
-        .badge:hover {
-            transform: scale(1.1);
-        }
-
-    h5.card-title {
-        font-size: 1.1rem;
-        margin-bottom: 0.3rem;
-    }
-
-    .card-text {
-        font-size: 0.95rem;
-        color: #555;
-    }
-
-    @@media (max-width: 576px) {
-        .card-title {
-            font-size: 1rem;
-        }
-
-        .card-text {
-            font-size: 0.9rem;
-        }
+    .btn-outline-warning:hover {
+        color: white;
+        background-color: #ffb300;
+        border-color: #ffa000;
     }
 </style>
