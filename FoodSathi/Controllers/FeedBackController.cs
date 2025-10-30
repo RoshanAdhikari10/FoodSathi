@@ -1,12 +1,9 @@
-﻿// ============================================
-// 3. Controllers/FeedbackController.cs
-// ============================================
-using FoodSathi.Data;
+﻿using FoodSathi.Data;
 using FoodSathi.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FeedbackApp.Controllers
+namespace FoodSathi.Controllers
 {
     public class FeedbackController : Controller
     {
@@ -17,7 +14,7 @@ namespace FeedbackApp.Controllers
             _context = context;
         }
 
-        // GET: Feedback/Index - Show all feedback
+        // ✅ Show all feedback
         public async Task<IActionResult> Index()
         {
             try
@@ -25,35 +22,36 @@ namespace FeedbackApp.Controllers
                 var feedbacks = await _context.Feedbacks
                     .OrderByDescending(f => f.SubmittedDate)
                     .ToListAsync();
+
+                ViewBag.AvgRating = feedbacks.Any() ? feedbacks.Average(f => f.Rating) : 0;
+
+                // ✅ For logged-in user
+                if (User.Identity.IsAuthenticated)
+                {
+                    ViewBag.UserName = User.Identity.Name;
+                    ViewBag.UserEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
+                }
+
+                // ✅ Check for success message
+                ViewBag.Success = TempData["Success"] as string;
                 return View(feedbacks);
             }
             catch (Exception ex)
             {
                 ViewBag.Error = "Error loading feedback: " + ex.Message;
+                ViewBag.AvgRating = 0;
                 return View(new List<Feedback>());
             }
         }
 
-        // GET: Feedback/Create
-        public IActionResult Create()
-        {
-            // Check if user is authenticated
-            if (User.Identity.IsAuthenticated)
-            {
-                ViewBag.UserName = User.Identity.Name;
-                ViewBag.UserEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
-            }
-            return View();
-        }
-
-        // POST: Feedback/Create
+        // ✅ Submit Feedback
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Feedback feedback)
+        public async Task<IActionResult> SubmitFeedback(Feedback feedback)
         {
             try
             {
-                // If user is authenticated, get their info
+                // Auto-fill user details
                 if (User.Identity.IsAuthenticated)
                 {
                     feedback.UserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -63,50 +61,25 @@ namespace FeedbackApp.Controllers
 
                 feedback.SubmittedDate = DateTime.Now;
 
-                // Remove validation for fields that are auto-filled
                 ModelState.Remove("UserId");
                 ModelState.Remove("Name");
                 ModelState.Remove("Email");
 
                 if (ModelState.IsValid)
                 {
-                    _context.Add(feedback);
+                    _context.Feedbacks.Add(feedback);
                     await _context.SaveChangesAsync();
                     TempData["Success"] = "Thank you for your feedback!";
                     return RedirectToAction(nameof(Index));
                 }
 
-                // If we get here, something failed, redisplay form
-                if (User.Identity.IsAuthenticated)
-                {
-                    ViewBag.UserName = User.Identity.Name;
-                    ViewBag.UserEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
-                }
-                return View(feedback);
+                return View("Index", await _context.Feedbacks.ToListAsync());
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError("", "Error saving feedback: " + ex.Message);
-                return View(feedback);
+                return View("Index", await _context.Feedbacks.ToListAsync());
             }
-        }
-
-      
-        // GET: Feedback/MyFeedback - Show current user's feedback
-        public async Task<IActionResult> MyFeedback()
-        {
-            if (!User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            var feedbacks = await _context.Feedbacks
-                .Where(f => f.UserId == userId)
-                .OrderByDescending(f => f.SubmittedDate)
-                .ToListAsync();
-
-            return View("Index", feedbacks);
         }
     }
 }
