@@ -1,25 +1,28 @@
 ﻿@{
-    ViewData["Title"] = "Card Payment";
+    ViewData["Title"] = "Card Payment | FoodSathi";
     var orderId = ViewBag.OrderId;
     var amount = ViewBag.Amount;
     var fromCart = ViewBag.FromCart ?? false;
 }
 
-<div class="container my-5 d-flex justify-content-center align-items-center">
-    <div class="card shadow-lg border-0 rounded-4 p-4 text-center" style="max-width: 550px;">
-        <h3 class="fw-bold text-primary mb-4">💳 Card Payment</h3>
+<div class="container my-5 d-flex justify-content-center align-items-center fade-in">
+    <div class="card payment-card shadow-lg border-0 rounded-5 p-5 text-center">
+        <div class="mb-4">
+            <h3 class="fw-bold text-gradient">💳 Secure Card Payment</h3>
+            <p class="text-muted small">Your information is encrypted and securely processed.</p>
+        </div>
 
         <!-- Order Info -->
-        <div class="mb-3">
+        <div class="order-info mb-4">
             @if (!fromCart)
             {
                 <p class="mb-1"><strong>Order ID:</strong> #@orderId</p>
             }
-            <p class="mb-1"><strong>Total Amount:</strong> Rs. @amount</p>
+            <p class="mb-0"><strong>Total Amount:</strong> Rs. @amount</p>
         </div>
 
         <!-- Payment Form -->
-        <form asp-action="@(fromCart ? "PayByCardConfirmFromCart" : "PayByCardConfirm")" method="post">
+        <form asp-action="@(fromCart ? "PayByCardConfirmFromCart" : "PayByCardConfirm")" method="post" class="text-start">
             @Html.AntiForgeryToken()
 
             @if (!fromCart)
@@ -28,30 +31,51 @@
             }
             else
             {
-                <!-- Just for record keeping (not required by controller but useful) -->
                 <input type="hidden" name="amount" value="@amount" />
             }
 
+            <!-- Card Number -->
             <div class="form-group mb-4">
-                <label for="cardNumber" class="fw-semibold mb-2">Card Number</label>
-                <input type="text" id="cardNumber" class="form-control shadow-sm rounded-pill text-center"
-                       placeholder="XXXX-XXXX-XXXX-XXXX" maxlength="19" required />
+                <label for="cardNumber" class="fw-semibold mb-2">Card Number <span class="text-danger">*</span></label>
+                <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-credit-card-2-front-fill text-gradient"></i></span>
+                    <input type="text" id="cardNumber" name="cardNumber" class="form-control border-start-0 shadow-sm rounded-end-pill"
+                           placeholder="1234 5678 9012 3456" maxlength="19" pattern="\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}" required />
+                </div>
+                <small class="text-muted">Enter a valid 16-digit card number.</small>
             </div>
 
-            <div class="form-group mb-4 d-flex gap-2">
-                <input type="text" class="form-control shadow-sm rounded-pill text-center"
-                       placeholder="MM/YY" maxlength="5" required />
-                <input type="text" class="form-control shadow-sm rounded-pill text-center"
-                       placeholder="CVV" maxlength="3" required />
+            <!-- Expiry & CVV -->
+            <div class="row mb-4">
+                <div class="col-6">
+                    <label class="fw-semibold mb-2">Expiry Date <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control shadow-sm rounded-pill text-center"
+                           name="expiryDate" placeholder="MM/YY" maxlength="5" pattern="^(0[1-9]|1[0-2])\/?([0-9]{2})$" required />
+                    <small class="text-muted">Format: MM/YY</small>
+                </div>
+                <div class="col-6">
+                    <label class="fw-semibold mb-2">CVV <span class="text-danger">*</span></label>
+                    <input type="password" class="form-control shadow-sm rounded-pill text-center"
+                           name="cvv" placeholder="***" maxlength="3" pattern="\d{3}" required />
+                    <small class="text-muted">3-digit code on back of card.</small>
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold shadow-sm">
-                💸 Confirm Card Payment
+            <!-- Cardholder Name -->
+            <div class="form-group mb-4">
+                <label class="fw-semibold mb-2">Cardholder Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control shadow-sm rounded-pill text-center" name="cardholderName"
+                       placeholder="Enter name on card" required />
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-gradient w-100 rounded-pill fw-bold py-2 shadow-sm mt-2">
+                💸 Confirm & Pay Rs. @amount
             </button>
         </form>
 
         <!-- Back Link -->
-        <div class="mt-3">
+        <div class="mt-4">
             @if (!fromCart)
             {
                 <a asp-controller="Order" asp-action="Details" asp-route-id="@orderId"
@@ -74,3 +98,54 @@
 {
     <div class="alert alert-success text-center mt-3">@TempData["Success"]</div>
 }
+
+<!-- 💅 CSS -->
+<style>
+    .text-gradient {
+        background: linear-gradient(135deg, #ff8a00, #e52e71);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .payment-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-gradient {
+        background: linear-gradient(135deg, #ff8a00, #e52e71);
+        border: none;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+        .btn-gradient:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(229, 46, 113, 0.3);
+        }
+
+    .fade-in {
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    @@keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    input::placeholder {
+        color: #bbb !important;
+        font-style: italic;
+    }
+</style>
