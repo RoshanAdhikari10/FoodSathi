@@ -31,6 +31,11 @@ namespace FoodSathi.Controllers
             return View();
         }
 
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
         // ✅ Home Page (Dynamic Featured Dishes + Top Feedbacks)
         public async Task<IActionResult> Index()
         {
