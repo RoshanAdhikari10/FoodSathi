@@ -77,11 +77,12 @@
 
                 <div class="row g-4">
                     <div class="col-md-4">
-                        <div class="option-card delivery-option active" data-value="Standard" data-charge="0">
+                        <!-- 🔹 Standard delivery now charges Rs. 50 -->
+                        <div class="option-card delivery-option active" data-value="Standard" data-charge="50">
                             <i class="bi bi-truck fs-2 text-success"></i>
                             <h6 class="fw-bold mt-2">Standard</h6>
                             <small class="text-muted">45–60 mins</small>
-                            <span class="badge bg-success-subtle text-success mt-2">Free</span>
+                            <span class="badge bg-success-subtle text-success mt-2">Rs. 50</span>
                         </div>
                     </div>
                     <div class="col-md-4">
@@ -101,6 +102,8 @@
                         </div>
                     </div>
                 </div>
+            </section>
+
             </section>
 
             <!-- 🏠 Address -->
@@ -176,6 +179,11 @@
         let basePrice = parseFloat("@Model.TotalAmount");
         let selectedDelivery = "Standard";
         let selectedPayment = "Card";
+
+            let deliveryCharge = 50; // Default Standard Delivery charge
+    deliveryChargeEl.textContent = deliveryCharge.toFixed(2);
+    finalTotalEl.textContent = (basePrice + deliveryCharge).toFixed(2);
+
         const fromCart = @fromCart.ToString().ToLower();
         const orderId = "@(Model?.SingleOrder?.OrderID ?? 0)";
 
@@ -189,6 +197,13 @@
                 const charge = parseFloat(card.dataset.charge);
                 deliveryChargeEl.textContent = charge.toFixed(2);
                 finalTotalEl.textContent = (basePrice + charge).toFixed(2);
+
+                 // ✅ Hide address for Pickup option
+                if (selectedDelivery === "Pickup") {
+                    addressSection.style.display = "none";
+                } else {
+                    addressSection.style.display = "block";
+                }
             });
         });
 
@@ -214,6 +229,12 @@
 
             const finalTotal = document.getElementById("finalTotal").textContent;
             const address = document.getElementById("deliveryAddress").value.trim();
+
+              // Skip address validation for Pickup
+            if (selectedDelivery !== "Pickup" && !address) {
+                alert("⚠️ Please enter your delivery address before proceeding!");
+                return;
+            }
 
             // Validate address
             if (!address) {
