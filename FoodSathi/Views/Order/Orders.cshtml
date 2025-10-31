@@ -25,7 +25,7 @@
                 <div class="card-body">
                     @{
                         var processingOrders = Model
-                        .Where(o => o.DeliveryStatus != "Delivered" && o.DeliveryStatus != "Cancelled")
+                        .Where(o => o.DeliveryStatus != "Delivered" && o.DeliveryStatus != "Picked Up")
                         .ToList();
                     }
 
@@ -75,7 +75,7 @@
                 <div class="card-body">
                     @{
                         var completedOrders = Model
-                        .Where(o => o.DeliveryStatus == "Delivered" || o.DeliveryStatus == "Cancelled")
+                        .Where(o => o.DeliveryStatus == "Delivered" || o.DeliveryStatus == "Picked Up")
                         .ToList();
                     }
 
@@ -90,8 +90,25 @@
                     {
                         foreach (var order in completedOrders)
                         {
-                            var badgeClass = order.DeliveryStatus == "Delivered" ? "bg-success" : "bg-danger";
-                            var icon = order.DeliveryStatus == "Delivered" ? "bi-check-circle" : "bi-x-circle";
+                            string badgeClass = "bg-success";
+                            string icon = "bi-check-circle";
+
+                            if (order.DeliveryStatus == "Picked Up")
+                            {
+                                badgeClass = "bg-info";
+                                icon = "bi-box-arrow-in-down";
+                            }
+                            else if (order.DeliveryStatus == "Delivered")
+                            {
+                                badgeClass = "bg-success";
+                                icon = "bi-check-circle";
+                            }
+                            else
+                            {
+                                badgeClass = "bg-danger";
+                                icon = "bi-x-circle";
+                            }
+
                             <div class="border-start border-success border-4 rounded-3 p-3 mb-3 bg-light shadow-sm">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <h6 class="fw-bold mb-0">@order.ItemName</h6>
@@ -122,18 +139,15 @@
     }
 
     @@keyframes fadeIn {
-        from
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
 
-    {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 
     .logo-circle {
