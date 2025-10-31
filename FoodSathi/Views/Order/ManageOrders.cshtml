@@ -2,117 +2,250 @@
 @{
     ViewData["Title"] = "Manage Orders | FoodSathi";
 }
-<div class="container py-4">
-    <h3 class="fw-bold mb-3 text-center text-primary">📦 Manage Orders</h3>
-    <div class="table-responsive shadow-sm rounded-3">
-        <table class="table table-hover align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>Order ID</th>
-                    <th>User</th>
-                    <th>Item</th>
-                    <th>Quantity</th>
-                    <th>Total Price</th>
-                    <th>Payment</th>
-                    <th>Delivery Status</th>
-                    <th>Order Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var order in Model)
-                {
-                    <tr>
-                        <td>#@order.OrderID</td>
-                        <td>@order.UserName</td>
-                        <td>@order.ItemName</td>
-                        <td>@order.Quantity</td>
-                        <td>Rs. @order.TotalPrice</td>
-                        <!-- Payment Dropdown -->
-                        <td>
-                            <select class="form-select form-select-sm payment-status shadow-sm" data-id="@order.OrderID">
-                                <option value="Pending" selected="@(order.PaymentStatus == "Pending")">Pending</option>
-                                <option value="Paid" selected="@(order.PaymentStatus == "Paid")">Paid</option>
-                            </select>
-                        </td>
-                        <!-- Delivery Status Dropdown -->
-                        <td>
-                            <select class="form-select form-select-sm delivery-status shadow-sm" data-id="@order.OrderID">
-                                <option value="Order Placed" selected="@(order.DeliveryStatus == "Order Placed")">Order Placed</option>
-                                <option value="Preparing" selected="@(order.DeliveryStatus == "Preparing")">Preparing</option>
-                                <option value="Out for Delivery" selected="@(order.DeliveryStatus == "Out for Delivery")">Out for Delivery</option>
-                                <option value="Delivered" selected="@(order.DeliveryStatus == "Delivered")">Delivered</option>
-                                <option value="Ready for Pickup" selected="@(order.DeliveryStatus == "Ready for Pickup")">Ready for Pickup</option>
-                                <option value="Picked Up" selected="@(order.DeliveryStatus == "Picked Up")">Picked Up</option>
-                            </select>
-                        </td>
-                        <td>@order.OrderDate.ToString("MMM dd, yyyy - hh:mm tt")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+
+<div class="container py-5">
+
+    <!-- 🌟 Page Header + Toolbar -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <h3 class="fw-bold text-primary mb-0">📦 Manage Orders</h3>
+
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <input type="text" id="searchUser" class="form-control form-control-sm shadow-sm" placeholder="Search by User">
+
+            <select id="filterPayment" class="form-select form-select-sm shadow-sm">
+                <option value="">Payment Status</option>
+                <option value="Pending">Pending</option>
+                <option value="Paid">Paid</option>
+            </select>
+
+            <select id="filterDelivery" class="form-select form-select-sm shadow-sm">
+                <option value="">Delivery Status</option>
+                <option value="Order Placed">Order Placed</option>
+                <option value="Preparing">Preparing</option>
+                <option value="Out for Delivery">Out for Delivery</option>
+                <option value="Delivered">Delivered</option>
+                <option value="Ready for Pickup">Ready for Pickup</option>
+                <option value="Picked Up">Picked Up</option>
+            </select>
+
+            <input type="date" id="filterDate" class="form-control form-control-sm shadow-sm">
+
+            <button id="refreshBtn" class="btn btn-outline-primary shadow-sm d-flex align-items-center gap-1">
+                <i class="bi bi-arrow-clockwise"></i> Refresh
+            </button>
+
+            <button id="updateAllBtn" class="btn btn-primary shadow-sm d-flex align-items-center gap-1">
+                <i class="bi bi-save"></i> Update All
+            </button>
+        </div>
     </div>
+
+    <!-- 🟢 Table Card -->
+    <div class="card shadow-lg rounded-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table id="ordersTable" class="table table-hover align-middle mb-0">
+                    <thead class="table-dark text-uppercase sticky-top">
+                        <tr>
+                            <th>#ID</th>
+                            <th>User</th>
+                            <th>Item</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                            <th>Payment</th>
+                            <th>Delivery</th>
+                            <th>Order Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model)
+                        {
+                            <tr class="align-middle"
+                                data-id="@order.OrderID"
+                                data-user="@order.UserName"
+                                data-payment="@order.PaymentStatus"
+                                data-delivery="@order.DeliveryStatus"
+                                data-date="@order.OrderDate.ToString("yyyy-MM-dd")"
+                                data-delivery-type="@order.DeliveryOption"
+                                data-payment-method="@order.PaymentMethod">
+
+                                <td class="fw-bold">#@order.OrderID</td>
+                                <td>@order.UserName</td>
+                                <td>@order.ItemName</td>
+                                <td>@order.Quantity</td>
+                                <td class="text-success fw-semibold">Rs. @order.TotalPrice</td>
+
+                                <!-- Payment Dropdown -->
+                                <td>
+                                    <select class="form-select form-select-sm payment-status shadow-sm">
+                                        @if (order.PaymentStatus == "Paid" || order.PaymentMethod == "Wallet" || order.PaymentMethod == "Card")
+                                        {
+                                            <option value="Paid" selected>Paid</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="Pending" selected>Pending</option>
+                                            <option value="Paid">Paid</option>
+                                        }
+                                    </select>
+                                </td>
+
+                                <!-- Delivery Dropdown -->
+                                <td>
+                                    <select class="form-select form-select-sm delivery-status shadow-sm">
+                                        <option value="Order Placed" selected="@(order.DeliveryStatus == "Order Placed")">Order Placed</option>
+                                        <option value="Preparing" selected="@(order.DeliveryStatus == "Preparing")">Preparing</option>
+                                        @if (order.DeliveryOption != "PickUp")
+                                        {
+                                            <option value="Out for Delivery" selected="@(order.DeliveryStatus == "Out for Delivery")">Out for Delivery</option>
+                                            <option value="Delivered" selected="@(order.DeliveryStatus == "Delivered")">Delivered</option>
+                                        }
+                                        <option value="Ready for Pickup" selected="@(order.DeliveryStatus == "Ready for Pickup")">Ready for Pickup</option>
+                                        <option value="Picked Up" selected="@(order.DeliveryStatus == "Picked Up")">Picked Up</option>
+                                    </select>
+                                </td>
+
+                                <td>@order.OrderDate.ToString("MMM dd, yyyy - hh:mm tt")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
 </div>
+
+@section Styles {
+    <style>
+        /* ✨ Professional Table Styles */
+        #ordersTable tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+            transition: 0.3s;
+        }
+
+        #ordersTable tbody tr[data-updated="true"] {
+            box-shadow: inset 0 0 0 2px #198754;
+            border-radius: 6px;
+            transition: all 0.4s;
+        }
+
+        #ordersTable thead.sticky-top {
+            top: 0;
+            z-index: 2;
+        }
+
+        input, select {
+            min-width: 120px;
+            max-width: 200px;
+            border-radius: 0.375rem;
+        }
+
+        .btn {
+            border-radius: 0.375rem;
+            min-width: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .btn i {
+                margin-right: 5px;
+            }
+
+        @@media (max-width: 768px) {
+            #ordersTable
+
+        {
+            font-size: 0.85rem;
+        }
+
+        }
+    </style>
+}
 
 @section Scripts {
     <script>
-        // 💰 Update Payment Status
-        document.querySelectorAll('.payment-status').forEach(select => {
-            select.addEventListener('change', e => {
-                const id = e.target.dataset.id;
-                const status = e.target.value;
-
-                fetch(`/Order/UpdatePayment?id=${id}&paymentStatus=${status}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        const row = e.target.closest('tr');
-                        row.style.backgroundColor = "rgba(0,255,100,0.1)";
-                        setTimeout(() => row.style.backgroundColor = "", 700);
-                        console.log('✅ Payment status updated successfully');
-                    } else {
-                        console.error('❌ Failed to update payment status');
-                        alert('Failed to update payment status');
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ Error:', error);
-                    alert('Error updating payment status');
+        // 💰 Track changes
+        function setupStatusDropdowns() {
+            document.querySelectorAll('.payment-status').forEach(select => {
+                select.addEventListener('change', e => {
+                    const row = e.target.closest('tr');
+                    row.dataset.updated = true;
+                    row.style.backgroundColor = "rgba(0,255,100,0.15)";
                 });
             });
-        });
 
-        // 🚚 Update Delivery Status
-        document.querySelectorAll('.delivery-status').forEach(select => {
-            select.addEventListener('change', e => {
-                const id = e.target.dataset.id;
-                const status = e.target.value;
-
-                fetch(`/Order/UpdateDeliveryStatus?id=${id}&status=${status}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        const row = e.target.closest('tr');
-                        row.style.backgroundColor = "rgba(0,150,255,0.1)";
-                        setTimeout(() => row.style.backgroundColor = "", 700);
-                        console.log('✅ Delivery status updated successfully');
-                    } else {
-                        console.error('❌ Failed to update delivery status');
-                        alert('Failed to update delivery status');
-                    }
-                })
-                .catch(error => {
-                    console.error('❌ Error:', error);
-                    alert('Error updating delivery status');
+            document.querySelectorAll('.delivery-status').forEach(select => {
+                select.addEventListener('change', e => {
+                    const row = e.target.closest('tr');
+                    row.dataset.updated = true;
+                    row.style.backgroundColor = "rgba(0,150,255,0.15)";
                 });
             });
+        }
+
+        setupStatusDropdowns();
+
+        // 🔄 Refresh Button
+        document.getElementById('refreshBtn').addEventListener('click', () => location.reload());
+
+        // 💾 Update All Button
+        document.getElementById('updateAllBtn').addEventListener('click', async () => {
+            const rows = document.querySelectorAll('#ordersTable tbody tr[data-updated="true"]');
+            if (rows.length === 0) return alert("No changes to update!");
+
+            for (let row of rows) {
+                const id = row.dataset.id;
+                const paymentStatus = row.querySelector('.payment-status').value;
+                const deliveryStatus = row.querySelector('.delivery-status').value;
+
+                try {
+                    const paymentResponse = await fetch(`/Order/UpdatePayment?id=${id}&paymentStatus=${paymentStatus}`, { method: 'POST' });
+                    const deliveryResponse = await fetch(`/Order/UpdateDeliveryStatus?id=${id}&status=${deliveryStatus}`, { method: 'POST' });
+
+                    if (paymentResponse.ok && deliveryResponse.ok) {
+                        row.style.transition = "background-color 0.4s";
+                        row.style.backgroundColor = "rgba(0,200,150,0.2)";
+                        setTimeout(() => row.style.backgroundColor = "", 800);
+                        row.dataset.updated = false;
+                    } else {
+                        alert(`Failed to update order #${id}`);
+                    }
+                } catch {
+                    alert(`Error updating order #${id}`);
+                }
+            }
+
+            alert("✅ All updated orders processed successfully!");
         });
+
+        // 🔍 Search & Filter
+        function filterOrders() {
+            const searchText = document.getElementById('searchUser').value.toLowerCase();
+            const paymentFilter = document.getElementById('filterPayment').value;
+            const deliveryFilter = document.getElementById('filterDelivery').value;
+            const dateFilter = document.getElementById('filterDate').value;
+
+            document.querySelectorAll('#ordersTable tbody tr').forEach(row => {
+                const user = row.dataset.user.toLowerCase();
+                const payment = row.dataset.payment;
+                const delivery = row.dataset.delivery;
+                const date = row.dataset.date;
+
+                let show = true;
+                if (searchText && !user.includes(searchText)) show = false;
+                if (paymentFilter && payment !== paymentFilter) show = false;
+                if (deliveryFilter && delivery !== deliveryFilter) show = false;
+                if (dateFilter && date !== dateFilter) show = false;
+
+                row.style.display = show ? '' : 'none';
+            });
+        }
+
+        document.getElementById('searchUser').addEventListener('input', filterOrders);
+        document.getElementById('filterPayment').addEventListener('change', filterOrders);
+        document.getElementById('filterDelivery').addEventListener('change', filterOrders);
+        document.getElementById('filterDate').addEventListener('change', filterOrders);
     </script>
 }
