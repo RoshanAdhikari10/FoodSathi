@@ -61,7 +61,7 @@
                                 </li>
 
                                 <li class="nav-item me-5">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="FeedBack" asp-action="feedback">Feedback</a>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="FeedBack" asp-action="Index">Feedback</a>
                                 </li>
                             }
                         }
@@ -96,12 +96,90 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="foodsathi-footer text-center text-white py-5 mt-5">
         <div class="container">
-            &copy; 2025 - FoodSathi -
-            <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <!-- 🏷️ Brand Identity -->
+            <h3 class="fw-bold mb-2 text-gradient">🍽️ FoodSathi</h3>
+            <p class="tagline mb-4">Delivering Freshness & Happiness to Your Doorstep</p>
+
+            <!-- 📞 Contact Info -->
+            <div class="contact-info mb-4">
+                <p class="mb-1"><i class="bi bi-geo-alt-fill text-warning me-2"></i> Pokhara-13, Kaski, Gandaki, Nepal</p>
+                <p class="mb-1"><i class="bi bi-telephone-fill text-info me-2"></i> +97798766009112</p>
+                <p class="mb-0"><i class="bi bi-envelope-fill text-danger me-2"></i> chhetrirosun@gmail.com</p>
+            </div>
+
+            <!-- 🔗 Footer Links -->
+            <div class="footer-links mb-3">
+                <a asp-controller="Home" asp-action="Privacy" class="text-light text-decoration-none mx-2">Privacy Policy</a>
+            </div>
+
+            <!-- © Copyright -->
+            <div class="small text-light opacity-75 mt-3">
+                © 2025 FoodSathi — All Rights Reserved
+            </div>
         </div>
     </footer>
+
+    <!-- 💅 CSS -->
+    <style>
+        .foodsathi-footer {
+            background: black;
+            backdrop-filter: blur(8px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+            .foodsathi-footer::before {
+                content: "";
+                position: absolute;
+                inset: 0;
+                background: rgba(255, 255, 255, 0.05);
+                z-index: 0;
+            }
+
+            .foodsathi-footer .container {
+                position: relative;
+                z-index: 1;
+            }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #ff9800, #e52e71);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.85);
+            letter-spacing: 0.5px;
+        }
+
+        .contact-info p {
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .contact-info i {
+            font-size: 1.1rem;
+        }
+
+        .footer-links a {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            transition: all 0.3s ease;
+        }
+
+            .footer-links a:hover {
+                color: #fff;
+                opacity: 1;
+                text-decoration: underline;
+            }
+    </style>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
