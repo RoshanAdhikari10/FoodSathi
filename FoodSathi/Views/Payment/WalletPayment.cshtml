@@ -25,7 +25,7 @@
         </div>
 
         <!-- Payment Form -->
-        <form asp-action="@((fromCart) ? "PayByWalletConfirmFromCart" : "PayByWalletConfirm")" method="post" class="text-start">
+        <form id="walletPaymentForm" asp-action="@((fromCart) ? "PayByWalletConfirmFromCart" : "PayByWalletConfirm")" method="post" class="text-start">
             @Html.AntiForgeryToken()
 
             @if (!fromCart)
@@ -55,7 +55,7 @@
             </div>
 
             <!-- Pay Button -->
-            <button type="submit" class="btn btn-gradient w-100 rounded-pill fw-bold shadow py-2 fs-5">
+            <button type="button" class="btn btn-gradient w-100 rounded-pill fw-bold shadow py-2 fs-5" onclick="openPinModal()">
                 💸 Confirm Wallet Payment
             </button>
         </form>
@@ -74,20 +74,32 @@
     </div>
 </div>
 
-@if (TempData["Success"] != null)
-{
-    <div class="alert alert-success text-center mt-3 shadow-sm rounded-pill">@TempData["Success"]</div>
-}
+<!-- 🔐 PIN Modal -->
+<div class="modal fade" id="pinModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow-lg border-0">
+            <div class="modal-header border-0 bg-gradient text-white rounded-top-4">
+                <h5 class="modal-title fw-bold">🔐 Enter Your PIN</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center">
+                <input type="password" id="pinCode" class="form-control text-center rounded-pill py-2 mb-3" placeholder="Enter 4-digit PIN" maxlength="4" required />
+                <p class="text-muted small">For security, please confirm your wallet PIN.</p>
+            </div>
+            <div class="modal-footer border-0 d-flex justify-content-center">
+                <button class="btn btn-success rounded-pill px-4 fw-semibold" onclick="verifyPin()">✅ Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- 💅 CSS -->
 <style>
-    /* Container */
     .wallet-payment-container {
         min-height: 80vh;
         background: linear-gradient(135deg, #f9fafb, #f1f5f9);
     }
 
-    /* Card */
     .payment-card {
         width: 100%;
         max-width: 520px;
@@ -102,20 +114,17 @@
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
         }
 
-    /* Gradient Text */
     .text-gradient {
         background: linear-gradient(90deg, #ff8a00, #e52e71);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
-    /* Summary Box */
     .summary-box {
         background: linear-gradient(145deg, #f0f4f8, #ffffff);
         box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.05);
     }
 
-    /* Button Gradient */
     .btn-gradient {
         background: linear-gradient(90deg, #28a745, #20c997);
         border: none;
@@ -128,16 +137,18 @@
             box-shadow: 0 8px 16px rgba(32, 201, 151, 0.3);
         }
 
-    /* Input and Select Focus */
     select:focus, input:focus {
         border-color: #20c997;
         box-shadow: 0 0 0 0.2rem rgba(32, 201, 151, 0.25);
         outline: none;
     }
 
-    /* Back link hover */
     .hover-underline:hover {
         text-decoration: underline;
+    }
+
+    .bg-gradient {
+        background: linear-gradient(90deg, #007bff, #6610f2);
     }
 </style>
 
@@ -157,6 +168,26 @@
             walletInput.required = true;
             walletLabel.innerText = walletType + " ID";
             walletInput.placeholder = "Enter your " + walletType + " ID";
+        }
+    }
+
+    function openPinModal() {
+        const walletType = document.getElementById('walletType').value;
+        const walletId = document.getElementById('walletId').value;
+
+        if (!walletType || !walletId) {
+            alert("Please select a wallet and enter your Wallet ID first!");
+            return;
+        }
+        new bootstrap.Modal(document.getElementById('pinModal')).show();
+    }
+
+    function verifyPin() {
+        const pin = document.getElementById('pinCode').value;
+        if (pin === "1234") {  // 🔒 simple demo check — replace with real PIN validation if needed
+            document.getElementById('walletPaymentForm').submit();
+        } else {
+            alert("❌ Invalid PIN! Please try again.");
         }
     }
 </script>
