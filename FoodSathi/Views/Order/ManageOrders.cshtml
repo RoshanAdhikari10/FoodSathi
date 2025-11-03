@@ -13,8 +13,8 @@
 
     <!-- 🧭 Filter Toolbar -->
     <div class="toolbar d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 p-3 rounded-4 shadow-sm bg-white bg-opacity-75 backdrop-blur">
-        <div class="d-flex flex-wrap gap-2 align-items-center">
-            <div class="input-group input-group-sm shadow-sm">
+        <div class="filter-group d-flex flex-wrap gap-2 align-items-center w-100 w-md-auto">
+            <div class="input-group input-group-sm shadow-sm flex-grow-1 flex-md-grow-0">
                 <span class="input-group-text bg-light"><i class="bi bi-person-search"></i></span>
                 <input type="text" id="searchUser" class="form-control border-0" placeholder="Search by user name">
             </div>
@@ -38,18 +38,18 @@
             <input type="date" id="filterDate" class="form-control form-control-sm shadow-sm">
         </div>
 
-        <div class="d-flex gap-2">
-            <button id="refreshBtn" class="btn btn-outline-primary shadow-sm">
+        <div class="d-flex gap-2 justify-content-end flex-wrap w-100 w-md-auto">
+            <button id="refreshBtn" class="btn btn-outline-primary shadow-sm w-100 w-md-auto">
                 <i class="bi bi-arrow-clockwise"></i> Refresh
             </button>
-            <button id="updateAllBtn" class="btn btn-primary shadow-sm">
+            <button id="updateAllBtn" class="btn btn-primary shadow-sm w-100 w-md-auto">
                 <i class="bi bi-save2"></i> Update All
             </button>
         </div>
     </div>
 
-    <!-- 💼 Orders Table -->
-    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+    <!-- 💼 Orders Table (Desktop View) -->
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden d-none d-md-block">
         <div class="card-header text-white fw-semibold py-3 bg-gradient-primary">
             <i class="bi bi-list-check"></i> Orders Overview
         </div>
@@ -86,16 +86,8 @@
 
                                 <td>
                                     <select class="form-select form-select-sm payment-status">
-                                        @if (order.PaymentStatus == "Paid")
-                                        {
-                                            <option value="Paid" selected>Paid</option>
-                                            <option value="Pending">Pending</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="Pending" selected>Pending</option>
-                                            <option value="Paid">Paid</option>
-                                        }
+                                        <option value="Pending" selected="@(order.PaymentStatus == "Pending")">Pending</option>
+                                        <option value="Paid" selected="@(order.PaymentStatus == "Paid")">Paid</option>
                                     </select>
                                 </td>
 
@@ -118,9 +110,53 @@
             </div>
         </div>
     </div>
+
+    <!-- 📱 Mobile Collapsible View -->
+    <div class="d-md-none">
+        @foreach (var order in Model)
+        {
+            <div class="order-card border rounded-4 shadow-sm mb-3 p-3 bg-white bg-opacity-75" data-id="@order.OrderID">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6 class="fw-bold text-primary mb-0">#@order.OrderID - @order.UserName</h6>
+                        <small class="text-muted">@order.OrderDate.ToString("MMM dd, yyyy - hh:mm tt")</small>
+                    </div>
+                    <button class="btn btn-sm btn-light toggle-details rounded-circle">
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                </div>
+
+                <div class="details mt-3" style="display: none;">
+                    <hr class="my-2">
+                    <p class="mb-1"><strong>Item:</strong> @order.ItemName</p>
+                    <p class="mb-1"><strong>Quantity:</strong> @order.Quantity</p>
+                    <p class="mb-1 text-success"><strong>Total:</strong> Rs. @order.TotalPrice</p>
+
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold mb-1">Payment:</label>
+                        <select class="form-select form-select-sm payment-status">
+                            <option value="Pending" selected="@(order.PaymentStatus == "Pending")">Pending</option>
+                            <option value="Paid" selected="@(order.PaymentStatus == "Paid")">Paid</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label small fw-semibold mb-1">Delivery:</label>
+                        <select class="form-select form-select-sm delivery-status">
+                            <option value="Order Placed" selected="@(order.DeliveryStatus == "Order Placed")">Order Placed</option>
+                            <option value="Preparing" selected="@(order.DeliveryStatus == "Preparing")">Preparing</option>
+                            <option value="Out for Delivery" selected="@(order.DeliveryStatus == "Out for Delivery")">Out for Delivery</option>
+                            <option value="Delivered" selected="@(order.DeliveryStatus == "Delivered")">Delivered</option>
+                            <option value="Ready for Pickup" selected="@(order.DeliveryStatus == "Ready for Pickup")">Ready for Pickup</option>
+                            <option value="Picked Up" selected="@(order.DeliveryStatus == "Picked Up")">Picked Up</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
 
-<!-- 💅 Styles -->
 @section Styles {
     <style>
         .text-gradient {
@@ -138,107 +174,98 @@
         }
 
         @@keyframes fadeIn {
-            from
-
-        {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        }
-
-        .toolbar select, .toolbar input {
-            min-width: 150px;
-        }
-
-        table tbody tr {
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-            table tbody tr:hover {
-                background-color: rgba(0, 123, 255, 0.07);
-                transform: scale(1.005);
+            from {
+                opacity: 0;
+                transform: translateY(10px);
             }
 
-        tr[data-updated="true"] {
-            background-color: rgba(0, 255, 120, 0.1) !important;
-            animation: pulse 1s ease-in-out;
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        @@keyframes pulse {
-            0%
-
-        {
-            box-shadow: 0 0 0 rgba(0,255,100,0.2);
+        table tbody tr:hover {
+            background-color: rgba(0, 123, 255, 0.07);
+            transform: scale(1.005);
         }
 
-        50% {
-            box-shadow: 0 0 10px rgba(0,255,100,0.5);
+        .order-card {
+            transition: all 0.3s ease;
         }
 
-        100% {
-            box-shadow: 0 0 0 rgba(0,255,100,0.2);
+            .order-card.open {
+                border-color: #00bcd4;
+                box-shadow: 0 0 10px rgba(0, 188, 212, 0.3);
+            }
+
+        .toggle-details {
+            transition: transform 0.3s ease;
         }
 
-        }
-
-        .card-header {
-            letter-spacing: 0.5px;
-        }
+            .toggle-details.open i {
+                transform: rotate(180deg);
+            }
 
         @@media (max-width: 768px) {
-            .toolbar
+            .toolbar {
+                flex-direction: column;
+            }
 
-        {
-            flex-direction: column;
-        }
+                .toolbar .filter-group {
+                    width: 100%;
+                    flex-direction: column;
+                }
 
+                .toolbar .btn {
+                    width: 100%;
+                }
         }
     </style>
 }
 
-<!-- ⚙️ Scripts -->
 @section Scripts {
     <script>
+        // Setup listeners
         function setupStatusDropdowns() {
             document.querySelectorAll('.payment-status, .delivery-status').forEach(select => {
                 select.addEventListener('change', e => {
-                    const row = e.target.closest('tr');
+                    const row = e.target.closest('[data-id]');
                     row.dataset.updated = true;
                 });
             });
         }
         setupStatusDropdowns();
 
+        // Refresh
         document.getElementById('refreshBtn').addEventListener('click', () => location.reload());
 
+        // Update All
         document.getElementById('updateAllBtn').addEventListener('click', async () => {
-            const rows = document.querySelectorAll('#ordersTable tbody tr[data-updated="true"]');
-            if (!rows.length) return alert("No changes to update.");
+            const updated = document.querySelectorAll('[data-id][data-updated="true"]');
+            if (!updated.length) return alert("No changes to update.");
 
-            for (const row of rows) {
-                const id = row.dataset.id;
-                const payment = row.querySelector('.payment-status').value;
-                const delivery = row.querySelector('.delivery-status').value;
+            for (const el of updated) {
+                const id = el.dataset.id;
+                const pay = el.querySelector('.payment-status').value;
+                const del = el.querySelector('.delivery-status').value;
 
-                const [payRes, delRes] = await Promise.all([
-                    fetch(`/Order/UpdatePayment?id=${id}&paymentStatus=${payment}`, { method: 'POST' }),
-                    fetch(`/Order/UpdateDeliveryStatus?id=${id}&status=${delivery}`, { method: 'POST' })
+                await Promise.all([
+                    fetch(`/Order/UpdatePayment?id=${id}&paymentStatus=${pay}`, { method: 'POST' }),
+                    fetch(`/Order/UpdateDeliveryStatus?id=${id}&status=${del}`, { method: 'POST' })
                 ]);
 
-                if (payRes.ok && delRes.ok) {
-                    row.style.backgroundColor = "rgba(0,200,150,0.2)";
-                    setTimeout(() => row.style.backgroundColor = "", 1000);
-                    row.dataset.updated = false;
-                }
+                el.dataset.updated = false;
+                el.classList.add('open');
+                setTimeout(() => el.classList.remove('open'), 1200);
             }
 
             alert("✅ Orders updated successfully!");
+        });
+
+        // Filters
+        ['searchUser', 'filterPayment', 'filterDelivery', 'filterDate'].forEach(id => {
+            document.getElementById(id)?.addEventListener('input', filterOrders);
         });
 
         function filterOrders() {
@@ -247,8 +274,8 @@
             const del = document.getElementById('filterDelivery').value;
             const date = document.getElementById('filterDate').value;
 
-            document.querySelectorAll('#ordersTable tbody tr').forEach(row => {
-                const user = row.dataset.user.toLowerCase();
+            document.querySelectorAll('[data-id]').forEach(row => {
+                const user = row.dataset.user?.toLowerCase() || '';
                 const payment = row.dataset.payment;
                 const delivery = row.dataset.delivery;
                 const orderDate = row.dataset.date;
@@ -263,7 +290,16 @@
             });
         }
 
-        ['searchUser', 'filterPayment', 'filterDelivery', 'filterDate']
-            .forEach(id => document.getElementById(id)?.addEventListener('input', filterOrders));
+        // Toggle collapsible cards on mobile
+        document.querySelectorAll('.toggle-details').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const card = btn.closest('.order-card');
+                const details = card.querySelector('.details');
+                const open = details.style.display === 'block';
+                details.style.display = open ? 'none' : 'block';
+                card.classList.toggle('open', !open);
+                btn.classList.toggle('open', !open);
+            });
+        });
     </script>
 }
