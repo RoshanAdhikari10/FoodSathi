@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Linq;
 using System;
+using FoodSathi.Helpers;
 
 namespace FoodSathi.Controllers
 {
@@ -20,7 +21,6 @@ namespace FoodSathi.Controllers
         // 💳 CARD PAYMENT
         // ====================================================
 
-        // ✅ GET - Single Order
         [HttpGet]
         public async Task<IActionResult> PayByCard(int? id, decimal? amount)
         {
@@ -38,7 +38,6 @@ namespace FoodSathi.Controllers
             return View("CardPayment");
         }
 
-        // ✅ POST - Single Order
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PayByCardConfirm(int orderId)
@@ -54,37 +53,28 @@ namespace FoodSathi.Controllers
             _context.Update(order);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "✅ Card payment successful!";
+            string userEmail = "chhetrirosun@gmail.com";
+            await EmailHelper.SendEmailAsync(userEmail,
+                "Payment Successful ✅",
+                $"<h3>Thank you {order.UserName}!</h3><p>Your order #{orderId} was successfully paid via Card.</p>");
+
+            await EmailHelper.NotifyAdminAsync(
+                "New Payment Received 💳",
+                $"<p>User <b>{order.UserName}</b> just paid Rs. {order.TotalAmount} for Order #{orderId} via Card.</p>");
+
+            TempData["Success"] = "✅ Card payment successful! Email sent to you and admin.";
             return RedirectToAction("OrderConfirmation", "Order", new { id = orderId });
         }
 
-        // ✅ GET - From Cart
-        [HttpGet]
-        public async Task<IActionResult> PayByCardFromCart()
-        {
-            var userName = User.Identity?.Name ?? "Guest";
 
-            var cartItems = await _context.Carts
-                .Include(c => c.MenuItem)
-                .Where(c => c.UserName == userName)
-                .ToListAsync();
-
-            if (!cartItems.Any())
-                return RedirectToAction("Index", "Cart");
-
-            ViewBag.Amount = cartItems.Sum(c => c.Quantity * c.MenuItem.Price);
-            ViewBag.FromCart = true;
-
-            return View("CardPayment");
-        }
-
-        // ✅ POST - From Cart
+        // ====================================================
+        // 💳 CARD PAYMENT - FROM CART
+        // ====================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PayByCardConfirmFromCart()
         {
             var userName = User.Identity?.Name ?? "Guest";
-
             var cartItems = await _context.Carts
                 .Include(c => c.MenuItem)
                 .Where(c => c.UserName == userName)
@@ -93,18 +83,16 @@ namespace FoodSathi.Controllers
             if (!cartItems.Any())
                 return RedirectToAction("Index", "Cart");
 
-            // Get delivery info from cart items (first item as reference)
-            var firstCart = cartItems.First();
-            string address = firstCart.Address ?? "Not Provided";
-            string deliveryOption = firstCart.DeliveryOption ?? "Standard";
+            string address = cartItems.First().Address ?? "Not Provided";
+            string deliveryOption = cartItems.First().DeliveryOption ?? "Standard";
 
             decimal totalAmount = 0;
             int itemCount = 0;
 
             foreach (var c in cartItems)
             {
-                var itemTotal = c.Quantity * c.MenuItem.Price;
-                totalAmount += itemTotal;
+                var total = c.Quantity * c.MenuItem.Price;
+                totalAmount += total;
                 itemCount++;
 
                 var order = new Order
@@ -112,8 +100,8 @@ namespace FoodSathi.Controllers
                     ItemID = c.ItemID,
                     ItemName = c.MenuItem.ItemName,
                     Quantity = c.Quantity,
-                    TotalPrice = itemTotal,
-                    TotalAmount = itemTotal,
+                    TotalPrice = total,
+                    TotalAmount = total,
                     Address = address,
                     DeliveryOption = deliveryOption,
                     PaymentMethod = "Card",
@@ -127,37 +115,23 @@ namespace FoodSathi.Controllers
             _context.Carts.RemoveRange(cartItems);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("OrderConfirmationFromCart", "Order", new
-            {
-                amount = totalAmount,
-                itemCount = itemCount,
-                paymentMethod = "Card"
-            });
+            string userEmail = "chhetrirosun@gmail.com";
+            await EmailHelper.SendEmailAsync(userEmail,
+                "Payment Successful (Cart) ✅",
+                $"<h3>Thank you {userName}!</h3><p>Your payment for {itemCount} item(s) totaling Rs. {totalAmount} via Card was successful.</p>");
+
+            await EmailHelper.NotifyAdminAsync(
+                "New Cart Payment 💳",
+                $"<p>User <b>{userName}</b> paid Rs. {totalAmount} for {itemCount} item(s) via Card.</p>");
+
+            TempData["Success"] = "✅ Cart payment successful! Email sent to you and admin.";
+            return RedirectToAction("OrderConfirmationFromCart", "Order", new { amount = totalAmount, itemCount, paymentMethod = "Card" });
         }
 
+
         // ====================================================
-        // 💼 WALLET PAYMENT
+        // 💼 WALLET PAYMENT (Single Order)
         // ====================================================
-
-        // ✅ GET - Single Order
-        [HttpGet]
-        public async Task<IActionResult> PayByWallet(int? id, decimal? amount)
-        {
-            if (id == null || amount == null)
-                return BadRequest("Missing order ID or amount.");
-
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null)
-                return NotFound("Order not found.");
-
-            ViewBag.OrderId = id.Value;
-            ViewBag.Amount = amount.Value;
-            ViewBag.FromCart = false;
-
-            return View("WalletPayment");
-        }
-
-        // ✅ POST - Single Order
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PayByWalletConfirm(int orderId, string walletType)
@@ -173,37 +147,27 @@ namespace FoodSathi.Controllers
             _context.Update(order);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = $"✅ Payment successful via {walletType} Wallet!";
+            string userEmail = "chhetrirosun@gmail.com";
+            await EmailHelper.SendEmailAsync(userEmail,
+                $"Payment Successful via {walletType} Wallet ✅",
+                $"<h3>Thank you {order.UserName}!</h3><p>Your order #{orderId} was successfully paid using {walletType} Wallet.</p>");
+
+            await EmailHelper.NotifyAdminAsync(
+                $"New {walletType} Wallet Payment 💼",
+                $"<p>User <b>{order.UserName}</b> paid Rs. {order.TotalAmount} for Order #{orderId} using {walletType} Wallet.</p>");
+
+            TempData["Success"] = $"✅ Payment successful via {walletType} Wallet! Email sent to you and admin.";
             return RedirectToAction("OrderConfirmation", "Order", new { id = orderId });
         }
 
-        // ✅ GET - From Cart
-        [HttpGet]
-        public async Task<IActionResult> PayByWalletFromCart()
-        {
-            var userName = User.Identity?.Name ?? "Guest";
-
-            var cartItems = await _context.Carts
-                .Include(c => c.MenuItem)
-                .Where(c => c.UserName == userName)
-                .ToListAsync();
-
-            if (!cartItems.Any())
-                return RedirectToAction("Index", "Cart");
-
-            ViewBag.Amount = cartItems.Sum(c => c.Quantity * c.MenuItem.Price);
-            ViewBag.FromCart = true;
-
-            return View("WalletPayment");
-        }
-
-        // ✅ POST - From Cart
+        // ====================================================
+        // 💼 WALLET PAYMENT (From Cart)
+        // ====================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PayByWalletConfirmFromCart(string walletType)
         {
             var userName = User.Identity?.Name ?? "Guest";
-
             var cartItems = await _context.Carts
                 .Include(c => c.MenuItem)
                 .Where(c => c.UserName == userName)
@@ -212,10 +176,8 @@ namespace FoodSathi.Controllers
             if (!cartItems.Any())
                 return RedirectToAction("Index", "Cart");
 
-            // Get delivery info from cart items
-            var firstCart = cartItems.First();
-            string address = firstCart.Address ?? "Not Provided";
-            string deliveryOption = firstCart.DeliveryOption ?? "Standard";
+            string address = cartItems.First().Address ?? "Not Provided";
+            string deliveryOption = cartItems.First().DeliveryOption ?? "Standard";
 
             decimal totalAmount = 0;
             int itemCount = 0;
@@ -240,27 +202,30 @@ namespace FoodSathi.Controllers
                     UserName = userName,
                     OrderDate = DateTime.Now
                 };
-
                 _context.Add(order);
             }
 
             _context.Carts.RemoveRange(cartItems);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("OrderConfirmationFromCart", "Order", new
-            {
-                amount = totalAmount,
-                itemCount = itemCount,
-                paymentMethod = walletType
-            });
+            string userEmail = "chhetrirosun@gmail.com";
+            await EmailHelper.SendEmailAsync(userEmail,
+                $"Wallet Payment Successful ✅",
+                $"<h3>Thank you {userName}!</h3><p>Your payment of Rs. {totalAmount} via {walletType} Wallet for {itemCount} item(s) was successful.</p>");
+
+            await EmailHelper.NotifyAdminAsync(
+                $"New {walletType} Wallet Payment 💼",
+                $"<p>User <b>{userName}</b> paid Rs. {totalAmount} for {itemCount} item(s) using {walletType} Wallet.</p>");
+
+            TempData["Success"] = $"✅ {walletType} Wallet payment successful! Email sent to you and admin.";
+            return RedirectToAction("OrderConfirmationFromCart", "Order", new { amount = totalAmount, itemCount, paymentMethod = walletType });
         }
 
 
         // ====================================================
-        // 💵 CASH ON DELIVERY
+        // 💵 CASH ON DELIVERY (Single + Cart)
         // ====================================================
 
-        // ✅ Single Order
         [HttpGet]
         public async Task<IActionResult> CashOnDelivery(int id)
         {
@@ -275,16 +240,23 @@ namespace FoodSathi.Controllers
             _context.Update(order);
             await _context.SaveChangesAsync();
 
-            TempData["Success"] = "💵 Order placed successfully! Please pay cash upon delivery.";
+            string userEmail = "chhetrirosun@gmail.com";
+            await EmailHelper.SendEmailAsync(userEmail,
+                "Order Placed - Cash on Delivery 💵",
+                $"<h3>Your order #{id} has been placed successfully!</h3><p>Please pay cash upon delivery.</p>");
+
+            await EmailHelper.NotifyAdminAsync(
+                "New Cash on Delivery Order 🧾",
+                $"<p>User <b>{order.UserName}</b> placed Order #{id} using Cash on Delivery.</p>");
+
+            TempData["Success"] = "💵 Order placed successfully! Email sent to you and admin.";
             return RedirectToAction("OrderConfirmation", "Order", new { id });
         }
 
-        // ✅ From Cart
         [HttpGet]
         public async Task<IActionResult> CashOnDeliveryFromCart()
         {
             var userName = User.Identity?.Name ?? "Guest";
-
             var cartItems = await _context.Carts
                 .Include(c => c.MenuItem)
                 .Where(c => c.UserName == userName)
@@ -293,18 +265,16 @@ namespace FoodSathi.Controllers
             if (!cartItems.Any())
                 return RedirectToAction("Index", "Cart");
 
-            // Get delivery info from cart items
-            var firstCart = cartItems.First();
-            string address = firstCart.Address ?? "Not Provided";
-            string deliveryOption = firstCart.DeliveryOption ?? "Standard";
+            string address = cartItems.First().Address ?? "Not Provided";
+            string deliveryOption = cartItems.First().DeliveryOption ?? "Standard";
 
             decimal totalAmount = 0;
             int itemCount = 0;
 
             foreach (var c in cartItems)
             {
-                var itemTotal = c.Quantity * c.MenuItem.Price;
-                totalAmount += itemTotal;
+                var total = c.Quantity * c.MenuItem.Price;
+                totalAmount += total;
                 itemCount++;
 
                 var order = new Order
@@ -312,8 +282,8 @@ namespace FoodSathi.Controllers
                     ItemID = c.ItemID,
                     ItemName = c.MenuItem.ItemName,
                     Quantity = c.Quantity,
-                    TotalPrice = itemTotal,
-                    TotalAmount = itemTotal,
+                    TotalPrice = total,
+                    TotalAmount = total,
                     Address = address,
                     DeliveryOption = deliveryOption,
                     PaymentMethod = "Cash on Delivery",
@@ -327,12 +297,17 @@ namespace FoodSathi.Controllers
             _context.Carts.RemoveRange(cartItems);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("OrderConfirmationFromCart", "Order", new
-            {
-                amount = totalAmount,
-                itemCount = itemCount,
-                paymentMethod = "Cash on Delivery"
-            });
+            string userEmail = "chhetrirosun@gmail.com";
+            await EmailHelper.SendEmailAsync(userEmail,
+                "Order Placed (Cart) - Cash on Delivery 💵",
+                $"<h3>Hi {userName}!</h3><p>Your order for {itemCount} item(s) totaling Rs. {totalAmount} has been placed successfully. Please pay cash on delivery.</p>");
+
+            await EmailHelper.NotifyAdminAsync(
+                "New Cash on Delivery (Cart) 🧾",
+                $"<p>User <b>{userName}</b> placed {itemCount} item(s) order totaling Rs. {totalAmount} using Cash on Delivery.</p>");
+
+            TempData["Success"] = "💵 Cart order placed successfully! Email sent to you and admin.";
+            return RedirectToAction("OrderConfirmationFromCart", "Order", new { amount = totalAmount, itemCount, paymentMethod = "Cash on Delivery" });
         }
     }
 }
