@@ -55,40 +55,6 @@ namespace FoodSathi.Migrations
                     b.ToTable("Carts");
                 });
 
-            modelBuilder.Entity("FoodSathi.Models.Feedback", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Review")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Feedbacks");
-                });
-
             modelBuilder.Entity("FoodSathi.Models.MenuItem", b =>
                 {
                     b.Property<int>("ItemID")
@@ -96,6 +62,9 @@ namespace FoodSathi.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemID"));
+
+                    b.Property<double>("AverageRating")
+                        .HasColumnType("float");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -186,6 +155,37 @@ namespace FoodSathi.Migrations
                     b.ToTable("Orders");
                 });
 
+            modelBuilder.Entity("FoodSathi.Models.Review", b =>
+                {
+                    b.Property<int>("ReviewID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewID"));
+
+                    b.Property<string>("Comment")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ItemID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ReviewID");
+
+                    b.HasIndex("ItemID");
+
+                    b.ToTable("Reviews");
+                });
+
             modelBuilder.Entity("FoodSathi.Models.Cart", b =>
                 {
                     b.HasOne("FoodSathi.Models.MenuItem", "MenuItem")
@@ -195,6 +195,22 @@ namespace FoodSathi.Migrations
                         .IsRequired();
 
                     b.Navigation("MenuItem");
+                });
+
+            modelBuilder.Entity("FoodSathi.Models.Review", b =>
+                {
+                    b.HasOne("FoodSathi.Models.MenuItem", "MenuItem")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ItemID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MenuItem");
+                });
+
+            modelBuilder.Entity("FoodSathi.Models.MenuItem", b =>
+                {
+                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }
