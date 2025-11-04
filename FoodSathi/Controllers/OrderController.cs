@@ -14,6 +14,7 @@ namespace FoodSathi.Controllers
         {
             _context = context;
         }
+
         [Authorize(Roles = "User")]
         // 🛒 From "Buy Now" button
         [HttpPost]
@@ -26,6 +27,7 @@ namespace FoodSathi.Controllers
             {
                 ItemID = item.ItemID,
                 ItemName = item.ItemName,
+                ItemImage = item.ImagePath,  // ✅ SAVE IMAGE HERE!
                 Quantity = quantity,
                 TotalPrice = item.Price * quantity,
                 TotalAmount = item.Price * quantity,
@@ -33,7 +35,7 @@ namespace FoodSathi.Controllers
                 DeliveryOption = "Standard",
                 PaymentMethod = "Pending",
                 OrderDate = DateTime.Now,
-                UserName = User.Identity.Name // ✅ Assign logged-in username
+                UserName = User.Identity.Name
             };
 
             _context.Orders.Add(order);
@@ -110,20 +112,19 @@ namespace FoodSathi.Controllers
                 return RedirectToAction("PayByCard", "Payment", new { orderId = order.OrderID, amount = order.TotalPrice });
             }
         }
+
         // ✅ Admin: Manage All Orders
         [Authorize(Roles = "Admin")]
         public IActionResult ManageOrders()
         {
-            // Get all orders sorted by most recent
             var orders = _context.Orders
                 .OrderByDescending(o => o.OrderDate)
                 .ToList();
 
-            return View(orders); // Pass data to ManageOrders.cshtml
+            return View(orders);
         }
 
         [Authorize(Roles = "Admin")]
-        // POST: Update payment status via AJAX
         [HttpPost]
         public IActionResult UpdatePayment(int id, string paymentStatus)
         {
@@ -153,6 +154,7 @@ namespace FoodSathi.Controllers
             System.Diagnostics.Debug.WriteLine($"Order found: {order.ItemName}");
             return PartialView("_OrderDetailsPartial", order);
         }
+
         // 🟢 Track Order Page
         [HttpGet]
         public async Task<IActionResult> Track(int? id)
@@ -164,7 +166,6 @@ namespace FoodSathi.Controllers
             if (order == null)
                 return NotFound();
 
-            // Determine status based on delivery type
             string status = "";
             string nextStep = "";
 
@@ -212,10 +213,6 @@ namespace FoodSathi.Controllers
             return Ok();
         }
 
-
-
-
-
         [Authorize(Roles = "User")]
         // ✅ All orders list
         public IActionResult Orders()
@@ -227,6 +224,7 @@ namespace FoodSathi.Controllers
                 .ToList();
             return View(orders);
         }
+
         [Authorize(Roles = "User")]
         // ✅ Confirmation Page
         [HttpGet]
@@ -236,7 +234,6 @@ namespace FoodSathi.Controllers
             if (order == null)
                 return NotFound();
 
-            // Set ViewBag values for confirmation page
             ViewBag.FromCart = false;
             ViewBag.OrderId = order.OrderID;
             ViewBag.Amount = order.TotalAmount;
@@ -246,6 +243,7 @@ namespace FoodSathi.Controllers
 
             return View(order);
         }
+
         [Authorize(Roles = "User")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -271,6 +269,7 @@ namespace FoodSathi.Controllers
 
             return RedirectToAction("OrderConfirmation", new { id = newOrder.OrderID });
         }
+
         [Authorize(Roles = "User")]
         [HttpGet]
         public IActionResult OrderConfirmationFromCart(decimal amount, int itemCount, string paymentMethod)
@@ -283,6 +282,7 @@ namespace FoodSathi.Controllers
 
             return View("OrderConfirmation");
         }
+
         [Authorize(Roles = "User")]
         // ✅ NEW: Update order delivery information before payment
         [HttpPost]
@@ -293,13 +293,44 @@ namespace FoodSathi.Controllers
             if (order == null)
                 return Json(new { success = false, message = "Order not found" });
 
-            // Update order with delivery info
             order.Address = address;
             order.DeliveryOption = deliveryOption;
 
             await _context.SaveChangesAsync();
 
             return Json(new { success = true, message = "Order updated successfully" });
+        }
+
+        // ✅ FIXED: Get order details with image
+        [HttpGet]
+        public async Task<IActionResult> GetOrderDetails(int id)
+        {
+            // Include MenuItem to get the ImagePath
+            var order = await _context.Orders
+                .Include(o => o.MenuItem)
+                .FirstOrDefaultAsync(o => o.OrderID == id);
+
+            if (order == null)
+                return NotFound();
+
+            var details = new
+            {
+                order.OrderID,
+                order.UserName,
+                order.ItemName,
+                order.Quantity,
+                order.TotalPrice,
+                order.PaymentStatus,
+                order.DeliveryStatus,
+                order.Address,
+                order.DeliveryOption,
+                order.PaymentMethod,
+                order.OrderDate,
+                // Try MenuItem navigation first, then ItemImage column, then fallback
+                itemImage = order.MenuItem?.ImagePath ?? order.ItemImage ?? "/images/no-image.png"
+            };
+
+            return Json(details);
         }
     }
 }
