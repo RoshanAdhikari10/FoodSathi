@@ -99,6 +99,7 @@ namespace FoodSathi.Controllers
                 {
                     ItemID = c.ItemID,
                     ItemName = c.MenuItem.ItemName,
+                    ItemImage = c.MenuItem.ImagePath,  // ✅ SAVE IMAGE HERE!
                     Quantity = c.Quantity,
                     TotalPrice = total,
                     TotalAmount = total,
@@ -192,6 +193,7 @@ namespace FoodSathi.Controllers
                 {
                     ItemID = c.ItemID,
                     ItemName = c.MenuItem.ItemName,
+                    ItemImage = c.MenuItem.ImagePath,  // ✅ SAVE IMAGE HERE!
                     Quantity = c.Quantity,
                     TotalPrice = total,
                     TotalAmount = total,
@@ -281,6 +283,7 @@ namespace FoodSathi.Controllers
                 {
                     ItemID = c.ItemID,
                     ItemName = c.MenuItem.ItemName,
+                    ItemImage = c.MenuItem.ImagePath,  // ✅ SAVE IMAGE HERE!
                     Quantity = c.Quantity,
                     TotalPrice = total,
                     TotalAmount = total,
