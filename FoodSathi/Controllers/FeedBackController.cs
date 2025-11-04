@@ -81,5 +81,28 @@ namespace FoodSathi.Controllers
                 return View("Index", await _context.Feedbacks.ToListAsync());
             }
         }
+
+             // GET: Feedback/Manage
+        public async Task<IActionResult> Manage()
+        {
+            var feedbacks = await _context.Feedbacks
+                .OrderByDescending(f => f.SubmittedDate)
+                .ToListAsync();
+            return View(feedbacks);
+        }
+
+        // Optional: Delete Feedback
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var feedback = await _context.Feedbacks.FindAsync(id);
+            if (feedback != null)
+            {
+                _context.Feedbacks.Remove(feedback);
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction(nameof(Manage));
+        }
+    
     }
 }
