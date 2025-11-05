@@ -25,7 +25,7 @@
                 <div class="card-body">
                     @{
                         var processingOrders = Model
-                        .Where(o => o.DeliveryStatus != "Delivered" && o.DeliveryStatus != "Picked Up")
+                        .Where(o => o.DeliveryStatus != "Delivered" && o.DeliveryStatus != "Picked Up" && o.DeliveryStatus != "Cancelled")
                         .ToList();
                     }
 
@@ -53,9 +53,14 @@
                                 <p class="small text-muted mb-2"><i class="bi bi-credit-card-2-front"></i> Payment: @order.PaymentMethod</p>
                                 <p class="small mb-2 text-secondary"><i class="bi bi-clock-history"></i> Placed on: @order.OrderDate.ToString("MMM dd, yyyy - hh:mm tt")</p>
 
-                                <!-- 🚀 Track Button -->
-                                <div class="text-end">
-                                    <a href="@Url.Action("Track", "Order", new { id = order.OrderID })" class="btn btn-sm btn-outline-warning rounded-pill shadow-sm">
+                                <!-- 🚀 Action Buttons -->
+                                <div class="d-flex gap-2 justify-content-end">
+                                    <button class="btn btn-sm btn-outline-info rounded-pill shadow-sm view-details-btn"
+                                            data-id="@order.OrderID">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </button>
+                                    <a href="@Url.Action("Track", "Order", new { id = order.OrderID })"
+                                       class="btn btn-sm btn-outline-warning rounded-pill shadow-sm">
                                         <i class="bi bi-geo-alt"></i> Track
                                     </a>
                                 </div>
@@ -75,7 +80,7 @@
                 <div class="card-body">
                     @{
                         var completedOrders = Model
-                        .Where(o => o.DeliveryStatus == "Delivered" || o.DeliveryStatus == "Picked Up")
+                        .Where(o => o.DeliveryStatus == "Delivered" || o.DeliveryStatus == "Picked Up" || o.DeliveryStatus == "Cancelled")
                         .ToList();
                     }
 
@@ -92,24 +97,34 @@
                         {
                             string badgeClass = "bg-success";
                             string icon = "bi-check-circle";
+                            string borderClass = "border-success";
 
                             if (order.DeliveryStatus == "Picked Up")
                             {
                                 badgeClass = "bg-info";
                                 icon = "bi-box-arrow-in-down";
+                                borderClass = "border-info";
                             }
                             else if (order.DeliveryStatus == "Delivered")
                             {
                                 badgeClass = "bg-success";
                                 icon = "bi-check-circle";
+                                borderClass = "border-success";
                             }
-                            else
+                            else if (order.DeliveryStatus == "Cancelled")
                             {
                                 badgeClass = "bg-danger";
                                 icon = "bi-x-circle";
+                                borderClass = "border-danger";
+                            }
+                            else
+                            {
+                                badgeClass = "bg-secondary";
+                                icon = "bi-dash-circle";
+                                borderClass = "border-secondary";
                             }
 
-                            <div class="border-start border-success border-4 rounded-3 p-3 mb-3 bg-light shadow-sm">
+                            <div class="border-start @borderClass border-4 rounded-3 p-3 mb-3 bg-light shadow-sm">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
                                     <h6 class="fw-bold mb-0">@order.ItemName</h6>
                                     <span class="badge @badgeClass">
@@ -122,10 +137,41 @@
                                 <p class="small text-muted mb-1"><i class="bi bi-house-door"></i> Address: @order.Address</p>
                                 <p class="small text-muted mb-1"><i class="bi bi-truck"></i> Delivery: @order.DeliveryOption</p>
                                 <p class="small text-muted mb-2"><i class="bi bi-credit-card-2-front"></i> Payment: @order.PaymentMethod</p>
-                                <p class="small mb-0 text-secondary"><i class="bi bi-calendar-check"></i> Ordered on: @order.OrderDate.ToString("MMM dd, yyyy - hh:mm tt")</p>
+                                <p class="small mb-2 text-secondary"><i class="bi bi-calendar-check"></i> Ordered on: @order.OrderDate.ToString("MMM dd, yyyy - hh:mm tt")</p>
+
+                                <!-- 🚀 View Details Button -->
+                                <div class="text-end">
+                                    <button class="btn btn-sm btn-outline-info rounded-pill shadow-sm view-details-btn"
+                                            data-id="@order.OrderID">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </button>
+                                </div>
                             </div>
                         }
                     }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 🔍 Order Details Modal -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow-lg">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title fw-semibold">
+                    <i class="bi bi-receipt-cutoff"></i> Order Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div id="orderDetailsContent" class="fade-in">
+                    <div class="text-center text-muted">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -172,4 +218,185 @@
         background-color: #ffb300;
         border-color: #ffa000;
     }
+
+    .btn-outline-info:hover {
+        color: white;
+        background-color: #0dcaf0;
+        border-color: #0dcaf0;
+    }
+
+    .bg-gradient-primary {
+        background: linear-gradient(90deg, #0062ff, #00bcd4);
+    }
+
+    .order-image {
+        max-height: 280px;
+        width: 100%;
+        object-fit: cover;
+        background-color: #f8f9fa;
+        border-radius: 12px;
+    }
+
+    .image-placeholder {
+        height: 280px;
+        width: 100%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 4rem;
+        border-radius: 12px;
+    }
+
+    .detail-card {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        border-radius: 12px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .status-badge-large {
+        font-size: 1rem;
+        padding: 8px 16px;
+    }
 </style>
+
+@section Scripts {
+    <script>
+        // Helper function to get correct image URL
+        function getImageUrl(imagePath) {
+            if (!imagePath || imagePath === 'null' || imagePath === 'undefined') {
+                return '/images/no-image.png';
+            }
+
+            // If it already starts with http or /, return as is
+            if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
+                return imagePath;
+            }
+
+            // Otherwise add / at the beginning
+            return '/' + imagePath;
+        }
+
+        // 🧾 View Details Modal
+        document.querySelectorAll('.view-details-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.dataset.id;
+                const modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+                const content = document.getElementById('orderDetailsContent');
+
+                content.innerHTML = '<div class="text-center text-muted"><div class="spinner-border" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+
+                try {
+                    const res = await fetch(`/Order/GetOrderDetails?id=${id}`);
+                    if (!res.ok) throw new Error('Failed to fetch order details');
+
+                    const data = await res.json();
+                    console.log('Order Details Response:', data);
+
+                    // Fixed code (correct property name)
+        const imageUrl = getImageUrl(data.itemImage); // ← Match backend property name
+
+                    // Fallback values
+                    const itemName = data.itemName || data.ItemName || 'N/A';
+                    const userName = data.userName || data.UserName || 'N/A';
+                    const quantity = data.quantity || data.Quantity || 'N/A';
+                    const totalPrice = data.totalPrice || data.TotalPrice || 0;
+                    const paymentMethod = data.paymentMethod || data.PaymentMethod || 'N/A';
+                    const paymentStatus = data.paymentStatus || data.PaymentStatus || 'N/A';
+                    const deliveryStatus = data.deliveryStatus || data.DeliveryStatus || 'N/A';
+                    const deliveryOption = data.deliveryOption || data.DeliveryOption || 'N/A';
+                    const deliveryAddress = data.deliveryAddress || data.DeliveryAddress || data.address || data.Address || 'Not provided';
+                    const orderDate = data.orderDate || data.OrderDate || 'N/A';
+
+                    // Status badge colors
+                    const deliveryBadgeClass = ['Delivered','Picked Up'].includes(deliveryStatus) ? 'bg-success' :
+                                               deliveryStatus === 'Cancelled' ? 'bg-danger' : 'bg-warning text-dark';
+                    const paymentBadgeClass = paymentStatus === 'Paid' ? 'bg-success' : 'bg-warning text-dark';
+
+                    // Render modal content (cart-style)
+                    content.innerHTML = `
+                        <div class="row g-4 align-items-center">
+                            <!-- 🖼️ Food Image -->
+                            <div class="col-4">
+                                <img src="${imageUrl}"
+                                     alt="${itemName}"
+                                     class="img-fluid rounded-start shadow-sm border"
+                                     style="object-fit: cover; width: 100%; height: 220px;"
+                                     onerror="this.src='/images/no-image.png';" />
+                            </div>
+
+                            <!-- 📋 Order Info -->
+                            <div class="col-8">
+                                <h4 class="fw-bold text-primary mb-3">
+                                    <i class="bi bi-cart-check-fill"></i> ${itemName}
+                                </h4>
+
+                                <div class="detail-card">
+                                    <div class="row g-3">
+                                        <div class="col-6">
+                                            <small class="text-muted d-block mb-1"><i class="bi bi-person-circle"></i> Customer</small>
+                                            <strong>${userName}</strong>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted d-block mb-1"><i class="bi bi-box-seam"></i> Quantity</small>
+                                            <strong>${quantity}</strong>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted d-block mb-1"><i class="bi bi-cash-coin"></i> Total Price</small>
+                                            <strong class="text-success fs-5">₹${totalPrice}</strong>
+                                        </div>
+                                        <div class="col-6">
+                                            <small class="text-muted d-block mb-1"><i class="bi bi-credit-card-2-front"></i> Payment Method</small>
+                                            <strong>${paymentMethod}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block mb-2"><i class="bi bi-check2-square"></i> Payment Status</small>
+                                    <span class="badge ${paymentBadgeClass} status-badge-large">${paymentStatus}</span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block mb-2"><i class="bi bi-truck"></i> Delivery Status</small>
+                                    <span class="badge ${deliveryBadgeClass} status-badge-large">${deliveryStatus}</span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block mb-1"><i class="bi bi-geo-alt-fill"></i> Delivery Option</small>
+                                    <strong>${deliveryOption}</strong>
+                                </div>
+
+                                <div class="mb-3">
+                                    <small class="text-muted d-block mb-1"><i class="bi bi-house-door-fill"></i> Delivery Address</small>
+                                    <strong>${deliveryAddress}</strong>
+                                </div>
+
+                                <div class="mb-0 mt-4 pt-3 border-top">
+                                    <small class="text-muted d-block mb-1"><i class="bi bi-calendar-event"></i> Order Date</small>
+                                    <span class="text-secondary fw-semibold">${orderDate}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Error loading order details:', error);
+                    content.innerHTML = `
+                        <div class="text-center">
+                            <i class="bi bi-exclamation-triangle-fill text-danger" style="font-size: 3rem;"></i>
+                            <p class="text-danger mt-3 fw-semibold">Failed to load order details.</p>
+                            <p class="text-muted small">Error: ${error.message}</p>
+                            <p class="text-muted small">Please try again or contact support.</p>
+                        </div>
+                    `;
+                }
+
+                modal.show();
+            });
+        });
+    </script>
+}
+
+}
