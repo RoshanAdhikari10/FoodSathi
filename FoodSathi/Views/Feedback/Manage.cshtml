@@ -1,0 +1,70 @@
+﻿@model IEnumerable<FoodSathi.Models.Feedback>
+
+@{
+    ViewData["Title"] = "Manage Feedback | FoodSathi";
+}
+
+<div class="container py-5 fade-in">
+    <h1 class="fw-bold text-primary mb-4">📝 Manage Feedback</h1>
+    <p class="text-muted mb-4">View all feedback submitted by users.</p>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>User Name</th>
+                    <th>Email</th>
+                    <th>Product</th>
+                    <th>Rating</th>
+                    <th>Message</th>
+                    <th>Submitted Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="8" class="text-center">No feedback found.</td>
+                    </tr>
+                }
+                else
+                {
+                    int count = 1;
+                    foreach (var fb in Model)
+                    {
+                        <tr>
+                            <td>@count</td>
+                            <td>@fb.Name</td>
+                            <td>@fb.Email</td>
+                            <td>@fb.ProductName</td>
+                            <td>
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    if (i <= fb.Rating)
+                                    {
+                                        <span class="text-warning">&#9733;</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-secondary">&#9733;</span>
+                                    }
+                                }
+                            </td>
+                            <td>@fb.Message</td>
+                            <td>@fb.SubmittedDate.ToString("MMM dd, yyyy - hh:mm tt")</td>
+                            <td>
+                                <form asp-action="Delete" method="post" onsubmit="return confirm('Are you sure you want to delete this feedback?');">
+                                    <input type="hidden" name="id" value="@fb.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        count++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
