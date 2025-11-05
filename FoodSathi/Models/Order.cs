@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FoodSathi.Models
 {
@@ -21,13 +22,13 @@ namespace FoodSathi.Models
         public decimal TotalPrice { get; set; }
 
         [Required]
-        public string Address { get; set; } // 🏠 Delivery address
+        public string Address { get; set; } // 🏠 Delivery address filled by user
 
         [Required]
-        public string DeliveryOption { get; set; } // 🚚 e.g. “Home Delivery”, “Pickup”
+        public string DeliveryOption { get; set; } // 🚚 “Home Delivery” / “Pickup”
 
         [Required]
-        public string PaymentMethod { get; set; } // 💳 e.g. “Cash on Delivery”, “eSewa”, “Khalti”
+        public string PaymentMethod { get; set; } // 💳 “Cash on Delivery”, “eSewa”, etc.
 
         [Required]
         [DataType(DataType.Currency)]
@@ -42,8 +43,15 @@ namespace FoodSathi.Models
         [MaxLength(20)]
         public string PaymentStatus { get; set; } = "Pending";
 
-        public bool FromCart { get; set; } = false; // 🛒 NEW — true if placed from cart
+        public bool FromCart { get; set; } = false; // 🛒 true if placed from cart
 
         public string DeliveryStatus { get; set; } = "Order Placed";
+
+        // ✅ Store image path or URL as string
+        public string ItemImage { get; set; }
+
+        //  Navigation property to MenuItem
+        [ForeignKey("ItemID")]
+        public virtual MenuItem MenuItem { get; set; }
     }
 }
