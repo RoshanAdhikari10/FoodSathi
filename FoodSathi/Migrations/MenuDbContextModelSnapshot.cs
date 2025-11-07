@@ -55,6 +55,23 @@ namespace FoodSathi.Migrations
                     b.ToTable("Carts");
                 });
 
+            modelBuilder.Entity("FoodSathi.Models.Category", b =>
+                {
+                    b.Property<int>("CategoryID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CategoryID"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CategoryID");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("FoodSathi.Models.MenuItem", b =>
                 {
                     b.Property<int>("ItemID")
@@ -63,12 +80,8 @@ namespace FoodSathi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ItemID"));
 
-                    b.Property<double>("AverageRating")
-                        .HasColumnType("float");
-
-                    b.Property<string>("Category")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("CategoryID")
+                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -90,6 +103,8 @@ namespace FoodSathi.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("ItemID");
+
+                    b.HasIndex("CategoryID");
 
                     b.ToTable("MenuItems");
                 });
@@ -119,6 +134,10 @@ namespace FoodSathi.Migrations
 
                     b.Property<int>("ItemID")
                         .HasColumnType("int");
+
+                    b.Property<string>("ItemImage")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ItemName")
                         .IsRequired()
@@ -152,38 +171,9 @@ namespace FoodSathi.Migrations
 
                     b.HasKey("OrderID");
 
-                    b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("FoodSathi.Models.Review", b =>
-                {
-                    b.Property<int>("ReviewID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewID"));
-
-                    b.Property<string>("Comment")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("ItemID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Rating")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ReviewID");
-
                     b.HasIndex("ItemID");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("FoodSathi.Models.Cart", b =>
@@ -197,20 +187,26 @@ namespace FoodSathi.Migrations
                     b.Navigation("MenuItem");
                 });
 
-            modelBuilder.Entity("FoodSathi.Models.Review", b =>
+            modelBuilder.Entity("FoodSathi.Models.MenuItem", b =>
+                {
+                    b.HasOne("FoodSathi.Models.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("FoodSathi.Models.Order", b =>
                 {
                     b.HasOne("FoodSathi.Models.MenuItem", "MenuItem")
-                        .WithMany("Reviews")
+                        .WithMany()
                         .HasForeignKey("ItemID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("MenuItem");
-                });
-
-            modelBuilder.Entity("FoodSathi.Models.MenuItem", b =>
-                {
-                    b.Navigation("Reviews");
                 });
 #pragma warning restore 612, 618
         }
