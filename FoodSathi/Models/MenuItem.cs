@@ -20,8 +20,12 @@ namespace FoodSathi.Models
 
         public string? ImagePath { get; set; }
 
+        // ✅ Correct foreign key declaration
         [Required]
-        public string Category { get; set; }
+        public int CategoryID { get; set; }
+
+        [ForeignKey("CategoryID")]
+        public virtual Category? Category { get; set; }
 
         public bool IsAvailable { get; set; } = true;
 
