@@ -1,0 +1,20 @@
+﻿@model FoodSathi.Models.Category
+@{
+    ViewData["Title"] = "Add Category";
+}
+
+<div class="container py-5 fade-in">
+    <h2 class="text-gradient mb-4">➕ Add New Category</h2>
+    <div class="glass-card p-4 rounded-4 shadow-lg text-white">
+        <form asp-action="Create">
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" placeholder="Enter category name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary rounded-pill px-4">Save</button>
+            <a href="/Category" class="btn btn-outline-light rounded-pill px-4">Cancel</a>
+        </form>
+    </div>
+</div>
