@@ -224,6 +224,60 @@ namespace FoodSathi.Controllers
         }
 
 
+
+        // ====================================================
+        // 💼 WALLET PAYMENT - SHOW PAGE
+        // ====================================================
+
+        [HttpGet]
+        public async Task<IActionResult> PayByWallet(int? id, decimal? amount)
+        {
+            if (id == null || amount == null)
+                return BadRequest("Missing order ID or amount.");
+
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
+                return NotFound("Order not found.");
+
+            ViewBag.OrderId = id.Value;
+            ViewBag.Amount = amount.Value;
+            ViewBag.FromCart = false;
+
+            return View("WalletPayment"); // Create this view!
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> PayByWalletFromCart()
+        {
+            var userName = User.Identity?.Name ?? "Guest";
+            var cartItems = await _context.Carts
+                .Include(c => c.MenuItem)
+                .Where(c => c.UserName == userName)
+                .ToListAsync();
+
+            if (!cartItems.Any())
+            {
+                TempData["Error"] = "Your cart is empty!";
+                return RedirectToAction("Index", "Cart");
+            }
+
+            // Calculate total amount from cart items
+            decimal totalAmount = cartItems.Sum(c => c.Quantity * c.MenuItem.Price);
+
+            ViewBag.Amount = totalAmount;
+            ViewBag.FromCart = true;
+
+            return View("WalletPayment");
+        }
+
+
+
+
+
+
+
+
+
         // ====================================================
         // 💵 CASH ON DELIVERY (Single + Cart)
         // ====================================================
