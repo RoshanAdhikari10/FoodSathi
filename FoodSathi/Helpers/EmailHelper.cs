@@ -6,8 +6,8 @@ namespace FoodSathi.Helpers
 {
     public static class EmailHelper
     {
-        private static readonly string fromEmail = "chhetrirosun@gmail.com"; // your Gmail
-        private static readonly string appPassword = "knizszftctnzekwz";     // your App Password
+        private static readonly string fromEmail = "teamfoodsathi@gmail.com"; // your Gmail
+        private static readonly string appPassword = "kcvd krny kvnb slro";     // your App Password
         private static readonly string adminEmail = "admin@foodsathi.com";   // admin email address
 
         // ✅ Send email to any address
