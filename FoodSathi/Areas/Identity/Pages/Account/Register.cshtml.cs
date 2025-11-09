@@ -91,7 +91,10 @@ namespace FoodSathi.Areas.Identity.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    // ✅ Email confirmation
+                    // 🟢 Assign default 'User' role
+                    await _userManager.AddToRoleAsync(user, "User");
+
+                    // ✅ Email confirmation logic (optional)
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -111,6 +114,7 @@ namespace FoodSathi.Areas.Identity.Pages.Account
                     }
                     else
                     {
+                        // 🟢 Automatically sign in after registration
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
