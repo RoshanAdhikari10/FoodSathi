@@ -19,7 +19,7 @@ namespace FoodSathi.Controllers
         {
             var categories = _context.Categories.ToList();
             return View(categories);
-        }
+        }    
 
         // ➕ Add new
         public IActionResult Create() => View();
