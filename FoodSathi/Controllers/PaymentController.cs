@@ -12,7 +12,7 @@ namespace FoodSathi.Controllers
     {
         private readonly MenuDbContext _context;
 
-        public PaymentController(MenuDbContext context)
+        public PaymentController(MenuDbContext context) 
         {
             _context = context;
         }
