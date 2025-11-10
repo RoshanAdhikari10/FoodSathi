@@ -83,7 +83,7 @@ namespace FoodSathi.Controllers
         }
 
              // GET: Feedback/Manage
-        public async Task<IActionResult> Manage()
+        public async Task<IActionResult> Manage()                      
         {
             var feedbacks = await _context.Feedbacks
                 .OrderByDescending(f => f.SubmittedDate)
