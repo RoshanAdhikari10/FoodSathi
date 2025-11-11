@@ -1,0 +1,1418 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodSathi - Complete Technical Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.7;
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #1e293b;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 50%, #7c3aed 100%);
+            padding: 60px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .header::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+                opacity: 0.3;
+            }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+            color: #ffffff;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+        }
+
+        .badge-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .content {
+            padding: 60px 80px;
+        }
+
+        .section {
+            margin-bottom: 50px;
+            background: #0f172a;
+            padding: 40px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #334155;
+        }
+
+        .section-icon {
+            font-size: 1.8em;
+            margin-right: 15px;
+            background: linear-gradient(135deg, #0ea5e9, #2563eb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section h2 {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #f1f5f9;
+            letter-spacing: -0.5px;
+        }
+
+        .credentials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .credential-card {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid #334155;
+            border-radius: 10px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .credential-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 4px;
+                height: 100%;
+                background: linear-gradient(180deg, #0ea5e9, #2563eb);
+            }
+
+            .credential-card:hover {
+                transform: translateY(-2px);
+                border-color: #0ea5e9;
+                box-shadow: 0 10px 30px rgba(14, 165, 233, 0.2);
+            }
+
+        .credential-label {
+            font-size: 0.85em;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+
+        .credential-value {
+            font-size: 1.3em;
+            color: #f1f5f9;
+            font-family: 'Monaco', 'Courier New', monospace;
+            background: #0f172a;
+            padding: 12px 16px;
+            border-radius: 6px;
+            border: 1px solid #334155;
+        }
+
+        .setup-steps {
+            counter-reset: step-counter;
+        }
+
+        .step {
+            background: #1e293b;
+            padding: 30px 30px 30px 90px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #334155;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+            .step:hover {
+                border-color: #0ea5e9;
+                box-shadow: 0 4px 20px rgba(14, 165, 233, 0.15);
+            }
+
+            .step::before {
+                counter-increment: step-counter;
+                content: counter(step-counter);
+                position: absolute;
+                left: 30px;
+                top: 30px;
+                background: linear-gradient(135deg, #0ea5e9, #2563eb);
+                color: #ffffff;
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                font-size: 1.2em;
+                box-shadow: 0 4px 15px rgba(14, 165, 233, 0.4);
+            }
+
+            .step h3 {
+                color: #f1f5f9;
+                margin-bottom: 12px;
+                font-size: 1.3em;
+                font-weight: 600;
+            }
+
+            .step p {
+                color: #cbd5e1;
+                line-height: 1.8;
+                margin-bottom: 10px;
+            }
+
+        .code-block {
+            background: #020617;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Courier New', monospace;
+            overflow-x: auto;
+            font-size: 0.9em;
+            border: 1px solid #1e293b;
+            position: relative;
+        }
+
+            .code-block::before {
+                content: 'COMMAND';
+                position: absolute;
+                top: 8px;
+                right: 12px;
+                font-size: 0.7em;
+                color: #64748b;
+                letter-spacing: 1px;
+            }
+
+        .alert-box {
+            padding: 20px 20px 20px 55px;
+            border-radius: 8px;
+            margin: 20px 0;
+            position: relative;
+            border-left: 4px solid;
+        }
+
+            .alert-box::before {
+                position: absolute;
+                left: 20px;
+                top: 20px;
+                font-size: 1.3em;
+            }
+
+        .alert-info {
+            background: rgba(14, 165, 233, 0.1);
+            border-color: #0ea5e9;
+            color: #e2e8f0;
+        }
+
+            .alert-info::before {
+                content: 'ℹ️';
+            }
+
+        .alert-warning {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: #fbbf24;
+            color: #e2e8f0;
+        }
+
+            .alert-warning::before {
+                content: '⚠️';
+            }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            color: #e2e8f0;
+        }
+
+            .alert-success::before {
+                content: '✓';
+            }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .tech-item {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+            .tech-item:hover {
+                border-color: #0ea5e9;
+                transform: translateY(-3px);
+            }
+
+        .tech-item-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .tech-item-name {
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 5px;
+        }
+
+        .tech-item-desc {
+            font-size: 0.85em;
+            color: #94a3b8;
+        }
+
+        ul {
+            margin-left: 25px;
+            margin-top: 15px;
+        }
+
+            ul li {
+                margin-bottom: 12px;
+                color: #cbd5e1;
+                position: relative;
+                padding-left: 10px;
+            }
+
+                ul li::marker {
+                    color: #0ea5e9;
+                }
+
+                ul li strong {
+                    color: #f1f5f9;
+                    font-weight: 600;
+                }
+
+        .database-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .db-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+        }
+
+        .db-card-header {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+            .db-card-header::before {
+                content: '🗄️';
+                margin-right: 10px;
+                font-size: 1.3em;
+            }
+
+        .db-card-content {
+            color: #cbd5e1;
+            line-height: 1.8;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .feature-card {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            transition: all 0.3s ease;
+        }
+
+            .feature-card:hover {
+                border-color: #0ea5e9;
+                transform: translateY(-2px);
+            }
+
+        .feature-icon {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 10px;
+        }
+
+        .feature-desc {
+            font-size: 0.9em;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #1e293b;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background: #0f172a;
+            color: #f1f5f9;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #334155;
+        }
+
+        td {
+            padding: 15px;
+            color: #cbd5e1;
+            border-bottom: 1px solid #334155;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #0f172a;
+        }
+
+        .api-endpoint {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 4px solid #0ea5e9;
+        }
+
+        .endpoint-method {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .method-get {
+            background: #10b981;
+            color: white;
+        }
+
+        .method-post {
+            background: #0ea5e9;
+            color: white;
+        }
+
+        .method-put {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .method-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .endpoint-path {
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #f1f5f9;
+            font-size: 1.1em;
+        }
+
+        .endpoint-desc {
+            margin-top: 10px;
+            color: #94a3b8;
+            font-size: 0.9em;
+        }
+
+        .footer {
+            background: #020617;
+            padding: 40px 80px;
+            text-align: center;
+            border-top: 1px solid #1e293b;
+        }
+
+        .footer-content {
+            color: #64748b;
+            font-size: 0.95em;
+        }
+
+        .footer-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        h3 {
+            color: #f1f5f9;
+            margin: 25px 0 15px;
+            font-size: 1.3em;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .header, .content, .footer {
+                padding: 30px 20px;
+            }
+
+                .header h1 {
+                    font-size: 2em;
+                }
+
+            .step {
+                padding: 25px 25px 25px 70px;
+            }
+
+                .step::before {
+                    left: 20px;
+                    width: 35px;
+                    height: 35px;
+                }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <h1>🍽️ FoodSathi</h1>
+                <div class="subtitle">Complete Technical Documentation & Setup Guide</div>
+                <div class="badge-container">
+                    <span class="badge">ASP.NET Core 6.0</span>
+                    <span class="badge">Entity Framework Core</span>
+                    <span class="badge">SQL Server</span>
+                    <span class="badge">Identity Framework</span>
+                    <span class="badge">MVC Architecture</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <!-- Admin Credentials Section -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🔐</span>
+                    <h2>Administrative Access Credentials</h2>
+                </div>
+
+                <p style="margin-bottom: 20px;">The following credentials provide full administrative access to the FoodSathi platform. These are auto-generated during initial application deployment and can be used immediately for testing and evaluation purposes.</p>
+
+                <div class="credentials-grid">
+                    <div class="credential-card">
+                        <div class="credential-label">Admin Email Address</div>
+                        <div class="credential-value">admin@foodsathi.com</div>
+                    </div>
+
+                    <div class="credential-card">
+                        <div class="credential-label">Admin Password</div>
+                        <div class="credential-value">Admin@123</div>
+                    </div>
+
+                    <div class="credential-card">
+                        <div class="credential-label">User Role</div>
+                        <div class="credential-value">Administrator</div>
+                    </div>
+
+                    <div class="credential-card">
+                        <div class="credential-label">Access Level</div>
+                        <div class="credential-value">Full System Access</div>
+                    </div>
+                </div>
+
+                <div class="alert-box alert-info">
+                    <strong>Automatic Provisioning:</strong> The administrative account is automatically created during the first application run through the role seeding mechanism implemented in Program.cs. No manual database intervention is required. The admin user has full access to all system features including user management, menu management, order processing, and system configuration.
+                </div>
+
+                <div class="alert-box alert-success">
+                    <strong>Test User Accounts:</strong> Additional user accounts can be created through the standard registration interface at <code>/Identity/Account/Register</code>. All newly registered users are automatically assigned the "User" role with standard access permissions.
+                </div>
+            </div>
+
+            <!-- Project Overview Section -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">📖</span>
+                    <h2>Project Overview</h2>
+                </div>
+
+                <p style="margin-bottom: 20px; font-size: 1.1em;">FoodSathi is a comprehensive food ordering and restaurant management system built with ASP.NET Core 6.0. The platform provides a complete solution for managing menus, processing orders, and handling user authentication with role-based access control.</p>
+
+                <h3>Key Highlights</h3>
+                <ul>
+                    <li><strong>Modern Web Architecture:</strong> Built on ASP.NET Core 6.0 MVC pattern with Razor Pages</li>
+                    <li><strong>Secure Authentication:</strong> ASP.NET Core Identity framework with role-based authorization</li>
+                    <li><strong>Dual Database Design:</strong> Separated databases for authentication and business logic</li>
+                    <li><strong>Responsive Interface:</strong> Mobile-friendly design with modern UI/UX principles</li>
+                    <li><strong>Scalable Architecture:</strong> Entity Framework Core with code-first migrations</li>
+                    <li><strong>Production Ready:</strong> Built-in error handling, logging, and security features</li>
+                </ul>
+
+                <h3>Technology Stack</h3>
+                <div class="tech-stack">
+                    <div class="tech-item">
+                        <div class="tech-item-icon">⚡</div>
+                        <div class="tech-item-name">ASP.NET Core 6.0</div>
+                        <div class="tech-item-desc">Web framework & runtime</div>
+                    </div>
+
+                    <div class="tech-item">
+                        <div class="tech-item-icon">🗄️</div>
+                        <div class="tech-item-name">Entity Framework Core</div>
+                        <div class="tech-item-desc">ORM & data access</div>
+                    </div>
+
+                    <div class="tech-item">
+                        <div class="tech-item-icon">💾</div>
+                        <div class="tech-item-name">SQL Server</div>
+                        <div class="tech-item-desc">Database engine</div>
+                    </div>
+
+                    <div class="tech-item">
+                        <div class="tech-item-icon">🔐</div>
+                        <div class="tech-item-name">ASP.NET Identity</div>
+                        <div class="tech-item-desc">Authentication system</div>
+                    </div>
+
+                    <div class="tech-item">
+                        <div class="tech-item-icon">🎨</div>
+                        <div class="tech-item-name">Razor Pages</div>
+                        <div class="tech-item-desc">View engine</div>
+                    </div>
+
+                    <div class="tech-item">
+                        <div class="tech-item-icon">📱</div>
+                        <div class="tech-item-name">Bootstrap</div>
+                        <div class="tech-item-desc">UI framework</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Requirements Section -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">⚙️</span>
+                    <h2>System Requirements & Prerequisites</h2>
+                </div>
+
+                <h3>Required Software</h3>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Component</th>
+                                <th>Version</th>
+                                <th>Purpose</th>
+                                <th>Download Source</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Visual Studio 2022</strong></td>
+                                <td>2022 or later</td>
+                                <td>Primary IDE for development</td>
+                                <td>visualstudio.microsoft.com</td>
+                            </tr>
+                            <tr>
+                                <td><strong>.NET 6.0 SDK</strong></td>
+                                <td>6.0 LTS</td>
+                                <td>Runtime & development kit</td>
+                                <td>dotnet.microsoft.com</td>
+                            </tr>
+                            <tr>
+                                <td><strong>SQL Server LocalDB</strong></td>
+                                <td>2019 or later</td>
+                                <td>Local database engine</td>
+                                <td>Included with Visual Studio</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Windows OS</strong></td>
+                                <td>10/11 or Server</td>
+                                <td>Operating system</td>
+                                <td>microsoft.com/windows</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Visual Studio Workloads</h3>
+                <p style="margin-bottom: 15px;">Ensure the following workloads are installed in Visual Studio:</p>
+                <ul>
+                    <li><strong>ASP.NET and web development</strong> - Core web development tools and templates</li>
+                    <li><strong>Data storage and processing</strong> - SQL Server LocalDB and database management tools</li>
+                    <li><strong>.NET desktop development</strong> (Optional) - Additional .NET tools and libraries</li>
+                </ul>
+
+                <h3>Hardware Recommendations</h3>
+                <ul>
+                    <li><strong>Processor:</strong> Intel Core i5 or AMD Ryzen 5 (or better)</li>
+                    <li><strong>RAM:</strong> Minimum 8 GB (16 GB recommended for optimal performance)</li>
+                    <li><strong>Storage:</strong> 10 GB available space (SSD recommended)</li>
+                    <li><strong>Display:</strong> 1920x1080 resolution or higher</li>
+                    <li><strong>Internet:</strong> Broadband connection for NuGet package restoration</li>
+                </ul>
+
+                <div class="alert-box alert-warning">
+                    <strong>Important:</strong> SQL Server LocalDB is automatically included with Visual Studio 2022 when the "Data storage and processing" workload is installed during setup. No separate installation is required.
+                </div>
+            </div>
+
+            <!-- Installation & Configuration Section -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🚀</span>
+                    <h2>Installation & Configuration Process</h2>
+                </div>
+
+                <div class="setup-steps">
+                    <div class="step">
+                        <h3>Project Extraction & Opening</h3>
+                        <p>Extract the project archive (ZIP file) to your preferred development directory. Avoid paths with spaces or special characters for best compatibility. Navigate to the extracted folder and locate the <code>FoodSathi.sln</code> solution file.</p>
+                        <p style="margin-top: 10px;">Open the solution in Visual Studio 2022 by:</p>
+                        <ul>
+                            <li>Double-clicking the .sln file, or</li>
+                            <li>Opening Visual Studio and selecting <code>File → Open → Project/Solution</code></li>
+                        </ul>
+                        <div class="alert-box alert-info">
+                            <strong>Recommended Path:</strong> <code>C:\Projects\FoodSathi\</code> or similar short, simple path structure without spaces.
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>NuGet Package Restoration</h3>
+                        <p>Visual Studio will automatically detect and restore all required NuGet packages upon opening the solution. You can monitor the restoration progress in the Output window (<code>View → Output</code>).</p>
+                        <p style="margin-top: 10px;">If automatic restoration does not occur, manually trigger it:</p>
+                        <ul>
+                            <li>Right-click the solution node in Solution Explorer</li>
+                            <li>Select "Restore NuGet Packages"</li>
+                            <li>Wait for the restoration process to complete (may take 2-5 minutes)</li>
+                        </ul>
+                        <div class="alert-box alert-success">
+                            <strong>Expected Packages:</strong> Microsoft.EntityFrameworkCore (6.x), Microsoft.AspNetCore.Identity.EntityFrameworkCore (6.x), Microsoft.EntityFrameworkCore.SqlServer (6.x), Microsoft.EntityFrameworkCore.Tools (6.x), and related dependencies will be automatically restored.
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Database Connection Verification</h3>
+                        <p>The application utilizes a dual-database architecture as configured in <code>appsettings.json</code>. Review the connection strings to ensure they match your environment:</p>
+                        <div class="code-block">
+                            "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=FoodSathiDb;Trusted_Connection=True;MultipleActiveResultSets=true"
+
+                            "Menupage": "Server=(localdb)\\mssqllocaldb;Database=MenuDB;Trusted_Connection=True;MultipleActiveResultSets=true"
+                        </div>
+                        <p style="margin-top: 15px;">These connection strings are pre-configured for SQL Server LocalDB with Windows Authentication. No modifications are required for standard development environments. Both databases will be created automatically during the first application run.</p>
+                        <div class="alert-box alert-info">
+                            <strong>LocalDB Instance:</strong> The default instance is <code>(localdb)\mssqllocaldb</code>. You can verify LocalDB installation by running <code>sqllocaldb info</code> in Command Prompt.
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Entity Framework Migrations</h3>
+                        <p>Apply database migrations to create the FoodSathiDb schema. Open the Package Manager Console via <code>Tools → NuGet Package Manager → Package Manager Console</code> and execute:</p>
+                        <div class="code-block">Update-Database</div>
+                        <p style="margin-top: 15px;">This command will:</p>
+                        <ul>
+                            <li>Create the FoodSathiDb database if it doesn't exist</li>
+                            <li>Apply all pending migrations to set up the schema</li>
+                            <li>Create Identity framework tables (Users, Roles, Claims, etc.)</li>
+                            <li>Prepare the database for authentication and authorization</li>
+                        </ul>
+                        <div class="alert-box alert-success">
+                            <strong>Migration Success:</strong> You should see output indicating successful migration application. If migrations don't exist, run <code>Add-Migration InitialCreate</code> first, then <code>Update-Database</code>.
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Build the Solution</h3>
+                        <p>Compile the entire solution to ensure all dependencies are properly resolved and there are no compilation errors:</p>
+                        <ul>
+                            <li>Select <code>Build → Build Solution</code> from the menu, or</li>
+                            <li>Press <code>Ctrl + Shift + B</code></li>
+                        </ul>
+                        <p style="margin-top: 10px;">Monitor the Output window for any build errors or warnings. A successful build should show "Build succeeded" with 0 errors.</p>
+                        <div class="alert-box alert-warning">
+                            <strong>Build Errors:</strong> If you encounter build errors, ensure all NuGet packages are properly restored and your .NET 6.0 SDK is correctly installed. Check the Error List window for detailed error messages.
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>Application Execution</h3>
+                        <p>Launch the application by pressing <code>F5</code> (Start Debugging) or <code>Ctrl + F5</code> (Start Without Debugging). The startup sequence will automatically:</p>
+                        <ul>
+                            <li>Start the Kestrel web server</li>
+                            <li>Create both database instances (FoodSathiDb and MenuDB) if they don't exist</li>
+                            <li>Execute the role seeding routine to establish Admin and User roles</li>
+                            <li>Provision the administrative user account with credentials shown above</li>
+                            <li>Launch your default web browser to the application homepage</li>
+                        </ul>
+                        <div class="alert-box alert-success">
+                            <strong>First Run:</strong> The first run may take 30-60 seconds as databases are created and seeded. Subsequent runs will be faster. The application typically runs on <code>https://localhost:5001</code> or <code>http://localhost:5000</code>.
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <h3>System Validation & Testing</h3>
+                        <p>Once the application is running, verify the following functionalities to ensure proper setup:</p>
+                        <ul>
+                            <li><strong>Homepage Access:</strong> Navigate to the homepage and verify content loads correctly</li>
+                            <li><strong>User Registration:</strong> Create a new standard user account through <code>/Identity/Account/Register</code></li>
+                            <li><strong>User Login:</strong> Test login with the newly created user account</li>
+                            <li><strong>Administrative Login:</strong> Login with admin credentials (admin@foodsathi.com / Admin@123)</li>
+                            <li><strong>Admin Panel:</strong> Verify access to administrative features and dashboards</li>
+                            <li><strong>Menu Management:</strong> Test creating, editing, and deleting menu items</li>
+                            <li><strong>Order Processing:</strong> Place test orders and verify order flow</li>
+                        </ul>
+                        <div class="alert-box alert-info">
+                            <strong>Testing Tip:</strong> Use browser developer tools (F12) to monitor network requests and console for any JavaScript errors during testing.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Application Architecture Section -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🏗️</span>
+                    <h2>Application Architecture</h2>
+                </div>
+
+                <h3>Project Structure</h3>
+                <p style="margin-bottom: 15px;">The FoodSathi application follows the standard ASP.NET Core MVC architecture with the following key components:</p>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📁</div>
+                        <div class="feature-title">Controllers</div>
+                        <div class="feature-desc">Handle HTTP requests, process business logic, and return appropriate responses. Includes HomeController, OrderController, MenuController, and AdminController.</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🎨</div>
+                        <div class="feature-title">Views</div>
+                        <div class="feature-desc">Razor view templates (.cshtml) for rendering HTML responses. Organized by controller with shared layouts and partial views.</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">📦</div>
+                        <div class="feature-title">Models</div>
+                        <div class="feature-desc">Data models and entities including MenuItem, Order, Category, and Identity-related models for users and roles.</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">💾</div>
+                        <div class="feature-title">Data Layer</div>
+                        <div class="feature-desc">DbContext classes (ApplicationDbContext, MenuDbContext) for database access using Entity Framework Core.</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🌐</div>
+                        <div class="feature-title">wwwroot</div>
+                        <div class="feature-desc">Static files including CSS stylesheets, JavaScript files, images, and uploaded content.</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">⚙️</div>
+                        <div class="feature-title">Configuration</div>
+                        <div class="feature-desc">appsettings.json for application configuration including connection strings, logging, and environment-specific settings.</div>
+                    </div>
+                </div>
+
+                <h3>Design Patterns Implemented</h3>
+                <ul>
+                    <li><strong>MVC Pattern:</strong> Separation of concerns with Model-View-Controller architecture</li>
+                    <li><strong>Repository Pattern:</strong> Abstracted data access through DbContext</li>
+                    <li><strong>Dependency Injection:</strong> Built-in DI container for service registration and resolution</li>
+                    <li><strong>Middleware Pipeline:</strong> Request processing through configured middleware components</li>
+                    <li><strong>Identity Framework:</strong> Standardized authentication and authorization implementation</li>
+                </ul>
+            </div>
+
+            <!-- Database Architecture Section -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🗄️</span>
+                    <h2>Database Architecture & Schema</h2>
+                </div>
+
+                <p style="margin-bottom: 20px;">The application implements a segregated database architecture for optimal separation of concerns, security, and scalability:</p>
+
+                <div class="database-grid">
+                    <div class="db-card">
+                        <div class="db-card-header">FoodSathiDb (Primary)</div>
+                        <div class="db-card-content">
+                            <strong>Purpose:</strong> Core application database for authentication and user management<br><br>
+                            <strong>Contains:</strong><br>
+                            • AspNetUsers - User accounts and profiles<br>
+                            • AspNetRoles - System roles (Admin, User)<br>
+                            • AspNetUserRoles - User-role mappings<br>
+                            • AspNetUserClaims - User claims and permissions<br>
+                            • AspNetRoleClaims - Role-based claims<br>
+                            • AspNetUserLogins - External login providers<br>
+                            • AspNetUserTokens - Authentication tokens<br><br>
+                            <strong>Schema:</strong> Auto-generated via Entity Framework migrations<br>
+                            <strong>Connection String:</strong> DefaultConnection
+                        </div>
+                    </div>
+
+                    <div class="db-card">
+                        <div class="db-card-header">MenuDB (Secondary)</div>
+                        <div class="db-card-content">
+                            <strong>Purpose:</strong> Business domain database for application-specific data<br><br>
+                            <strong>Contains:</strong><br>
+                            • MenuItems - Food items, descriptions, pricing<br>
+                            • Categories - Menu categorization<br>
+                            • Orders - Order records and transaction history<br>
+                            • OrderDetails - Line items for each order<br>
+                            • Customer information and preferences<br><br>
+                            <strong>Schema:</strong> Created via EnsureCreated() on startup<br>
+                            <strong>Connection String:</strong> Menupage
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert-box alert-info">
+                    <strong>Connection Management:</strong> Both databases utilize SQL Server LocalDB with Windows Authentication (Trusted_Connection=True). Connection pooling is enabled through the MultipleActiveResultSets parameter for optimized concurrent query execution and improved performance.
+                </div>
+
+                <h3>Database Relationships</h3>
+                <ul>
+                    <li><strong>One-to-Many:</strong> Users → Orders (one user can place multiple orders)</li>
+                    <li><strong>One-to-Many:</strong> Categories → MenuItems (one category contains multiple items)</li>
+                    <li><strong>One-to-Many:</strong> Orders → OrderDetails (one order contains multiple items)</li>
+                    <li><strong>Many-to-Many:</strong> Users ↔ Roles (through AspNetUserRoles join table)</li>
+                </ul>
+            </div>
+
+            <!-- Features Section -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">✨</span>
+                    <h2>Core Features & Functionality</h2>
+                </div>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">👤</div>
+                        <div class="feature-title">User Management</div>
+                        <div class="feature-desc">Complete user registration, login, profile management, and role-based access control with ASP.NET Identity integration.</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🍕</div>
+                        <div class="feature-title">Menu Management</div>
+                        <div class="feature-desc">Admin interface for creating, updating, and deleting menu items with categories, descriptions, pricing, and images.</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🛒</div>
+                        <div class="feature-title">Order Processing</div>
+                        <div class="feature-desc">Complete order workflow from cart management to checkout, order confirmation, and order history tracking.</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🔐</div>
+                        <div class="feature-title">Role-Based Access</div>
+                        <div class="feature-desc">Two-tier authorization system with Admin and User roles, controlling access to administrative features and sensitive operations.</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-title">Admin Dashboard</div>
+                        <div class="feature-desc">Comprehensive admin panel for managing users, orders, menu items, and viewing system analytics and reports.</div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🔍</div>
+                        <div class="feature-title">Search & Filter</div>
+                        <div class="feature-desc">Advanced search and filtering capabilities for menu items by category, price range, and availability.</div>
+                    </div>
+                </div>
+
+                <h3>Security Features</h3>
+                <ul>
+                    <li><strong>Password Hashing:</strong> Secure password storage using ASP.NET Identity's built-in hashing algorithms</li>
+                    <li><strong>HTTPS Enforcement:</strong> Automatic redirection to secure connections in production</li>
+                    <li><strong>CSRF Protection:</strong> Anti-forgery tokens on all state-changing operations</li>
+                    <li><strong>SQL Injection Prevention:</strong> Parameterized queries through Entity Framework Core</li>
+                    <li><strong>Authorization Filters:</strong> Role-based authorization on protected controllers and actions</li>
+                    <li><strong>Session Management:</strong> Secure cookie-based authentication with configurable expiration</li>
+                </ul>
+            </div>
+
+            <!-- API Routes Section -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🔌</span>
+                    <h2>Application Routes & Endpoints</h2>
+                </div>
+
+                <h3>Public Routes</h3>
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/</span>
+                    <div class="endpoint-desc">Homepage - displays featured menu items and restaurant information</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/Home/Index</span>
+                    <div class="endpoint-desc">Main landing page with navigation to all public sections</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/Identity/Account/Register</span>
+                    <div class="endpoint-desc">User registration page for creating new accounts</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-post">POST</span>
+                    <span class="endpoint-path">/Identity/Account/Register</span>
+                    <div class="endpoint-desc">Process new user registration with email and password</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/Identity/Account/Login</span>
+                    <div class="endpoint-desc">User login page with email and password authentication</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-post">POST</span>
+                    <span class="endpoint-path">/Identity/Account/Login</span>
+                    <div class="endpoint-desc">Authenticate user credentials and create session</div>
+                </div>
+
+                <h3>Protected Routes (Authenticated Users)</h3>
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/Order/Checkout</span>
+                    <div class="endpoint-desc">Checkout page for completing orders</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/Order/Checkout/{orderName}</span>
+                    <div class="endpoint-desc">Named checkout route for specific order processing</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-post">POST</span>
+                    <span class="endpoint-path">/Order/Create</span>
+                    <div class="endpoint-desc">Create new order from shopping cart</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/Order/History</span>
+                    <div class="endpoint-desc">View user's order history and status</div>
+                </div>
+
+                <h3>Admin Routes (Admin Role Required)</h3>
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/Admin/Dashboard</span>
+                    <div class="endpoint-desc">Administrative dashboard with system overview</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/Admin/Users</span>
+                    <div class="endpoint-desc">User management interface for admins</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-get">GET</span>
+                    <span class="endpoint-path">/Menu/Manage</span>
+                    <div class="endpoint-desc">Menu item management interface</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-post">POST</span>
+                    <span class="endpoint-path">/Menu/Create</span>
+                    <div class="endpoint-desc">Create new menu item (admin only)</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-put">PUT</span>
+                    <span class="endpoint-path">/Menu/Edit/{id}</span>
+                    <div class="endpoint-desc">Update existing menu item</div>
+                </div>
+
+                <div class="api-endpoint">
+                    <span class="endpoint-method method-delete">DELETE</span>
+                    <span class="endpoint-path">/Menu/Delete/{id}</span>
+                    <div class="endpoint-desc">Remove menu item from system</div>
+                </div>
+
+                <div class="alert-box alert-info">
+                    <strong>Route Configuration:</strong> Default routing pattern is <code>{controller=Home}/{action=Index}/{id?}</code>. Custom routes for checkout and other specialized endpoints are configured in Program.cs.
+                </div>
+            </div>
+
+            <!-- Testing Guidelines Section -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🧪</span>
+                    <h2>Testing Guidelines for Graders</h2>
+                </div>
+
+                <h3>Recommended Testing Workflow</h3>
+
+                <div class="step" style="padding: 25px; margin-bottom: 15px;">
+                    <h3>Step 1: Anonymous User Testing</h3>
+                    <ul>
+                        <li>Browse the homepage and navigate through public pages</li>
+                        <li>View menu items and categories without authentication</li>
+                        <li>Attempt to access protected routes (should redirect to login)</li>
+                        <li>Test responsive design on different screen sizes</li>
+                    </ul>
+                </div>
+
+                <div class="step" style="padding: 25px; margin-bottom: 15px;">
+                    <h3>Step 2: User Registration & Login</h3>
+                    <ul>
+                        <li>Navigate to <code>/Identity/Account/Register</code></li>
+                        <li>Create a new user account with valid credentials</li>
+                        <li>Verify email validation (if enabled)</li>
+                        <li>Login with the newly created account</li>
+                        <li>Test logout functionality</li>
+                    </ul>
+                </div>
+
+                <div class="step" style="padding: 25px; margin-bottom: 15px;">
+                    <h3>Step 3: Standard User Features</h3>
+                    <ul>
+                        <li>Browse menu items as authenticated user</li>
+                        <li>Add items to shopping cart</li>
+                        <li>Proceed to checkout and place order</li>
+                        <li>View order confirmation</li>
+                        <li>Check order history</li>
+                        <li>Update profile information</li>
+                    </ul>
+                </div>
+
+                <div class="step" style="padding: 25px; margin-bottom: 15px;">
+                    <h3>Step 4: Administrative Functions</h3>
+                    <ul>
+                        <li>Logout from user account</li>
+                        <li>Login with admin credentials (admin@foodsathi.com / Admin@123)</li>
+                        <li>Access admin dashboard</li>
+                        <li>Create new menu items with images and descriptions</li>
+                        <li>Edit existing menu items</li>
+                        <li>Delete menu items</li>
+                        <li>View all user accounts</li>
+                        <li>Manage user roles (if applicable)</li>
+                        <li>View all orders system-wide</li>
+                    </ul>
+                </div>
+
+                <h3>Test Cases Checklist</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Test Case</th>
+                                <th>Expected Result</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Homepage loads successfully</td>
+                                <td>Page displays with navigation and content</td>
+                                <td>✓ Pass</td>
+                            </tr>
+                            <tr>
+                                <td>User registration with valid data</td>
+                                <td>Account created, user logged in automatically</td>
+                                <td>✓ Pass</td>
+                            </tr>
+                            <tr>
+                                <td>Admin login with provided credentials</td>
+                                <td>Admin authenticated, redirected to dashboard</td>
+                                <td>✓ Pass</td>
+                            </tr>
+                            <tr>
+                                <td>Non-admin user accessing admin routes</td>
+                                <td>Access denied, redirected to login/error page</td>
+                                <td>✓ Pass</td>
+                            </tr>
+                            <tr>
+                                <td>Create new menu item as admin</td>
+                                <td>Item saved to database and appears in menu</td>
+                                <td>✓ Pass</td>
+                            </tr>
+                            <tr>
+                                <td>Place order as authenticated user</td>
+                                <td>Order created, confirmation displayed</td>
+                                <td>✓ Pass</td>
+                            </tr>
+                            <tr>
+                                <td>View order history</td>
+                                <td>All user orders displayed with details</td>
+                                <td>✓ Pass</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Troubleshooting Section -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🔍</span>
+                    <h2>Troubleshooting & Common Issues</h2>
+                </div>
+
+                <h3>Database Connection Issues</h3>
+                <div class="alert-box alert-warning">
+                    <strong>Problem:</strong> Cannot connect to SQL Server LocalDB<br><br>
+                    <strong>Solutions:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>Verify SQL Server LocalDB is installed via SQL Server Object Explorer (<code>View → SQL Server Object Explorer</code>)</li>
+                        <li>Check if LocalDB instance is running: open Command Prompt and run <code>sqllocaldb info</code></li>
+                        <li>Start LocalDB instance if stopped: <code>sqllocaldb start mssqllocaldb</code></li>
+                        <li>Reinstall "Data storage and processing" workload in Visual Studio Installer</li>
+                    </ul>
+                </div>
+
+                <h3>Migration and Database Errors</h3>
+                <div class="alert-box alert-warning">
+                    <strong>Problem:</strong> Migration fails or database schema issues<br><br>
+                    <strong>Solutions:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>Delete existing databases via SQL Server Object Explorer</li>
+                        <li>Remove Migrations folder from project</li>
+                        <li>Run: <code>Add-Migration InitialCreate</code> in Package Manager Console</li>
+                        <li>Run: <code>Update-Database</code></li>
+                        <li>Rebuild solution and run again</li>
+                    </ul>
+                </div>
+
+                <h3>Port Binding Conflicts</h3>
+                <div class="alert-box alert-warning">
+                    <strong>Problem:</strong> Application fails to start due to port already in use<br><br>
+                    <strong>Solutions:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>Open <code>Properties/launchSettings.json</code></li>
+                        <li>Modify "applicationUrl" to use different ports (e.g., change 5001 to 5002)</li>
+                        <li>Kill process using the port: Find PID with <code>netstat -ano | findstr :5001</code>, then <code>taskkill /PID [number] /F</code></li>
+                    </ul>
+                </div>
+
+                <h3>NuGet Package Restoration Issues</h3>
+                <div class="alert-box alert-warning">
+                    <strong>Problem:</strong> Packages fail to restore or build errors persist<br><br>
+                    <strong>Solutions:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>Clear NuGet cache: Run <code>dotnet nuget locals all --clear</code> in Package Manager Console</li>
+                        <li>Delete <code>bin</code> and <code>obj</code> folders from project directory</li>
+                        <li>Close Visual Studio and delete <code>.vs</code> folder</li>
+                        <li>Reopen solution and restore packages again</li>
+                        <li>Check internet connection for package downloads</li>
+                    </ul>
+                </div>
+
+                <h3>Static Files Not Loading</h3>
+                <div class="alert-box alert-warning">
+                    <strong>Problem:</strong> CSS, JavaScript, or images not displaying<br><br>
+                    <strong>Solutions:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>Verify <code>app.UseStaticFiles()</code> is called in Program.cs</li>
+                        <li>Check that files exist in <code>wwwroot</code> folder</li>
+                        <li>Clear browser cache (Ctrl + Shift + Delete)</li>
+                        <li>Check browser console (F12) for 404 errors</li>
+                        <li>Verify file paths in view files are correct</li>
+                    </ul>
+                </div>
+
+                <h3>Admin Account Not Created</h3>
+                <div class="alert-box alert-warning">
+                    <strong>Problem:</strong> Cannot login with admin credentials<br><br>
+                    <strong>Solutions:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>Verify the SeedRolesAndAdminAsync method runs in Program.cs</li>
+                        <li>Check Output window for seeding errors during startup</li>
+                        <li>Delete FoodSathiDb database and run application again</li>
+                        <li>Check AspNetUsers table in SQL Server Object Explorer for admin@foodsathi.com entry</li>
+                    </ul>
+                </div>
+
+                <h3>Identity/Account Pages Not Found</h3>
+                <div class="alert-box alert-warning">
+                    <strong>Problem:</strong> Login/Register pages show 404 errors<br><br>
+                    <strong>Solutions:</strong>
+                    <ul style="margin-top: 10px;">
+                        <li>Ensure ASP.NET Identity UI package is installed</li>
+                        <li>Verify <code>builder.Services.AddDefaultUI()</code> is called in Program.cs</li>
+                        <li>Check that <code>app.MapRazorPages()</code> is present in middleware pipeline</li>
+                        <li>Scaffold Identity pages if they were customized</li>
+                    </ul>
+                </div>
+
+                <h3>General Debugging Tips</h3>
+                <ul>
+                    <li><strong>Enable Detailed Errors:</strong> Set <code>ASPNETCORE_ENVIRONMENT=Development</code> in launchSettings.json</li>
+                    <li><strong>Check Logs:</strong> Review Output window and Debug console for error messages</li>
+                    <li><strong>Browser Console:</strong> Open F12 developer tools to check for JavaScript errors</li>
+                    <li><strong>Database Inspection:</strong> Use SQL Server Object Explorer to verify database structure and data</li>
+                    <li><strong>Breakpoints:</strong> Set breakpoints in controllers to debug request flow</li>
+                </ul>
+            </div>
+
+            <!-- Security Considerations Section -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🛡️</span>
+                    <h2>Security Considerations</h2>
+                </div>
+
+                <div class="alert-box alert-warning">
+                    <strong>Development Environment Notice:</strong> This configuration is optimized for development, testing, and academic evaluation purposes. For production deployment, the following security enhancements MUST be implemented:
+                </div>
+
+                <h3>Required Production Security Enhancements</h3>
+
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔐</div>
+                        <div class="feature-title">Password Policies</div>
+                        <div class="feature-desc">
+                            • Increase minimum password length to 8+ characters<br>
+                            • Require uppercase, lowercase, digits, and special characters<br>
+                            • Implement password complexity validation<br>
+                            • Enable password expiration and rotation policies
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">✉️</div>
+                        <div class="feature-title">Email Confirmation</div>
+                        <div class="feature-desc">
+                            • Enable RequireConfirmedAccount in Identity options<br>
+                            • Configure SMTP settings for email delivery<br>
+                            • Implement email verification tokens<br>
+                            • Add resend confirmation email functionality
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🔑</div>
+                        <div class="feature-title">Two-Factor Authentication</div>
+                        <div class="feature-desc">
+                            • Enable 2FA for admin accounts (mandatory)<br>
+                            • Offer 2FA option for all user accounts<br>
+                            • Support authenticator apps (TOTP)<br>
+                            • Implement backup codes for recovery
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <div class="feature-title">HTTPS Enforcement</div>
+                        <div class="feature-desc">
+                            • Obtain and configure SSL/TLS certificates<br>
+                            • Enable HSTS (HTTP Strict Transport Security)<br>
+                            • Configure secure cookie policies<br>
+                            • Redirect all HTTP requests to HTTPS
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🗝️</div>
+                        <div class="feature-title">Credential Management</div>
+                        <div class="feature-desc">
+                            • Change default admin password immediately<br>
+                            • Use Azure Key Vault or environment variables<br>
+                            • Never commit credentials to source control<br>
+                            • Implement credential rotation policies
+                        </div>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🔐</div>
+                        <div class="feature-title">Connection String Security</div>
+                        <div class="feature-desc">
+                            • Store connection strings in secure configuration<br>
+                            • Use managed identities when possible<br>
+                            • Encrypt sensitive configuration sections<br>
+                            • Implement least-privilege database access
+                        </div>
