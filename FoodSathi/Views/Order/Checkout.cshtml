@@ -114,6 +114,19 @@
                 <textarea id="deliveryAddress" class="form-control p-3 rounded-4 shadow-sm"
                           placeholder="Enter your complete delivery address..." rows="3" required></textarea>
             </section>
+            <!-- 📱 Phone Number -->
+            <section class="mb-5">
+                <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark">
+                    <i class="bi bi-telephone-fill me-2 text-danger"></i>Phone Number
+                </h5>
+                <input id="phoneNumber" type="tel"
+                       class="form-control p-3 rounded-4 shadow-sm"
+                       placeholder="Enter your phone number..."
+                       required
+                       pattern="^\+?\d{10,15}$"
+                       title="Please enter a valid phone number with 10-15 digits. Example: +9779817113485">
+            </section>
+
 
             <!-- 💳 Payment Options -->
             <section class="mb-5">
@@ -131,14 +144,14 @@
                     </div>
                     <div class="col-md-4">
                         <div class="option-card payment-option" data-value="Wallet">
-                            <img src="/images/esewa.png" class="img-fluid mb-2" style="height: 40px;" alt="Wallet">
+                            <img src="/images/wallet.png" class="img-fluid mb-2" style="height: 40px;" alt="Wallet">
                             <h6 class="fw-bold">Digital Wallet</h6>
                             <small class="text-muted">eSewa / Khalti</small>
                         </div>
                     </div>
                     <div class="col-md-4">
                         <div class="option-card payment-option" data-value="Cash">
-                            <img src="/images/cash.png" class="img-fluid mb-2" style="height: 40px;" alt="Cash">
+                            <img src="/images/cash.jpg" class="img-fluid mb-2" style="height: 40px;" alt="Cash">
                             <h6 class="fw-bold">Cash on Delivery</h6>
                             <small class="text-muted">Pay when delivered</small>
                         </div>
@@ -187,6 +200,8 @@
         const fromCart = @fromCart.ToString().ToLower();
         const orderId = "@(Model?.SingleOrder?.OrderID ?? 0)";
 
+
+
         // ✅ Handle delivery option selection
         deliveryCards.forEach(card => {
             card.addEventListener("click", () => {
@@ -222,6 +237,8 @@
                 }
             });
         });
+
+
 
         // ✅ Handle confirm button click
         confirmBtn.addEventListener("click", async (e) => {
@@ -321,7 +338,10 @@
                 }
             }
         });
+
     });
+
+
 </script>
 
 
