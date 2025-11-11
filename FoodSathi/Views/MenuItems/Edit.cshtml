@@ -72,10 +72,15 @@
 
                         <!-- 🍱 Category -->
                         <div class="mb-4">
-                            <label asp-for="Category" class="form-label fw-semibold">Category</label>
-                            <input asp-for="Category" class="form-control shadow-sm rounded-pill py-2 px-3" placeholder="Enter category (e.g., Momo, Pizza, Burger)" />
-                            <span asp-validation-for="Category" class="text-danger small"></span>
+                            <label asp-for="CategoryID" class="form-label fw-semibold">Category</label>
+                            <select asp-for="CategoryID" class="form-select shadow-sm rounded-pill py-2 px-3"
+                                    asp-items="ViewBag.Categories">
+                                <option value="">-- Select Category --</option>
+                            </select>
+                            <span asp-validation-for="CategoryID" class="text-danger small"></span>
                         </div>
+
+
 
                         <!-- ✅ Availability -->
                         <div class="form-check form-switch mb-4">
