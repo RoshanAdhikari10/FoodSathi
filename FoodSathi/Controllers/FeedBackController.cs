@@ -14,7 +14,7 @@ namespace FoodSathi.Controllers
             _context = context;
         }
 
-        // ✅ Show all feedback
+       
         public async Task<IActionResult> Index()
         {
             try
@@ -25,14 +25,13 @@ namespace FoodSathi.Controllers
 
                 ViewBag.AvgRating = feedbacks.Any() ? feedbacks.Average(f => f.Rating) : 0;
 
-                // ✅ For logged-in user
+               
                 if (User.Identity.IsAuthenticated)
                 {
                     ViewBag.UserName = User.Identity.Name;
                     ViewBag.UserEmail = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? "";
                 }
 
-                // ✅ Check for success message
                 ViewBag.Success = TempData["Success"] as string;
                 return View(feedbacks);
             }
@@ -44,14 +43,14 @@ namespace FoodSathi.Controllers
             }
         }
 
-        // ✅ Submit Feedback
+      
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitFeedback(Feedback feedback)
         {
             try
             {
-                // Auto-fill user details
+               
                 if (User.Identity.IsAuthenticated)
                 {
                     feedback.UserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -82,7 +81,7 @@ namespace FoodSathi.Controllers
             }
         }
 
-             // GET: Feedback/Manage
+           
         public async Task<IActionResult> Manage()                      
         {
             var feedbacks = await _context.Feedbacks
@@ -91,7 +90,7 @@ namespace FoodSathi.Controllers
             return View(feedbacks);
         }
 
-        // Optional: Delete Feedback
+       
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
