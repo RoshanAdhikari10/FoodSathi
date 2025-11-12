@@ -14,14 +14,14 @@ namespace FoodSathi.Controllers
             _context = context;
         }
 
-        // 📜 List all categories
+   
         public IActionResult Index()
         {
             var categories = _context.Categories.ToList();
             return View(categories);
         }    
 
-        // ➕ Add new
+      
         public IActionResult Create() => View();
 
         [HttpPost]
@@ -37,7 +37,7 @@ namespace FoodSathi.Controllers
             return View(category);
         }
 
-        // ✏️ Edit
+        
         public IActionResult Edit(int id)
         {
             var category = _context.Categories.Find(id);
@@ -58,7 +58,7 @@ namespace FoodSathi.Controllers
             return View(category);
         }
 
-        // ❌ Delete confirmation
+       
         public IActionResult Delete(int id)
         {
             var category = _context.Categories.Find(id);
