@@ -14,14 +14,14 @@
         <form id="account" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger text-center mb-3" role="alert"></div>
 
-            <!-- Email -->
+        
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control rounded-3" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                 <label asp-for="Input.Email">Email address</label>
                 <span asp-validation-for="Input.Email" class="text-danger small"></span>
             </div>
 
-            <!-- Password with toggle -->
+          
             <div class="form-floating mb-3 password-container">
                 <input asp-for="Input.Password" class="form-control rounded-3" type="password" autocomplete="current-password" aria-required="true" placeholder="Password" id="passwordInput" />
                 <label asp-for="Input.Password">Password</label>
@@ -29,7 +29,7 @@
                 <span asp-validation-for="Input.Password" class="text-danger small"></span>
             </div>
 
-            <!-- Remember Me -->
+          
             <div class="form-check mb-3">
                 <input class="form-check-input" asp-for="Input.RememberMe" />
                 <label class="form-check-label text-light" asp-for="Input.RememberMe">
@@ -54,7 +54,7 @@
 
         <hr class="text-secondary opacity-50 my-4" />
 
-        <!-- External Login -->
+     
         <div class="text-center">
             <h5 class="text-light mb-3">Or log in using</h5>
 
@@ -85,7 +85,7 @@
     <partial name="_ValidationScriptsPartial" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script>
-        // Password toggle
+      
         const togglePassword = document.querySelector('#togglePassword');
         const passwordInput = document.querySelector('#passwordInput');
 
@@ -99,7 +99,7 @@
 }
 
 <style>
-    /* Background */
+ 
     .login-page {
         background: url('/images/food-bg.jpg') center center/cover no-repeat;
         position: relative;
@@ -113,7 +113,7 @@
             z-index: 0;
         }
 
-    /* Card */
+  
     .login-card {
         background: rgba(255, 255, 255, 0.1);
         backdrop-filter: blur(10px);
@@ -167,7 +167,6 @@
             box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
         }
 
-    /* Password toggle */
     .password-container {
         position: relative;
     }
