@@ -31,26 +31,26 @@ namespace FoodSathi.Controllers
         [HttpPost]
         public IActionResult AddToCart(int itemId, int quantity)
         {
-            // ✅ Find the menu item
+           
             var item = _context.MenuItems.FirstOrDefault(m => m.ItemID == itemId);
             if (item == null)
                 return NotFound();
 
-            // ✅ Get logged-in user
+            
             var userName = User.Identity?.Name ?? "Guest";
 
-            // ✅ Check if item already exists in cart for the same user
+            
             var cartItem = _context.Carts.FirstOrDefault(c => c.ItemID == itemId && c.UserName == userName);
 
             if (cartItem != null)
             {
-                // Update quantity if item exists
+                
                 cartItem.Quantity += quantity;
                 _context.Carts.Update(cartItem);
             }
             else
             {
-                // ✅ Add a new item to the cart
+                
                 var newCartItem = new Cart
                 {
                     ItemID = item.ItemID,
@@ -65,11 +65,11 @@ namespace FoodSathi.Controllers
 
             _context.SaveChanges();
 
-            // Redirect to cart page
+           
             return RedirectToAction("Index", "Cart");
         }
 
-        // Remove single item
+        
         public IActionResult Remove(int cartId)
         {
             var userName = User.Identity?.Name ?? "Guest";
@@ -85,7 +85,7 @@ namespace FoodSathi.Controllers
             return RedirectToAction("Index");
         }
 
-        // Clear all cart items for current user
+       
         public IActionResult Clear()
         {
             var userName = User.Identity?.Name ?? "Guest";
@@ -99,7 +99,7 @@ namespace FoodSathi.Controllers
             return RedirectToAction("Index");
         }
 
-        // ✅ NEW: Update cart items with delivery information before checkout
+        
         [HttpPost]
         public async Task<IActionResult> UpdateCartDeliveryInfo(string address, string deliveryOption)
         {
@@ -112,7 +112,7 @@ namespace FoodSathi.Controllers
             if (!cartItems.Any())
                 return Json(new { success = false, message = "Cart is empty" });
 
-            // Update all cart items with delivery info
+          
             foreach (var item in cartItems)
             {
                 item.Address = address;
