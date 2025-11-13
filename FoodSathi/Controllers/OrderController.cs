@@ -16,7 +16,7 @@ namespace FoodSathi.Controllers
         }
 
         [Authorize(Roles = "User")]
-        // 🛒 From "Buy Now" button
+     
         [HttpPost]
         public IActionResult BuyNow(int itemId, int quantity)
         {
@@ -27,7 +27,7 @@ namespace FoodSathi.Controllers
             {
                 ItemID = item.ItemID,
                 ItemName = item.ItemName,
-                ItemImage = item.ImagePath,  // ✅ SAVE IMAGE HERE!
+                ItemImage = item.ImagePath,  
                 Quantity = quantity,
                 TotalPrice = item.Price * quantity,
                 TotalAmount = item.Price * quantity,
@@ -45,7 +45,7 @@ namespace FoodSathi.Controllers
         }
 
         [Authorize(Roles = "User")]
-        // ✅ Checkout for single or multiple items
+      
         [HttpGet]
         public IActionResult Checkout(int? orderId)
         {
@@ -65,7 +65,7 @@ namespace FoodSathi.Controllers
             }
             else
             {
-                // 🛒 Checkout from Cart
+              
                 var userName = User.Identity?.Name ?? "Guest";
                 var cartItems = _context.Carts
                     .Include(c => c.MenuItem)
@@ -86,7 +86,7 @@ namespace FoodSathi.Controllers
         }
 
         [Authorize(Roles = "User")]
-        // ✅ Proceed to payment (from checkout)
+       
         [HttpPost]
         public IActionResult ProceedToPayment(int? orderId, bool fromCart)
         {
@@ -113,7 +113,6 @@ namespace FoodSathi.Controllers
             }
         }
 
-        // ✅ Admin: Manage All Orders
         [Authorize(Roles = "Admin")]
         public IActionResult ManageOrders()
         {
@@ -155,7 +154,7 @@ namespace FoodSathi.Controllers
             return PartialView("_OrderDetailsPartial", order);
         }
 
-        // 🟢 Track Order Page
+    
         [HttpGet]
         public async Task<IActionResult> Track(int? id)
         {
@@ -214,7 +213,7 @@ namespace FoodSathi.Controllers
         }
 
         [Authorize(Roles = "User")]
-        // ✅ All orders list
+      
         public IActionResult Orders()
         {
             var userName = User.Identity?.Name ?? "Guest";
@@ -226,7 +225,7 @@ namespace FoodSathi.Controllers
         }
 
         [Authorize(Roles = "User")]
-        // ✅ Confirmation Page
+       
         [HttpGet]
         public async Task<IActionResult> OrderConfirmation(int id)
         {
@@ -284,7 +283,7 @@ namespace FoodSathi.Controllers
         }
 
         [Authorize(Roles = "User")]
-        // ✅ NEW: Update order delivery information before payment
+    
         [HttpPost]
         public async Task<IActionResult> UpdateOrderDeliveryInfo(int orderId, string address, string deliveryOption)
         {
@@ -301,11 +300,11 @@ namespace FoodSathi.Controllers
             return Json(new { success = true, message = "Order updated successfully" });
         }
 
-        // ✅ FIXED: Get order details with image
+
         [HttpGet]
         public async Task<IActionResult> GetOrderDetails(int id)
         {
-            // Include MenuItem to get the ImagePath
+          
             var order = await _context.Orders
                 .Include(o => o.MenuItem)
                 .FirstOrDefaultAsync(o => o.OrderID == id);
@@ -326,7 +325,7 @@ namespace FoodSathi.Controllers
                 order.DeliveryOption,
                 order.PaymentMethod,
                 order.OrderDate,
-                // Try MenuItem navigation first, then ItemImage column, then fallback
+            
                 itemImage = order.MenuItem?.ImagePath ?? order.ItemImage ?? "/images/no-image.png"
             };
 
