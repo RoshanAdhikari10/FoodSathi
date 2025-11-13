@@ -9,9 +9,9 @@ namespace FoodSathi.Models
             : base(options) { }
 
         public DbSet<MenuItem> MenuItems { get; set; }
-        public DbSet<Cart> Carts { get; set; }   // 👈 Added for Cart
+        public DbSet<Cart> Carts { get; set; }  
 
-        public DbSet<Order> Orders { get; set; }   // 👈 Added for Cart
+        public DbSet<Order> Orders { get; set; }  
 
         public DbSet<Category> Categories { get; set; }
 
@@ -22,7 +22,6 @@ namespace FoodSathi.Models
         {
             base.OnModelCreating(modelBuilder);
 
-            // Specify precision for Price to avoid truncation warnings
             modelBuilder.Entity<MenuItem>()
                 .Property(m => m.Price)
                 .HasColumnType("decimal(18,2)");
