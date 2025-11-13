@@ -22,17 +22,17 @@ namespace FoodSathi.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        // GET: MenuItems
+    
         public async Task<IActionResult> Index()
         {
             var items = await _context.MenuItems
-                .Include(m => m.Category) // Include category navigation
+                .Include(m => m.Category) 
                 .ToListAsync();
 
-            // Get all unique category names for filter
+          
             ViewBag.Categories = await _context.MenuItems
-                .Select(m => m.Category.Name)  // Only category names
-                .Distinct()                     // Unique categories
+                .Select(m => m.Category.Name)  
+                .Distinct()                     
                 .ToListAsync();
 
             return View(items);
@@ -40,7 +40,7 @@ namespace FoodSathi.Controllers
 
 
 
-        // 🔍 GET: MenuItems/Details/5
+     
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -57,21 +57,21 @@ namespace FoodSathi.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
-            // Use "Name" instead of "CategoryName"
+            
             ViewBag.Categories = new SelectList(_context.Categories.ToList(), "CategoryID", "Name");
             return View();
         }
 
 
         [Authorize(Roles = "Admin")]
-        // ➕ POST: MenuItems/Create
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ItemID,ItemName,Description,Price,ImageFile,CategoryID,IsAvailable")] MenuItem menuItem)
         {
             if (ModelState.IsValid)
             {
-                // ✅ Handle image upload
+                
                 if (menuItem.ImageFile != null)
                 {
                     string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
@@ -106,7 +106,7 @@ namespace FoodSathi.Controllers
             var menuItem = await _context.MenuItems.FindAsync(id);
             if (menuItem == null) return NotFound();
 
-            // ✅ Populate categories for dropdown
+          
             ViewBag.Categories = new SelectList(_context.Categories.ToList(), "CategoryID", "Name", menuItem.CategoryID);
 
             return View(menuItem);
@@ -167,14 +167,14 @@ namespace FoodSathi.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // ✅ Populate categories again if model validation fails
+           
             ViewBag.Categories = new SelectList(_context.Categories.ToList(), "CategoryID", "Name", menuItem.CategoryID);
             return View(menuItem);
         }
 
 
         [Authorize(Roles = "Admin")]
-        // ❌ GET: MenuItems/Delete/5
+        
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -189,7 +189,7 @@ namespace FoodSathi.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        // ❌ POST: MenuItems/Delete/5
+     
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
