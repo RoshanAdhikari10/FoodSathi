@@ -6,11 +6,11 @@ namespace FoodSathi.Helpers
 {
     public static class EmailHelper
     {
-        private static readonly string fromEmail = "teamfoodsathi@gmail.com"; // your Gmail
-        private static readonly string appPassword = "kcvd krny kvnb slro";     // your App Password
-        private static readonly string adminEmail = "admin@foodsathi.com";   // admin email address
+        private static readonly string fromEmail = "teamfoodsathi@gmail.com"; 
+        private static readonly string appPassword = "kcvd krny kvnb slro";    
+        private static readonly string adminEmail = "admin@foodsathi.com"; 
 
-        // ✅ Send email to any address
+      
         public static async Task SendEmailAsync(string toEmail, string subject, string body)
         {
             MailMessage mail = new MailMessage();
@@ -28,7 +28,7 @@ namespace FoodSathi.Helpers
             }
         }
 
-        // ✅ Shortcut for sending admin notification
+    
         public static async Task NotifyAdminAsync(string subject, string body)
         {
             await SendEmailAsync(adminEmail, subject, body);
