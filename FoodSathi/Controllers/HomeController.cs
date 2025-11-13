@@ -13,7 +13,7 @@ namespace FoodSathi.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly MenuDbContext _menuContext;
-        private readonly ApplicationDbContext _context; // ✅ Feedback database
+        private readonly ApplicationDbContext _context; 
 
         public HomeController(
             ILogger<HomeController> logger,
@@ -42,16 +42,16 @@ namespace FoodSathi.Controllers
         }
 
 
-        // ✅ Home Page (Dynamic Featured Dishes + Top Feedbacks)
+      
         public async Task<IActionResult> Index()
         {
-            // 🍽️ Fetch top 3 latest menu items
+           
             var featuredItems = await _menuContext.MenuItems
                 .OrderByDescending(m => m.ItemID)
                 .Take(3)
                 .ToListAsync();
 
-            // 💬 Fetch top 3 feedbacks with rating ≥ 4
+           
             var topFeedbacks = await _context.Feedbacks
                 .Where(f => f.Rating >= 4)
                 .OrderByDescending(f => f.Rating)
