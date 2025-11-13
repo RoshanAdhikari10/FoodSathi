@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using FoodSathi.Models; // change namespace as needed
+using FoodSathi.Models; 
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,14 +17,14 @@ namespace FoodSathi.Controllers
             _roleManager = roleManager;
         }
 
-        // ✅ Show all users
+    
         public IActionResult Index()
         {
             var users = _userManager.Users.ToList();
             return View(users);
         }
 
-        // ✅ Delete user
+      
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
@@ -36,7 +36,7 @@ namespace FoodSathi.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ✅ Assign Role
+     
         [HttpPost]
         public async Task<IActionResult> AssignRole(string userId, string role)
         {
