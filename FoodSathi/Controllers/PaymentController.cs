@@ -17,27 +17,23 @@ namespace FoodSathi.Controllers
             _context = context;
         }
 
-        // ====================================================
-        // 💳 CARD PAYMENT
-        // ====================================================
-
+   
         [HttpGet]
         public async Task<IActionResult> PayByCard(int? id, decimal? amount)
         {
             if (id == null || amount == null)
                 return BadRequest("Missing order ID or amount.");
-
             var order = await _context.Orders.FindAsync(id);
             if (order == null)
                 return NotFound("Order not found.");
-
             ViewBag.OrderId = id.Value;
             ViewBag.Amount = amount.Value;
             ViewBag.FromCart = false;
-
             return View("CardPayment");
         }
 
+       
+ 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PayByCardConfirm(int orderId)
@@ -65,11 +61,32 @@ namespace FoodSathi.Controllers
             TempData["Success"] = "✅ Card payment successful! Email sent to you and admin.";
             return RedirectToAction("OrderConfirmation", "Order", new { id = orderId });
         }
+        [HttpGet]
+        public async Task<IActionResult> PayByCardFromCart()
+        {
+            var userName = User.Identity?.Name ?? "Guest";
+            var cartItems = await _context.Carts
+                .Include(c => c.MenuItem)
+                .Where(c => c.UserName == userName)
+                .ToListAsync();
 
+            if (!cartItems.Any())
+            {
+                TempData["Error"] = "Your cart is empty.";
+                return RedirectToAction("Index", "Cart");
+            }
 
-        // ====================================================
-        // 💳 CARD PAYMENT - FROM CART
-        // ====================================================
+            decimal totalAmount = cartItems.Sum(c => c.Quantity * c.MenuItem.Price);
+            int itemCount = cartItems.Count;
+
+            ViewBag.TotalAmount = totalAmount;
+            ViewBag.ItemCount = itemCount;
+            ViewBag.Address = cartItems.First().Address ?? "Not Provided";
+            ViewBag.FromCart = true;
+
+            return View("CardPayment"); 
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PayByCardConfirmFromCart()
@@ -99,7 +116,7 @@ namespace FoodSathi.Controllers
                 {
                     ItemID = c.ItemID,
                     ItemName = c.MenuItem.ItemName,
-                    ItemImage = c.MenuItem.ImagePath,  // ✅ SAVE IMAGE HERE!
+                    ItemImage = c.MenuItem.ImagePath,  
                     Quantity = c.Quantity,
                     TotalPrice = total,
                     TotalAmount = total,
@@ -130,9 +147,6 @@ namespace FoodSathi.Controllers
         }
 
 
-        // ====================================================
-        // 💼 WALLET PAYMENT (Single Order)
-        // ====================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PayByWalletConfirm(int orderId, string walletType)
@@ -161,9 +175,6 @@ namespace FoodSathi.Controllers
             return RedirectToAction("OrderConfirmation", "Order", new { id = orderId });
         }
 
-        // ====================================================
-        // 💼 WALLET PAYMENT (From Cart)
-        // ====================================================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> PayByWalletConfirmFromCart(string walletType)
@@ -193,7 +204,7 @@ namespace FoodSathi.Controllers
                 {
                     ItemID = c.ItemID,
                     ItemName = c.MenuItem.ItemName,
-                    ItemImage = c.MenuItem.ImagePath,  // ✅ SAVE IMAGE HERE!
+                    ItemImage = c.MenuItem.ImagePath,  
                     Quantity = c.Quantity,
                     TotalPrice = total,
                     TotalAmount = total,
@@ -224,11 +235,6 @@ namespace FoodSathi.Controllers
         }
 
 
-
-        // ====================================================
-        // 💼 WALLET PAYMENT - SHOW PAGE
-        // ====================================================
-
         [HttpGet]
         public async Task<IActionResult> PayByWallet(int? id, decimal? amount)
         {
@@ -243,7 +249,7 @@ namespace FoodSathi.Controllers
             ViewBag.Amount = amount.Value;
             ViewBag.FromCart = false;
 
-            return View("WalletPayment"); // Create this view!
+            return View("WalletPayment"); 
         }
 
         [HttpGet]
@@ -261,7 +267,7 @@ namespace FoodSathi.Controllers
                 return RedirectToAction("Index", "Cart");
             }
 
-            // Calculate total amount from cart items
+
             decimal totalAmount = cartItems.Sum(c => c.Quantity * c.MenuItem.Price);
 
             ViewBag.Amount = totalAmount;
@@ -269,18 +275,6 @@ namespace FoodSathi.Controllers
 
             return View("WalletPayment");
         }
-
-
-
-
-
-
-
-
-
-        // ====================================================
-        // 💵 CASH ON DELIVERY (Single + Cart)
-        // ====================================================
 
         [HttpGet]
         public async Task<IActionResult> CashOnDelivery(int id)
@@ -337,7 +331,7 @@ namespace FoodSathi.Controllers
                 {
                     ItemID = c.ItemID,
                     ItemName = c.MenuItem.ItemName,
-                    ItemImage = c.MenuItem.ImagePath,  // ✅ SAVE IMAGE HERE!
+                    ItemImage = c.MenuItem.ImagePath,  
                     Quantity = c.Quantity,
                     TotalPrice = total,
                     TotalAmount = total,
