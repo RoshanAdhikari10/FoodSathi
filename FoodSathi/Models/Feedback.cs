@@ -10,16 +10,16 @@ namespace FoodSathi.Models
 
         [Required]
         [StringLength(100)]
-        public string UserId { get; set; }  // From logged-in user
+        public string UserId { get; set; }  
 
         [Required]
         [StringLength(100)]
-        public string Name { get; set; }  // From logged-in user
+        public string Name { get; set; }  
 
         [Required]
         [EmailAddress]
         [StringLength(100)]
-        public string Email { get; set; }  // From logged-in user
+        public string Email { get; set; } 
 
         [Required(ErrorMessage = "Product name is required")]
         [StringLength(200)]
