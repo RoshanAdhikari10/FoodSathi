@@ -22,17 +22,17 @@ namespace FoodSathi.Models
         public decimal TotalPrice { get; set; }
 
         [Required]
-        public string Address { get; set; } // 🏠 Delivery address filled by user
+        public string Address { get; set; } 
 
         [Required]
-        public string DeliveryOption { get; set; } // 🚚 “Home Delivery” / “Pickup”
+        public string DeliveryOption { get; set; } 
 
         [Required]
-        public string PaymentMethod { get; set; } // 💳 “Cash on Delivery”, “eSewa”, etc.
+        public string PaymentMethod { get; set; } 
 
         [Required]
         [DataType(DataType.Currency)]
-        public decimal TotalAmount { get; set; } // 💰 Final total
+        public decimal TotalAmount { get; set; } 
 
         public DateTime OrderDate { get; set; } = DateTime.Now;
 
@@ -43,14 +43,12 @@ namespace FoodSathi.Models
         [MaxLength(20)]
         public string PaymentStatus { get; set; } = "Pending";
 
-        public bool FromCart { get; set; } = false; // 🛒 true if placed from cart
+        public bool FromCart { get; set; } = false;
 
         public string DeliveryStatus { get; set; } = "Order Placed";
 
-        // ✅ Store image path or URL as string
         public string ItemImage { get; set; }
 
-        //  Navigation property to MenuItem
         [ForeignKey("ItemID")]
         public virtual MenuItem MenuItem { get; set; }
     }
