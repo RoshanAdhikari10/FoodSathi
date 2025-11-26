@@ -4,13 +4,11 @@
     ViewData["Title"] = "Home - FoodSathi";
 }
 
-<!-- 🌟 Hero Section -->
 <section class="home-hero position-relative d-flex align-items-center justify-content-center text-center text-white px-3">
-    <!-- Background Image -->
     <div class="hero-bg"></div>
     <div class="overlay"></div>
 
-    <!-- Content -->
+
     <div class="content animate-fade position-relative">
         <h1 class="display-4 fw-bold mb-3 text-shadow">
             Welcome to <span class="brand text-gradient">FoodSathi</span>
@@ -19,7 +17,7 @@
             Craving something delicious? Get it delivered <span class="fw-semibold">fast, fresh & flavorful</span> — anytime, anywhere 🍕
         </p>
 
-        <!-- CTA Buttons -->
+
         <div class="d-flex justify-content-center gap-3 mt-4">
             <a asp-controller="MenuItems" asp-action="Index" class="btn btn-outline-light fw-semibold px-4 py-2 rounded-pill">
                 📜 View Menu
@@ -28,7 +26,6 @@
     </div>
 </section>
 
-<!-- 🍽️ Featured Menu Section -->
 <section class="featured-menu py-5 position-relative">
     <div class="container text-center">
         <h2 class="fw-bold mb-3 text-gradient">🍽️ Featured Dishes</h2>
@@ -41,12 +38,7 @@
                     <div class="card menu-card border-0 shadow-lg rounded-4 overflow-hidden h-100">
                         <div class="img-container">
                             <img src="@item.ImagePath" class="card-img-top" alt="@item.ItemName">
-                            <div class="overlay d-flex align-items-center justify-content-center">
-                                <a asp-controller="Order" asp-action="BuyNow" asp-route-id="@item.ItemID"
-                                   class="btn btn-warning rounded-pill px-4 fw-semibold">
-                                    🛒 Order Now
-                                </a>
-                            </div>
+                           
                         </div>
                         <div class="card-body p-4 text-start">
                             <h5 class="fw-bold text-dark">@item.ItemName</h5>
@@ -63,7 +55,6 @@
             }
         </div>
 
-        <!-- Explore Full Menu Button -->
         <div class="mt-5">
             <a asp-controller="MenuItems" asp-action="Index"
                class="btn btn-gradient btn-lg rounded-pill shadow-lg px-5 py-3 fw-semibold">
@@ -73,7 +64,6 @@
     </div>
 </section>
 
-<!-- 🌟 How It Works Section -->
 <section class="how-it-works py-5 text-center">
     <div class="container">
         <h2 class="fw-bold mb-4 text-gradient">🚀 How FoodSathi Works</h2>
@@ -95,7 +85,6 @@
                 </div>
             </div>
 
-            <!-- Step 2 -->
             <div class="col-md-3">
                 <div class="step-card p-4 rounded-4 shadow-sm h-100">
                     <div class="icon mb-3">
@@ -108,7 +97,6 @@
                 </div>
             </div>
 
-            <!-- Step 3 -->
             <div class="col-md-3">
                 <div class="step-card p-4 rounded-4 shadow-sm h-100">
                     <div class="icon mb-3">
@@ -121,7 +109,6 @@
                 </div>
             </div>
 
-            <!-- Step 4 -->
             <div class="col-md-3">
                 <div class="step-card p-4 rounded-4 shadow-sm h-100">
                     <div class="icon mb-3">
@@ -137,10 +124,8 @@
     </div>
 </section>
 
-<!-- 💅 CSS -->
 <style>
 
-    /* Hero Section */
     .home-hero {
         height: 90vh;
         position: relative;
@@ -181,7 +166,6 @@
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
 
-    /* Buttons */
     .btn-warning {
         background: linear-gradient(90deg, #ff8a00, #e52e71);
         border: none;
@@ -227,7 +211,6 @@
 </style>
 
 
-<!-- 💬 Customer Feedback Section -->
 <section class="customer-feedback py-5 bg-light">
     <div class="container text-center">
         <h2 class="fw-bold mb-4 text-gradient">💬 What Our Customers Say</h2>
@@ -240,7 +223,6 @@
                     <div class="col-md-4">
                         <div class="card shadow-sm border-0 rounded-4 h-100 p-4 feedback-card hover-lift">
                             <div class="text-center mb-3">
-                                <!-- Avatar with first letter of user's name -->
                                 <div class="avatar-circle bg-primary text-white mx-auto mb-2" style="width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.2rem;">
                                     @feedback.Name.Substring(0, 1).ToUpper()
                                 </div>
@@ -250,7 +232,6 @@
                                 </p>
                             </div>
 
-                            <!-- Rating Stars -->
                             <div class="text-warning mb-3 text-center">
                                 @for (int i = 0; i < feedback.Rating; i++)
                                 {
@@ -262,13 +243,11 @@
                                 }
                             </div>
 
-                            <!-- Feedback Message -->
                             <p class="text-secondary fst-italic mb-2">
                                 <i class="bi bi-quote"></i>
                                 @(feedback.Message.Length > 100 ? feedback.Message.Substring(0, 100) + "..." : feedback.Message)
                             </p>
 
-                            <!-- Submitted Date -->
                             <small class="text-muted">
                                 <i class="bi bi-calendar3"></i>
                                 @feedback.SubmittedDate.ToString("MMM dd, yyyy")
@@ -278,7 +257,6 @@
                 }
             </div>
 
-            <!-- View All / Share Buttons -->
             <div class="mt-5 d-flex justify-content-center flex-wrap gap-3">
                 <a asp-controller="Feedback" asp-action="Index" class="btn btn-primary btn-lg rounded-pill px-4">
                     <i class="bi bi-chat-left-text"></i> View All Feedback
@@ -290,7 +268,6 @@
         }
         else
         {
-            <!-- Empty State -->
             <div class="empty-state py-5">
                 <i class="bi bi-chat-left-dots fs-1 text-muted mb-3"></i>
                 <p class="text-muted fs-5 mb-4">No feedback yet. Be the first to share your experience!</p>
@@ -302,7 +279,6 @@
     </div>
 </section>
 
-<!-- 🛵 Why Choose FoodSathi Section -->
 <section class="why-choose-foodsathi py-5 text-center">
     <div class="container">
         <h2 class="fw-bold text-gradient mb-4">🛵 Why Choose FoodSathi</h2>
@@ -311,7 +287,6 @@
         </p>
 
         <div class="row g-4 justify-content-center">
-            <!-- Fast Delivery -->
             <div class="col-md-3">
                 <div class="choose-card p-4 rounded-4 shadow-sm h-100">
                     <div class="icon mb-3">
@@ -324,7 +299,6 @@
                 </div>
             </div>
 
-            <!-- Fresh Ingredients -->
             <div class="col-md-3">
                 <div class="choose-card p-4 rounded-4 shadow-sm h-100">
                     <div class="icon mb-3">
@@ -337,7 +311,6 @@
                 </div>
             </div>
 
-            <!-- Easy Payment -->
             <div class="col-md-3">
                 <div class="choose-card p-4 rounded-4 shadow-sm h-100">
                     <div class="icon mb-3">
@@ -350,7 +323,6 @@
                 </div>
             </div>
 
-            <!-- 24/7 Support -->
             <div class="col-md-3">
                 <div class="choose-card p-4 rounded-4 shadow-sm h-100">
                     <div class="icon mb-3">
@@ -366,55 +338,7 @@
     </div>
 </section>
 
-<section class="contact-section py-5 text-center">
-    <div class="container">
-        <h2 class="fw-bold mb-3 text-gradient">Contact</h2>
-        <p class="mb-4">We’d love to hear from you! Whether it’s feedback, support, or partnership — drop us a message below.</p>
-        <!-- Contact Form -->
-        <form class="contact-form mx-auto p-4 rounded-4 shadow-lg glass-container" style="max-width: 600px;">
-            <div class="mb-3">
-                <input type="text" class="form-control rounded-pill" placeholder="Full Name" required>
-            </div>
-            <div class="mb-3">
-                <input type="email" class="form-control rounded-pill" placeholder="Email" required>
-            </div>
-            <div class="mb-3">
-                <textarea class="form-control rounded-4" rows="4" placeholder="Your Message..." required></textarea>
-            </div>
-            <button type="submit" class="btn btn-warning rounded-pill px-4 fw-bold shadow">Send Message</button>
-        </form>
-    </div>
-</section>
 
-<style>
-    .text-gradient {
-        background: linear-gradient(135deg, #ff9800, #ff5722);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .glass-container {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .contact-section input,
-    .contact-section textarea {
-        border: blue;
-        outline: double;
-        background: rgba(255, 255, 255, 0.9);
-        transition: all 0.3s ease;
-    }
-
-        .contact-section input:focus,
-        .contact-section textarea:focus {
-            box-shadow: 0 0 10px rgba(255, 193, 7, 0.6);
-            transform: scale(1.02);
-        }
-</style>
-
-<!-- 💅 CSS -->
 <style>
     .text-gradient {
         background: linear-gradient(45deg, #ff8a00, #e52e71);
@@ -446,14 +370,8 @@
     .choose-card:hover .icon i {
         transform: scale(1.2) rotate(5deg);
     }
-</style>
 
-
-
-
-
-<style>
-    /* ===== Hero Section ===== */
+   
     .home-hero {
         min-height: 100vh;
         background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.7)), url('/images/food-bg.jpg') center center/cover no-repeat;
@@ -510,7 +428,6 @@
             color: #222 !important;
         }
 
-    /* ===== Featured Menu Section ===== */
     .featured-menu {
         background: linear-gradient(180deg, #fff, #f9fafb);
     }
@@ -574,7 +491,6 @@
             color: #222 !important;
         }
 
-    /* ===== Responsive ===== */
     @@media (max-width: 1200px) {
         .home-hero h1
 
@@ -641,7 +557,6 @@
 
     }
 
-    /* ===== Overlay Glow ===== */
     .home-hero::after {
         content: "";
         position: absolute;
