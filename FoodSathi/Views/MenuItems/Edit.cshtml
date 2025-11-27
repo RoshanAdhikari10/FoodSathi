@@ -9,7 +9,6 @@
         <div class="col-lg-8 col-md-10">
             <div class="card border-0 shadow-lg glass-card rounded-5 overflow-hidden">
 
-                <!-- 🌈 Header -->
                 <div class="card-header text-center text-white py-4 header-gradient">
                     <h2 class="fw-bold mb-1">
                         <i class="bi bi-pencil-square me-2"></i> Edit Menu Item
@@ -17,7 +16,6 @@
                     <p class="text-light mb-0">Update details and save changes to your menu</p>
                 </div>
 
-                <!-- ✏️ Form Body -->
                 <div class="card-body p-5 bg-light">
                     <form asp-action="Edit" method="post" enctype="multipart/form-data">
                         @Html.AntiForgeryToken()
@@ -26,28 +24,24 @@
 
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger rounded-4 shadow-sm"></div>
 
-                        <!-- 🍔 Item Name -->
                         <div class="mb-4">
                             <label asp-for="ItemName" class="form-label fw-semibold">Item Name</label>
                             <input asp-for="ItemName" class="form-control shadow-sm rounded-pill py-2 px-3" placeholder="Enter item name" />
                             <span asp-validation-for="ItemName" class="text-danger small"></span>
                         </div>
 
-                        <!-- 📜 Description -->
                         <div class="mb-4">
                             <label asp-for="Description" class="form-label fw-semibold">Description</label>
                             <textarea asp-for="Description" rows="3" class="form-control shadow-sm rounded-4 p-3" placeholder="Enter item description"></textarea>
                             <span asp-validation-for="Description" class="text-danger small"></span>
                         </div>
 
-                        <!-- 💰 Price -->
                         <div class="mb-4">
                             <label asp-for="Price" class="form-label fw-semibold">Price (Rs.)</label>
                             <input asp-for="Price" type="number" step="0.01" class="form-control shadow-sm rounded-pill py-2 px-3" placeholder="0.00" />
                             <span asp-validation-for="Price" class="text-danger small"></span>
                         </div>
 
-                        <!-- 🖼️ Current Image -->
                         @if (!string.IsNullOrEmpty(Model.ImagePath))
                         {
                             <div class="mb-4 text-center">
@@ -58,7 +52,6 @@
                             </div>
                         }
 
-                        <!-- 📷 Upload New Image -->
                         <div class="mb-4">
                             <label asp-for="ImageFile" class="form-label fw-semibold">Upload New Image</label>
                             <input asp-for="ImageFile" type="file" accept="image/*" class="form-control shadow-sm rounded-pill py-2" onchange="previewImage(event)" />
@@ -70,7 +63,6 @@
                             <img id="imagePreview" src="#" alt="Preview" class="img-thumbnail rounded-4 shadow-sm" style="max-width: 250px; display: none;" />
                         </div>
 
-                        <!-- 🍱 Category -->
                         <div class="mb-4">
                             <label asp-for="CategoryID" class="form-label fw-semibold">Category</label>
                             <select asp-for="CategoryID" class="form-select shadow-sm rounded-pill py-2 px-3"
@@ -80,9 +72,6 @@
                             <span asp-validation-for="CategoryID" class="text-danger small"></span>
                         </div>
 
-
-
-                        <!-- ✅ Availability -->
                         <div class="form-check form-switch mb-4">
                             <input asp-for="IsAvailable" class="form-check-input" type="checkbox" role="switch" id="isAvailableSwitch" />
                             <label class="form-check-label fw-semibold" for="isAvailableSwitch">
@@ -90,7 +79,6 @@
                             </label>
                         </div>
 
-                        <!-- 🧭 Buttons -->
                         <div class="d-flex justify-content-between mt-4">
                             <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4 py-2">
                                 <i class="bi bi-arrow-left-circle me-2"></i> Back to List
@@ -107,7 +95,6 @@
     </div>
 </div>
 
-<!-- 💅 Styles -->
 <style>
     .glass-card {
         background: rgba(255, 255, 255, 0.9);
@@ -163,7 +150,6 @@
     }
 </style>
 
-<!-- 🧠 Scripts -->
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
