@@ -5,13 +5,11 @@
 
 <div class="container-fluid py-5 fade-in">
 
-    <!-- 🌟 Header Section -->
     <div class="text-center mb-5">
         <h1 class="fw-bold text-gradient mb-2">📦 Manage Orders</h1>
         <p class="text-muted">Track, update, and manage all customer orders in one place</p>
     </div>
 
-    <!-- 🧭 Filter Toolbar -->
     <div class="toolbar d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 p-3 rounded-4 shadow-sm bg-white bg-opacity-75 backdrop-blur">
         <div class="filter-group d-flex flex-wrap gap-2 align-items-center w-100 w-md-auto">
             <div class="input-group input-group-sm shadow-sm flex-grow-1 flex-md-grow-0">
@@ -49,7 +47,7 @@
         </div>
     </div>
 
-    <!-- 💼 Orders Table (Desktop View) -->
+
     <div class="card border-0 shadow-lg rounded-4 overflow-hidden d-none d-md-block">
         <div class="card-header text-white fw-semibold py-3 bg-gradient-primary">
             <i class="bi bi-list-check"></i> Orders Overview
@@ -120,7 +118,6 @@
         </div>
     </div>
 
-    <!-- 📱 Mobile Collapsible View -->
     <div class="d-md-none">
         @foreach (var order in Model)
         {
@@ -170,7 +167,6 @@
         }
     </div>
 
-    <!-- 🔍 Order Details Modal -->
     <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-4 border-0 shadow-lg">
@@ -275,7 +271,7 @@
 
 @section Scripts {
     <script>
-        // Helper function to get correct image URL
+
         function getImageUrl(imagePath) {
             console.log('Processing image path:', imagePath);
 
@@ -284,16 +280,13 @@
                 return '/images/no-image.png';
             }
 
-            // If it already starts with http or /, return as is
             if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
                 return imagePath;
             }
 
-            // Otherwise add / at the beginning
             return '/' + imagePath;
         }
 
-        // Setup listeners
         function setupStatusDropdowns() {
             document.querySelectorAll('.payment-status, .delivery-status').forEach(select => {
                 select.addEventListener('change', e => {
@@ -304,10 +297,8 @@
         }
         setupStatusDropdowns();
 
-        // Refresh
         document.getElementById('refreshBtn').addEventListener('click', () => location.reload());
 
-        // Update All
         document.getElementById('updateAllBtn').addEventListener('click', async () => {
             const updated = document.querySelectorAll('[data-id][data-updated="true"]');
             if (!updated.length) return alert("No changes to update.");
@@ -330,7 +321,7 @@
             alert("✅ Orders updated successfully!");
         });
 
-        // Filters
+
         ['searchUser', 'filterPayment', 'filterDelivery', 'filterDate'].forEach(id => {
             document.getElementById(id)?.addEventListener('input', filterOrders);
         });
@@ -357,7 +348,7 @@
             });
         }
 
-        // Toggle collapsible cards on mobile
+  
         document.querySelectorAll('.toggle-details').forEach(btn => {
             btn.addEventListener('click', () => {
                 const card = btn.closest('.order-card');
@@ -369,7 +360,6 @@
             });
         });
 
-        // 🧾 View Details Modal - WITH IMAGE
         document.querySelectorAll('.view-details-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const id = btn.dataset.id;
@@ -386,11 +376,9 @@
                     console.log('Full Order Details Response:', data);
                     console.log('ItemImage value:', data.itemImage);
 
-                    // Get image URL - MATCH YOUR BACKEND EXACTLY (itemImage with lowercase 'i')
                     const imageUrl = getImageUrl(data.itemImage);
                     console.log('Final image URL:', imageUrl);
 
-                 // Fallback values
                     const itemName = data.itemName || data.ItemName || 'N/A';
                     const userName = data.userName || data.UserName || 'N/A';
                     const quantity = data.quantity || data.Quantity || 'N/A';
@@ -402,12 +390,12 @@
                     const deliveryAddress = data.deliveryAddress || data.DeliveryAddress || data.address || data.Address || 'Not provided';
                     const orderDate = data.orderDate || data.OrderDate || 'N/A';
 
-                    // Status badge colors
+
                     const deliveryBadgeClass = ['Delivered','Picked Up'].includes(deliveryStatus) ? 'bg-success' :
                                                deliveryStatus === 'Cancelled' ? 'bg-danger' : 'bg-warning text-dark';
                     const paymentBadgeClass = paymentStatus === 'Paid' ? 'bg-success' : 'bg-warning text-dark';
 
-                    // Render modal content (cart-style)
+
                     content.innerHTML = `
                         <div class="row g-4 align-items-center">
                             <!-- 🖼️ Food Image -->
