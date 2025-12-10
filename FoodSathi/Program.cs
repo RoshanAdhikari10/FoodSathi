@@ -6,9 +6,6 @@ using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// =========================
-// ✅ Database connections
-// =========================
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
                       ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -18,9 +15,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDbContext<MenuDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("Menupage")));
 
-// =========================
-// ✅ Add Identity with Roles
-// =========================
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
@@ -40,9 +34,6 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// =========================
-// ✅ Middleware
-// =========================
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -55,24 +46,15 @@ else
 
 app.UseHttpsRedirection();
 
-// ✅ Serve wwwroot (images, css, js)
-app.UseStaticFiles(); // This automatically serves all files from wwwroot
+app.UseStaticFiles(); 
 
-// ✅ (Optional) – if you plan to serve other custom folders later (not needed now)
-// app.UseStaticFiles(new StaticFileOptions
-// {
-//     FileProvider = new PhysicalFileProvider(
-//         Path.Combine(Directory.GetCurrentDirectory(), "wwwroot")),
-//     RequestPath = ""
-// });
 
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ✅ Remove MapStaticAssets completely
-// app.MapStaticAssets();
+
 
 app.MapControllerRoute(
     name: "default",
@@ -85,25 +67,16 @@ app.MapControllerRoute(
 
 app.MapRazorPages();
 
-// =========================
-// ✅ Ensure MenuDB tables exist
-// =========================
 using (var scope = app.Services.CreateScope())
 {
     var menuDb = scope.ServiceProvider.GetRequiredService<MenuDbContext>();
-    menuDb.Database.EnsureCreated(); // Creates tables if missing
+    menuDb.Database.EnsureCreated(); 
 }
 
-// =========================
-// ✅ Run role/user seeding after build
-// =========================
 await SeedRolesAndAdminAsync(app);
 
 app.Run();
 
-// =========================
-// 🔧 Helper method for seeding roles/admin
-// =========================
 async Task SeedRolesAndAdminAsync(WebApplication app)
 {
     using var scope = app.Services.CreateScope();
