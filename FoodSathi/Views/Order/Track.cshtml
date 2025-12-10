@@ -34,13 +34,11 @@
 <div class="container py-5">
     <div class="glass-card shadow-lg rounded-5 overflow-hidden animate__animated animate__fadeInUp">
 
-        <!-- 🌈 Header -->
         <div class="p-4 bg-header text-white text-center">
             <h2 class="fw-bold mb-1"><i class="bi bi-truck me-2"></i> Track Your Order</h2>
             <p class="text-light opacity-75 mb-0">Follow your FoodSathi journey — from kitchen to doorstep 🍱</p>
         </div>
 
-        <!-- 🧾 Order Info -->
         <div class="px-4 py-4 text-center">
             <div class="d-flex flex-wrap justify-content-center gap-4 text-start text-muted small mb-3">
                 <div><strong>Order ID:</strong> #@Model.OrderID</div>
@@ -54,7 +52,6 @@
 
             <hr class="my-4 opacity-50" />
 
-            <!-- 🚚 Progress Tracker -->
             <div class="progress-tracker position-relative" id="progressTracker">
                 @for (int i = 0; i < steps.Count; i++)
                 {
@@ -68,7 +65,6 @@
                 }
             </div>
 
-            <!-- 💬 Status Message -->
             <div id="deliveryMessage" class="mt-4 animate__animated animate__fadeIn">
                 @switch (deliveryStatus)
                 {
@@ -107,7 +103,6 @@
 
             <p class="text-muted small mt-3">(Auto-refreshes every 10s for live tracking)</p>
 
-            <!-- 🔙 Back Button -->
             <div class="mt-4">
                 <a asp-controller="MenuItems" asp-action="Index" class="btn btn-gradient px-4 fw-semibold">
                     <i class="bi bi-arrow-left me-2"></i> Back to Menu
@@ -117,12 +112,11 @@
     </div>
 </div>
 
-<!-- Dependencies -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
 
 <style>
-    /* 🌟 Glass Effect Card */
+
     .glass-card {
         background: rgba(255, 255, 255, 0.9);
         backdrop-filter: blur(14px);
@@ -130,12 +124,10 @@
         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     }
 
-    /* 🌈 Header Gradient */
     .bg-header {
         background: linear-gradient(135deg, #ff914d, #ff5757);
     }
 
-    /* 🛤️ Progress Tracker */
     .progress-tracker {
         display: flex;
         justify-content: space-between;
@@ -193,7 +185,6 @@
         font-weight: 600;
     }
 
-    /* ✅ Pulse Animation */
     @@keyframes pulseCheck {
         0% {
             transform: scale(1);
@@ -215,7 +206,6 @@
         animation: pulseCheck 1.2s infinite ease-in-out;
     }
 
-    /* 🌸 Premium Button */
     .btn-gradient {
         background: linear-gradient(135deg, #ff914d, #ff5757);
         border: none;
@@ -230,7 +220,6 @@
         }
 </style>
 
-<!-- 🔁 Live Update -->
 <script>
     setInterval(() => {
         fetch(window.location.href)
