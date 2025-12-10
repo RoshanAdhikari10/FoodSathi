@@ -5,10 +5,9 @@
     var orderId = ViewBag.OrderId;
     var amount = ViewBag.Amount;
     var itemCount = ViewBag.ItemCount ?? 0;
-    var paymentMethod = ViewBag.PaymentMethod ?? "COD"; // COD, Card, eSewa, Khalti
+    var paymentMethod = ViewBag.PaymentMethod ?? "COD"; 
     var estimatedDelivery = ViewBag.EstimatedDelivery ?? "1-2 days";
 
-    // Dynamic styling & messages
     string bgClass = "", iconClass = "", textClass = "", heading = "", message = "";
 
     switch (paymentMethod)
@@ -50,16 +49,13 @@
 <div class="container py-5">
     <div class="card shadow-lg border-0 rounded-5 p-5 mx-auto text-center" style="max-width: 700px; background: #ffffffcc;">
 
-        <!-- Header Icon -->
         <div class="mb-4 mx-auto d-inline-flex rounded-circle @bgClass justify-content-center align-items-center" style="width: 90px; height: 90px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
             <i class="@iconClass fs-1"></i>
         </div>
 
-        <!-- Main Heading -->
         <h2 class="fw-bold @textClass mb-3">@heading</h2>
         <p class="lead text-muted mb-4">@Html.Raw(message)</p>
 
-        <!-- Order Summary -->
         <div class="bg-light rounded-4 p-4 shadow-sm mx-auto" style="max-width: 550px;">
             <h5 class="fw-bold mb-3 text-dark"><i class="bi bi-receipt-cutoff me-2 text-success"></i>Order Details</h5>
             <ul class="list-unstyled mb-3 fs-6">
@@ -84,7 +80,6 @@
             }
         </div>
 
-        <!-- Action Buttons -->
         <div class="mt-5 d-flex flex-column flex-md-row justify-content-center align-items-center gap-3">
             <a asp-controller="Order" asp-action="Track" asp-route-id="@orderId" class="btn btn-outline-success px-5 py-2 fw-semibold rounded-pill shadow-sm hover-scale">
                 <i class="bi bi-truck me-2"></i> Track Order
@@ -94,7 +89,6 @@
             </a>
         </div>
 
-        <!-- Extra Info -->
         <div class="mt-5 border-top pt-4">
             <h6 class="fw-semibold mb-2 text-success"><i class="bi bi-info-circle me-1"></i> Important Notice</h6>
             <p class="small text-muted mb-0">
