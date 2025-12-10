@@ -5,7 +5,7 @@
 }
 
 <div class="container py-5 fade-in">
-    <!-- 🌟 Header -->
+
     <div class="text-center mb-5 position-relative">
         <div class="logo-circle mx-auto d-flex align-items-center justify-content-center shadow-glow mb-3">
             <i class="bi bi-basket2-fill fs-1 text-light"></i>
@@ -14,9 +14,8 @@
         <p class="text-muted">Track your active and completed orders easily</p>
     </div>
 
-    <!-- 🧭 Split Layout -->
     <div class="row g-4">
-        <!-- LEFT: Processing / Unfinished Orders -->
+
         <div class="col-md-6">
             <div class="card shadow-sm border-0 rounded-4">
                 <div class="card-header bg-warning bg-gradient text-dark fw-bold text-center rounded-top-4">
@@ -53,7 +52,6 @@
                                 <p class="small text-muted mb-2"><i class="bi bi-credit-card-2-front"></i> Payment: @order.PaymentMethod</p>
                                 <p class="small mb-2 text-secondary"><i class="bi bi-clock-history"></i> Placed on: @order.OrderDate.ToString("MMM dd, yyyy - hh:mm tt")</p>
 
-                                <!-- 🚀 Action Buttons -->
                                 <div class="d-flex gap-2 justify-content-end">
                                     <button class="btn btn-sm btn-outline-info rounded-pill shadow-sm view-details-btn"
                                             data-id="@order.OrderID">
@@ -71,7 +69,6 @@
             </div>
         </div>
 
-        <!-- RIGHT: Delivered / Finished Orders -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 rounded-4">
                 <div class="card-header bg-success bg-gradient text-white fw-bold text-center rounded-top-4">
@@ -139,7 +136,6 @@
                                 <p class="small text-muted mb-2"><i class="bi bi-credit-card-2-front"></i> Payment: @order.PaymentMethod</p>
                                 <p class="small mb-2 text-secondary"><i class="bi bi-calendar-check"></i> Ordered on: @order.OrderDate.ToString("MMM dd, yyyy - hh:mm tt")</p>
 
-                                <!-- 🚀 View Details Button -->
                                 <div class="text-end">
                                     <button class="btn btn-sm btn-outline-info rounded-pill shadow-sm view-details-btn"
                                             data-id="@order.OrderID">
@@ -155,7 +151,6 @@
     </div>
 </div>
 
-<!-- 🔍 Order Details Modal -->
 <div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow-lg">
@@ -178,7 +173,6 @@
     </div>
 </div>
 
-<!-- ✨ CSS Animation & Styles -->
 <style>
     .fade-in {
         animation: fadeIn 0.8s ease-in-out;
@@ -264,22 +258,19 @@
 
 @section Scripts {
     <script>
-        // Helper function to get correct image URL
         function getImageUrl(imagePath) {
             if (!imagePath || imagePath === 'null' || imagePath === 'undefined') {
                 return '/images/no-image.png';
             }
 
-            // If it already starts with http or /, return as is
             if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
                 return imagePath;
             }
 
-            // Otherwise add / at the beginning
+
             return '/' + imagePath;
         }
 
-        // 🧾 View Details Modal
         document.querySelectorAll('.view-details-btn').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const id = btn.dataset.id;
@@ -295,10 +286,8 @@
                     const data = await res.json();
                     console.log('Order Details Response:', data);
 
-                    // Fixed code (correct property name)
-        const imageUrl = getImageUrl(data.itemImage); // ← Match backend property name
+        const imageUrl = getImageUrl(data.itemImage);
 
-                    // Fallback values
                     const itemName = data.itemName || data.ItemName || 'N/A';
                     const userName = data.userName || data.UserName || 'N/A';
                     const quantity = data.quantity || data.Quantity || 'N/A';
@@ -310,12 +299,12 @@
                     const deliveryAddress = data.deliveryAddress || data.DeliveryAddress || data.address || data.Address || 'Not provided';
                     const orderDate = data.orderDate || data.OrderDate || 'N/A';
 
-                    // Status badge colors
+
                     const deliveryBadgeClass = ['Delivered','Picked Up'].includes(deliveryStatus) ? 'bg-success' :
                                                deliveryStatus === 'Cancelled' ? 'bg-danger' : 'bg-warning text-dark';
                     const paymentBadgeClass = paymentStatus === 'Paid' ? 'bg-success' : 'bg-warning text-dark';
 
-                    // Render modal content (cart-style)
+ 
                     content.innerHTML = `
                         <div class="row g-4 align-items-center">
                             <!-- 🖼️ Food Image -->
