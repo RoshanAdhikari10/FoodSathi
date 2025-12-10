@@ -1,4 +1,6 @@
 ﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityUser>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "User Management";
@@ -16,36 +18,35 @@
                 <tr class="text-center">
                     <th>#</th>
                     <th>Email</th>
-                    <th>User ID</th>
                     <th>Manage</th>
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Any())
-                {
+                @{
                     int i = 1;
+                    var nonAdminUsers = new List<IdentityUser>();
                     foreach (var user in Model)
+                    {
+                        var roles = await UserManager.GetRolesAsync(user);
+                        if (!roles.Contains("Admin"))
+                        {
+                            nonAdminUsers.Add(user);
+                        }
+                    }
+                }
+
+                @if (nonAdminUsers.Any())
+                {
+                    foreach (var user in nonAdminUsers)
                     {
                         <tr>
                             <td class="text-center">@i</td>
                             <td>@user.Email</td>
-                            <td>@user.Id</td>
                             <td class="text-center">
                                 <form asp-action="Delete" method="post" class="d-inline">
                                     <input type="hidden" name="id" value="@user.Id" />
                                     <button type="submit" class="btn btn-sm btn-danger rounded-pill px-3" onclick="return confirm('Delete this user?');">
                                         🗑️ Delete
-                                    </button>
-                                </form>
-
-                                <form asp-action="AssignRole" method="post" class="d-inline ms-2">
-                                    <input type="hidden" name="userId" value="@user.Id" />
-                                    <select name="role" class="form-select form-select-sm d-inline w-auto">
-                                        <option value="Admin">Admin</option>
-                                        <option value="User">User</option>
-                                    </select>
-                                    <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 ms-1">
-                                        🎯 Assign
                                     </button>
                                 </form>
                             </td>
@@ -56,7 +57,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="4" class="text-center text-muted py-4">No users registered yet.</td>
+                        <td colspan="3" class="text-center text-muted py-4">No regular users found.</td>
                     </tr>
                 }
             </tbody>
