@@ -7,14 +7,14 @@
 
 <div class="container py-5">
     <div class="checkout-wrapper mx-auto shadow-lg rounded-5 overflow-hidden glass-container">
-        <!-- Header -->
+
         <div class="text-center p-5 header-gradient text-white">
             <h2 class="fw-bold mb-2"><i class="bi bi-bag-check-fill me-2"></i>Secure Checkout</h2>
             <p class="opacity-75">Complete your order and enjoy delicious food delivered fast 🍱</p>
         </div>
 
         <div class="p-4 p-md-5 bg-white">
-            <!-- 🧾 Order Summary -->
+   
             <section class="mb-5">
                 <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark">
                     <i class="bi bi-receipt-cutoff me-2 text-success"></i>Order Summary
@@ -69,7 +69,7 @@
                 </div>
             </section>
 
-            <!-- 🚚 Delivery Options -->
+        
             <section class="mb-5">
                 <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark">
                     <i class="bi bi-truck me-2 text-success"></i>Delivery Option
@@ -77,7 +77,7 @@
 
                 <div class="row g-4">
                     <div class="col-md-4">
-                        <!-- 🔹 Standard delivery now charges Rs. 50 -->
+                      
                         <div class="option-card delivery-option active" data-value="Standard" data-charge="50">
                             <i class="bi bi-truck fs-2 text-success"></i>
                             <h6 class="fw-bold mt-2">Standard</h6>
@@ -106,7 +106,7 @@
 
             </section>
 
-            <!-- 🏠 Address -->
+          
             <section class="mb-5">
                 <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark">
                     <i class="bi bi-geo-alt-fill me-2 text-danger"></i>Delivery Address
@@ -114,7 +114,7 @@
                 <textarea id="deliveryAddress" class="form-control p-3 rounded-4 shadow-sm"
                           placeholder="Enter your complete delivery address..." rows="3" required></textarea>
             </section>
-            <!-- 📱 Phone Number -->
+           
             <section class="mb-5">
                 <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark">
                     <i class="bi bi-telephone-fill me-2 text-danger"></i>Phone Number
@@ -128,7 +128,7 @@
             </section>
 
 
-            <!-- 💳 Payment Options -->
+          
             <section class="mb-5">
                 <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark">
                     <i class="bi bi-credit-card-fill me-2 text-primary"></i>Payment Method
@@ -159,7 +159,7 @@
                 </div>
             </section>
 
-            <!-- ✅ Confirm -->
+          
             <div class="d-grid gap-3 mt-4">
                 <button id="confirmOrderBtn" class="btn btn-lg btn-gradient rounded-pill fw-bold py-3">
                     Confirm & Pay <i class="bi bi-arrow-right-circle ms-2"></i>
@@ -171,7 +171,7 @@
             </div>
         </div>
 
-        <!-- Footer -->
+      
         <div class="text-center py-3 small text-muted bg-light">
             🔒 Secure Checkout • Powered by <strong>FoodSathi ©2025</strong>
         </div>
@@ -181,7 +181,7 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // Separate delivery and payment option cards
+      
         const deliveryCards = document.querySelectorAll(".delivery-option");
         const paymentCards = document.querySelectorAll(".payment-option");
         
@@ -193,7 +193,7 @@
         let selectedDelivery = "Standard";
         let selectedPayment = "Card";
 
-            let deliveryCharge = 50; // Default Standard Delivery charge
+            let deliveryCharge = 50;
     deliveryChargeEl.textContent = deliveryCharge.toFixed(2);
     finalTotalEl.textContent = (basePrice + deliveryCharge).toFixed(2);
 
@@ -202,7 +202,7 @@
 
 
 
-        // ✅ Handle delivery option selection
+      
         deliveryCards.forEach(card => {
             card.addEventListener("click", () => {
                 deliveryCards.forEach(c => c.classList.remove("active"));
@@ -213,7 +213,7 @@
                 deliveryChargeEl.textContent = charge.toFixed(2);
                 finalTotalEl.textContent = (basePrice + charge).toFixed(2);
 
-                 // ✅ Hide address for Pickup option
+               
                 if (selectedDelivery === "Pickup") {
                     addressSection.style.display = "none";
                 } else {
@@ -222,14 +222,13 @@
             });
         });
 
-        // ✅ Handle payment method selection
+      
         paymentCards.forEach(card => {
             card.addEventListener("click", () => {
                 paymentCards.forEach(c => c.classList.remove("active"));
                 card.classList.add("active");
                 selectedPayment = card.dataset.value;
-                
-                // Update button text based on payment method
+            
                 if (selectedPayment === "Cash") {
                     confirmBtn.innerHTML = 'Place Order (COD) <i class="bi bi-cash-coin ms-2"></i>';
                 } else {
@@ -240,30 +239,29 @@
 
 
 
-        // ✅ Handle confirm button click
+      
         confirmBtn.addEventListener("click", async (e) => {
             e.preventDefault();
 
             const finalTotal = document.getElementById("finalTotal").textContent;
             const address = document.getElementById("deliveryAddress").value.trim();
 
-              // Skip address validation for Pickup
             if (selectedDelivery !== "Pickup" && !address) {
                 alert("⚠️ Please enter your delivery address before proceeding!");
                 return;
             }
 
-            // Validate address
+          
             if (!address) {
                 alert("⚠️ Please enter your delivery address before proceeding!");
                 return;
             }
 
-            // Show loading state
+          
             confirmBtn.disabled = true;
             confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Processing...';
 
-            // ✅ Update cart with delivery info before proceeding (for cart purchases)
+          
             if (fromCart) {
                 try {
                     const response = await fetch('/Cart/UpdateCartDeliveryInfo', {
@@ -289,7 +287,7 @@
                     return;
                 }
             } else {
-                // For single order, update the order record
+              
                 try {
                     const response = await fetch('/Order/UpdateOrderDeliveryInfo', {
                         method: 'POST',
@@ -315,7 +313,7 @@
                 }
             }
 
-            // ✅ Navigate based on payment method
+           
             if (selectedPayment === "Card") {
                 if (fromCart) {
                     window.location.href = `/Payment/PayByCardFromCart`;
@@ -345,7 +343,7 @@
 </script>
 
 
-<!-- 🌈 Styles -->
+
 <style>
     .glass-container {
         background: rgba(255, 255, 255, 0.85);
